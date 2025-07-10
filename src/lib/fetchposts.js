@@ -6,3 +6,4 @@ export async function fetchPosts() {
   }
   return await res.json();
 }
+
