@@ -1,0 +1,32 @@
+---
+
+export async function getStaticPaths() {
+  const res = await fetch('http://167.99.153.17/wp-json/wp/v2/posts?_fields=slug');
+  const posts = await res.json();
+
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const res = await fetch(`http://167.99.153.17/wp-json/wp/v2/posts?slug=${slug}`);
+const posts = await res.json();
+const post = posts[0];
+
+if (!post) {
+  throw new Error(`Post not found for slug: ${slug}`);
+}
+---
+
+<html>
+  <head>
+    <title>{post.title.rendered}</title>
+  </head>
+  <body>
+    <article class="prose mx-auto">
+      <h1 set:html={post.title.rendered} />
+      <div set:html={post.content.rendered} />
+    </article>
+  </body>
+</html>
