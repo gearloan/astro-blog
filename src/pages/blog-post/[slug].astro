@@ -1,4 +1,6 @@
 ---
+import Layout from '../../layouts/Layout.astro';
+
 export async function getStaticPaths() {
   const res = await fetch('http://167.99.153.17/wp-json/wp/v2/posts?_embed');
   if (!res.ok) throw new Error('Failed to fetch posts');
@@ -15,12 +17,14 @@ export async function getStaticPaths() {
 }
 
 const { post, featured_image } = Astro.props;
----
 
-<article class="prose">
-  <h1 set:html={post.title.rendered}></h1>
-  {featured_image && (
-    <img src={featured_image} alt={post.title.rendered} class="w-full my-4" />
-  )}
-  <div set:html={post.content.rendered}></div>
-</article>
+---
+<Layout>
+  <article class="prose">
+    <h1 set:html={post.title.rendered}></h1>
+    {featured_image && (
+      <img src={featured_image} alt={post.title.rendered} class="w-full my-4" />
+    )}
+    <div set:html={post.content.rendered}></div>
+  </article>
+<Layout>
