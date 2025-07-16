@@ -4,8 +4,18 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        // your font config
-      },
+      gothamBold: ['"Gotham-Bold"', 'sans-serif'],
+      gothamBoldItalic: ['"Gotham-BoldItalic"', 'sans-serif'],
+      gothamBook: ['"Gotham-Book"', 'sans-serif'],
+      gothamBookItalic: ['"Gotham-BookItalic"', 'sans-serif'],
+      knockout94: ['"Knockout-94"', 'sans-serif'],
+      knockout28: ['"Knockout-28"', 'sans-serif'],
+      mercuryBold: ['"Mercury-Bold"', 'serif'],
+      mercuryBoldItalic: ['"Mercury-BoldItalic"', 'serif'],
+      mercuryRoman: ['"Mercury-Roman"', 'serif'],
+      mercuryItalic: ['"Mercury-BookItalic"', 'serif'],
+    },
+
       colors: {
         'aopa-dkblue': '#002a3a',
       },
