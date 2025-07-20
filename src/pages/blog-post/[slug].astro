@@ -17,10 +17,11 @@ export async function getStaticPaths() {
 }
 
 const { post, featured_image } = Astro.props;
+const proseStyle = post.postPresentationSettings?.proseStyle ?? 'prose-editorial';
 
 ---
 <Layout>
-  <article class="prose">
+  <article class={`prose ${proseStyle} max-w-none`}>
     <h1 set:html={post.title.rendered}></h1>
     {featured_image && (
       <img src={featured_image} alt={post.title.rendered} class="w-full my-4" />

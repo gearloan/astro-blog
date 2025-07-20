@@ -12,6 +12,9 @@ export async function fetchPosts() {
               title
               excerpt
               date
+              postPresentationSettings {
+                proseStyle
+              }
               featuredImage {
                 node {
                   sourceUrl
@@ -30,6 +33,8 @@ export async function fetchPosts() {
     })
   });
 
+
+  
   const json = await res.json();
   return json.data.posts.nodes;
 }
