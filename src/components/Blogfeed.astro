@@ -3,7 +3,7 @@ import { fetchPosts } from '../lib/fetchPosts.js';
 const posts = await fetchPosts();
 ---
 
-<ul class="">
+<ul class="prose prose-editorial">
   {posts.map(post => (
     <li>
       <img src={post.featuredImage?.node?.mediaDetails?.sizes?.find(size => size.name === "thumbnail")?.sourceUrl ?? post.featuredImage?.node?.sourceUrl} />
