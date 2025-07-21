@@ -1,10 +1,16 @@
 ---
+import { resolveProseStyle } from '../../lib/resolveProseStyle.js';
 import Layout from '../../layouts/Layout.astro';
-import BlogFeed from '../../components/BlogFeed.astro';
+import EditorialMasthead from '../../components/EditorialMasthead.astro';
 import EditorialHero from '../../components/EditorialHero.astro';
+import BlogFeed from '../../components/BlogFeed.astro';
+
+const proseStyle = resolveProseStyle(null, { forcedProseStyle: 'prose-editorial' });
+
 ---
 
-<Layout>
-    <EditorialHero />
-	<BlogFeed />
+<Layout proseStyle={proseStyle}>
+  <EditorialMasthead />
+  <EditorialHero />
+  <BlogFeed />
 </Layout>

@@ -23,6 +23,9 @@ export default {
       },
       colors: {
         'aopa-dkblue': '#002a3a',
+        gray: {
+          350: '#c4c9d1', // whatever hex you need
+        },
       },
       typography: ({ theme }) => ({
         DEFAULT: {
@@ -54,9 +57,19 @@ export default {
         },
         editorial: {
           css: {
+            fontSize: theme('fontSize.base'), // default font size
             fontFamily: theme('fontFamily.serif').join(', '),
-            h1: { fontFamily: theme('fontFamily.serifBold').join(', ') },
+            h1: { 
+              fontFamily: theme('fontFamily.serifBold').join(', '),
+              fontSize: theme('fontSize.4xl'),
+
+            },
             h2: { fontFamily: theme('fontFamily.serifBold').join(', ') },
+            h3: { 
+              fontFamily: theme('fontFamily.serifBold').join(', ') ,
+              fontSize: theme('fontSize.lg'),
+              lineHeight: theme('lineHeight.tight'), // ← this is what adds `leading-tight`
+            },
             em: { fontFamily: theme('fontFamily.serifItalic').join(', ') },
             strong: { fontFamily: theme('fontFamily.serifBold').join(', ') },
           },

@@ -1,0 +1,54 @@
+---
+import { fetchPosts } from '../lib/fetchPosts.js';
+const posts = await fetchPosts();
+const leadStory = posts[0];
+const leftStories = posts.slice(1, 3);
+const rightStories = posts.slice(3, 6);
+
+const { proseStyle = 'prose-editorial' } = Astro.props;
+
+
+
+---
+
+<section class={`max-w-7xl mx-auto px-4 pt-8 pb-4 border-b border-gray-350 mb-8 grid grid-cols-1 lg:grid-cols-12 gap-6 ${proseStyle ?? ''}`}>
+
+  <!-- Left Column (supporting stories) -->
+  <aside class="lg:col-span-2 space-y-8">
+    <h4>LATEST STORIES</h4>
+    {leftStories.map(story => (
+      <article class="pt-1">
+        <h3 class="mb-1 leading-tight">{story.title}</h3>
+        <p class="text-sm text-gray-600 mb-1">{story.excerpt.replace(/<[^>]*>/g, '')}</p>
+        <a href={story.href} class="text-sm text-blue-600 hover:underline">Read more</a>
+      </article>
+    ))}
+  </aside>
+
+  <!-- Center Column (lead story) -->
+  <article class="lg:col-span-8">
+    <img
+        src={leadStory.featuredImage?.node?.sourceUrl}
+        alt={leadStory.title}
+        class="w-full h-auto mb-4 object-cover rounded"
+    />
+    <h1 class="leading-tight mb-2">{leadStory.title}</h1>
+    <p class="text-sm font-gothamBold uppercase tracking-wide text-gray-500 mb-4">
+      By {leadStory.author} — {leadStory.date}
+    </p>
+    <p class="text-base text-gray-700">{leadStory.blurb}</p>
+  </article>
+
+  <!-- Right Column (supporting stories) -->
+  <aside class="lg:col-span-2 space-y-8">
+    <h4>ADVOCACY</h4>
+    {rightStories.map(story => (
+      <article class="pt-1">
+        <h3 class="mb-1">{story.title}</h3>
+        <p class="text-sm text-gray-600 mb-1">{story.excerpt.replace(/<[^>]*>/g, '')}</p>
+        <a href={story.href} class="text-sm text-blue-600 hover:underline">Read more</a>
+      </article>
+    ))}
+  </aside>
+
+</section>

@@ -1,6 +1,8 @@
 ---
 import "../styles/global.css";
 import Navigation from '../components/Navigation.astro';
+const { proseStyle = '' } = Astro.props;
+const isEditorial = proseStyle === 'prose-editorial';
 ---
 <!doctype html>
 <html lang="en">
@@ -11,7 +13,7 @@ import Navigation from '../components/Navigation.astro';
 		<meta name="generator" content={Astro.generator} />
 		<title>AOPA - astro test</title>
 	</head>
-	<body class="gothamBook">
+	<body class={`min-h-screen ${isEditorial ? 'bg-zinc-200' : ''}`}>
 		<Navigation />
 		<main class="max-w-7xl mx-auto px-4">
 			<slot />
