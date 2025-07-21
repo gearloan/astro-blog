@@ -1,0 +1,40 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+  <main class="max-w-5xl mx-auto px-6 py-12 space-y-12">
+    <h1 class="text-3xl font-heading">Typography & Design System</h1>
+
+    <section>
+      <h2 class="text-xl font-subheading mb-4">Font Families</h2>
+      <ul class="space-y-4">
+        <li class="font-heading text-3xl">Knockout-94 — font-heading</li>
+        <li class="font-subheading text-2xl">Knockout-28 — font-subheading</li>
+        <li class="font-body text-lg">Gotham Book — font-body</li>
+        <li class="font-bodyItalic italic text-lg">Gotham Book Italic — font-bodyItalic</li>
+        <li class="font-serif text-lg">Mercury Roman — font-serif</li>
+        <li class="font-serifItalic italic text-lg">Mercury Italic — font-serifItalic</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="text-xl font-subheading mb-4">Prose Styles</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="prose prose-editorial p-4 border rounded">
+          <h3>Editorial</h3>
+          <p>This is a sample editorial body paragraph. It uses Mercury throughout.</p>
+        </div>
+        <div class="prose prose-magazine p-4 border rounded">
+          <h3>Magazine</h3>
+          <p>Magazine prose mixes Gotham and Knockout, depending on structure.</p>
+        </div>
+        <div class="prose prose-feature p-4 border rounded">
+          <h3>Feature</h3>
+          <p>Big, punchy Knockout headlines and scaled body copy.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
+
