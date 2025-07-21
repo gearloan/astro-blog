@@ -1,0 +1,37 @@
+---
+import SitemapCard from './SitemapCard.astro';
+
+const sections = [
+  {
+    title: "Editorial",
+    routes: [
+      { name: "Home", route: "/editorial/home" },
+      { name: "Article", route: "/editorial/article" },
+      { name: "Article + Right Rail", route: "/editorial/article-rr" },
+      { name: "Feature", route: "/editorial/feature" },
+    ],
+  },
+  {
+    title: "Magazine",
+    routes: [
+      { name: "Home", route: "/magazine/home" },
+      { name: "Issue", route: "/magazine/issue" },
+      { name: "Article", route: "/magazine/article" },
+      { name: "Article + Right Rail", route: "/magazine/article-rr" },
+      { name: "Feature", route: "/magazine/feature" },
+    ],
+  },
+];
+---
+
+{sections.map(section => (
+  <section class="mb-16">
+    <h2 class="text-xl font-subheading mb-4">{section.title}</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {section.routes.map(r => (
+        <SitemapCard name={r.name} route={r.route} />
+      ))}
+    </div>
+  </section>
+))}
+
