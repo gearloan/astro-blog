@@ -3,14 +3,20 @@ import { fetchPosts } from '../lib/fetchPosts.js';
 const posts = await fetchPosts();
 ---
 
-<ul class="prose prose-editorial">
+<ul class="prose prose-editorial max-w-4xl mx-auto">
   {posts.map(post => (
-    <li>
-      <img src={post.featuredImage?.node?.mediaDetails?.sizes?.find(size => size.name === "thumbnail")?.sourceUrl ?? post.featuredImage?.node?.sourceUrl} />
-      <a href={`/blog-post/${post.slug}`} class="text-blue-600 hover:underline">
-        <h2 set:html={post.title}></h2>
-      </a>
-      <p set:html={post.excerpt}></p>
+    <li class="flex gap-6 items-start">
+      <img
+        src={post.featuredImage?.node?.mediaDetails?.sizes?.find(size => size.name === "thumbnail")?.sourceUrl ?? post.featuredImage?.node?.sourceUrl}
+        alt=""
+        class="w-48 h-48 object-cover rounded mt-0"
+      />
+      <div class="flex-1">
+        <a href={`/blog-post/${post.slug}`} class="text-blue-600 hover:underline">
+          <h2 set:html={post.title} class="text-3xl font-semibold mb-1 mt-0"></h2>
+        </a>
+        <p set:html={post.excerpt} class="text-sm text-gray-600"></p>
+      </div>
     </li>
   ))}
 </ul>

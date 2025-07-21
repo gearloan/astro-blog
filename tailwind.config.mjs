@@ -25,6 +25,33 @@ export default {
         'aopa-dkblue': '#002a3a',
       },
       typography: ({ theme }) => ({
+        DEFAULT: {
+          css: {
+            // Handles a inside headings
+            'h1 a, h2 a, h3 a, h4 a, h5 a, h6 a': {
+              textDecoration: 'none',
+              fontWeight: 'inherit',
+              '&:hover': {
+                textDecoration: 'underline',
+              },
+            },
+            // Handles when a wraps the heading
+            'a h1, a h2, a h3, a h4, a h5, a h6': {
+              textDecoration: 'none',
+              fontWeight: 'inherit',
+              '&:hover': {
+                textDecoration: 'underline',
+              },
+            },
+            // Optional: also nuke underline on a generally
+            'a': {
+              textDecoration: 'none',
+              '&:hover': {
+                textDecoration: 'underline',
+              },
+            },
+          },
+        },
         editorial: {
           css: {
             fontFamily: theme('fontFamily.serif').join(', '),
