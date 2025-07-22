@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 
 export async function getStaticPaths() {
-  const res = await fetch('http://167.99.153.17/wp-json/wp/v2/posts?_embed');
+  const res = await fetch('https://aopa-porkbuns.sbs/wp-json/wp/v2/posts?_embed');
   if (!res.ok) throw new Error('Failed to fetch posts');
   const posts = await res.json();
 

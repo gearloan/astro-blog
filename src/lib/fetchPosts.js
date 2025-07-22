@@ -1,5 +1,5 @@
 export async function fetchPosts() {
-  const res = await fetch('http://167.99.153.17/graphql', {
+  const res = await fetch('https://aopa-porkbuns.sbs/graphql', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
