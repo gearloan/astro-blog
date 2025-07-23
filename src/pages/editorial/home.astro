@@ -5,6 +5,8 @@ import EditorialMasthead from '../../components/EditorialMasthead.astro';
 import EditorialHero from '../../components/EditorialHero.astro';
 import BlogFeed from '../../components/Blogfeed.astro';
 import RightRail from '../../components/RightRail.astro';
+import MostRead from '../../components/MostRead.astro';
+
 
 const proseStyle = resolveProseStyle(null, { forcedProseStyle: 'prose-editorial' });
 
@@ -18,6 +20,8 @@ const proseStyle = resolveProseStyle(null, { forcedProseStyle: 'prose-editorial'
     <div class="flex-1">
       <BlogFeed />
     </div>
-    <RightRail />
-
+    <RightRail>
+        <MostRead />
+    </RightRail>
+  </div>
 </Layout>
