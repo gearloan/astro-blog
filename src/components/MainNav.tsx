@@ -1,10 +1,16 @@
 import { useState } from 'preact/hooks';
 
-export default function Nav() {
+type Props = {
+  section?: string | null;
+};
+
+export default function Nav({ section }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => setIsOpen((prev) => !prev);
 
+
+  
   return (
     <div class="relative z-40 group">
       {/* NAV BAR */}
@@ -15,10 +21,13 @@ export default function Nav() {
             <li class="relative px-6 pr-[2.5rem] h-full clip-angle flex items-center bg-aopa-ltblue text-lg">
               <a href="#">AOPA</a>
             </li>
-            <li class="px-4 flex items-center h-full text-lg">
-              <a href="#">News</a>
-            </li>
+            {section === 'editorial' && (
+              <li class="px-4 flex items-center h-full text-lg">
+                <a href="#">News</a>
+              </li>
+            )}
           </ul>
+
         </div>
 
         {/* RIGHT SIDE HAMBURGER (excluded from hover zone) */}
