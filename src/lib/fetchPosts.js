@@ -1,11 +1,11 @@
-export async function fetchPosts() {
+export async function fetchPosts(limit = 10) {
   const res = await fetch('https://aopa-porkbuns.sbs/graphql', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       query: `
         query {
-          posts(first: 10) {
+          posts(first: ${limit}) {
             nodes {
               id
               slug
@@ -33,8 +33,6 @@ export async function fetchPosts() {
     })
   });
 
-
-  
   const json = await res.json();
   return json.data.posts.nodes;
 }
