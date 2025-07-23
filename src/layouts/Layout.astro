@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-import Navigation from '../components/Navigation.astro';
+import Nav from '../components/MainNav.tsx';
 const { proseStyle = '' } = Astro.props;
 const isEditorial = proseStyle === 'prose-editorial';
 ---
@@ -14,7 +14,7 @@ const isEditorial = proseStyle === 'prose-editorial';
 		<title>AOPA - astro test</title>
 	</head>
 	<body class={`min-h-screen ${isEditorial ? 'bg-zinc-200' : ''}`}>
-		<Navigation />
+		<Nav client:load />
 		<main class="max-w-7xl mx-auto px-4">
 			<slot />
 		</main>

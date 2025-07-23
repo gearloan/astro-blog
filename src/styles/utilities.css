@@ -1,0 +1,15 @@
+/* clip angle used in main nav */
+.clip-angle {
+  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 100%, 0% 100%);
+}
+
+/* Hamburger: Transform into X when open */
+#hamburger.open .bar:nth-child(1) {
+  transform: rotate(45deg) translate(5.5px, 5.5px);
+}
+#hamburger.open .bar:nth-child(2) {
+  opacity: 0;
+}
+#hamburger.open .bar:nth-child(3) {
+  transform: rotate(-45deg) translate(5.5px, -5.5px);
+}

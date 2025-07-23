@@ -22,7 +22,9 @@ export default {
         uiLabel: ['"Gotham-Bold"', 'sans-serif'], // + tracking-wide, uppercase
       },
       colors: {
-        'aopa-dkblue': '#002a3a',
+        'aopa-ltblue': '#00a3e0',
+        'aopa-dkblue': '#163372',
+        'aopa-dkgrey': '#333333',
         gray: {
           350: '#c4c9d1', // whatever hex you need
         },
