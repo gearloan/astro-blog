@@ -4,7 +4,7 @@ import { fetchPosts } from '../lib/fetchPosts.js';
 const posts = await fetchPosts();
 const leadStory = posts[0];
 const leftStories = posts.slice(1, 3);
-const rightStories = posts.slice(3, 6);
+const rightStories = posts.slice(3, 5);
 
 const { proseStyle = 'prose-editorial' } = Astro.props;
 ---
@@ -16,7 +16,15 @@ const { proseStyle = 'prose-editorial' } = Astro.props;
     {leftStories.map(story => (
       <article class="!mt-2">
         <h3 class="mb-1 leading-tight">{story.title}</h3>
-        <p class="text-sm text-gray-600 mb-1">{story.excerpt.replace(/<[^>]*>/g, '')}</p>
+        <p class="text-sm text-gray-600 mb-1">
+          {(story.excerpt ?? '')
+            .replace(/<[^>]*>/g, '') // strip HTML
+            .split(' ')              // break into words
+            .slice(0, 30)            // grab first 30 words
+            .join(' ') + '...'}
+        </p>
+
+
         <!--<a href={`/blog-post/${post.slug}`} class="text-sm text-blue-600 hover:underline">Read more</a> -->
         <a href={`/blog-post/${story.slug}`} class="text-sm text-blue-600 hover:underline">Read more</a> 
       </article>
@@ -43,7 +51,14 @@ const { proseStyle = 'prose-editorial' } = Astro.props;
     {rightStories.map(story => (
       <article class="!mt-2">
         <h3 class="mb-1">{story.title}</h3>
-        <p class="text-sm text-gray-600 mb-1">{story.excerpt.replace(/<[^>]*>/g, '')}</p>
+        <p class="text-sm text-gray-600 mb-1">
+          {(story.excerpt ?? '')
+            .replace(/<[^>]*>/g, '') // strip HTML
+            .split(' ')              // break into words
+            .slice(0, 30)            // grab first 30 words
+            .join(' ') + '...'}
+        </p>
+
         <a href={`/blog-post/${story.slug}`} class="text-sm text-blue-600 hover:underline">Read more</a>
       </article>
     ))}
