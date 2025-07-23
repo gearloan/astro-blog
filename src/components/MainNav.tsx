@@ -11,11 +11,11 @@ export default function Nav() {
       <nav class="relative z-50 h-[75px] bg-aopa-dkblue shadow-md flex justify-between items-stretch">
         {/* LEFT SIDE NAV LINKS — hover target */}
         <div class="flex text-white h-full">
-          <ul class="flex h-full">
-            <li class="relative px-6 h-full clip-angle flex items-center bg-aopa-dkgrey">
+          <ul class="flex h-full font-heading">
+            <li class="relative px-6 pr-[2.5rem] h-full clip-angle flex items-center bg-aopa-ltblue text-lg">
               <a href="#">AOPA</a>
             </li>
-            <li class="px-4 flex items-center h-full">
+            <li class="px-4 flex items-center h-full text-lg">
               <a href="#">News</a>
             </li>
           </ul>
