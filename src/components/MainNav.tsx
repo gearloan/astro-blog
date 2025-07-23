@@ -20,7 +20,7 @@ export default function Nav({ section }: Props) {
         <div class="flex text-white h-full">
           <ul class="flex h-full font-heading">
             <li class="relative px-6 pr-[2.5rem] h-full clip-angle flex items-center bg-aopa-ltblue text-lg">
-              <a href="#">AOPA</a>
+              <a href="/">AOPA</a>
             </li>
             {section === 'editorial' && (
               <li class="px-4 flex items-center h-full text-lg">
