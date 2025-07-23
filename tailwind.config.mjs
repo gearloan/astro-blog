@@ -24,6 +24,7 @@ export default {
       colors: {
         'aopa-ltblue': '#00a3e0',
         'aopa-dkblue': '#163372',
+        'aopa-grey': '#5e5e5e',
         'aopa-dkgrey': '#333333',
         gray: {
           350: '#c4c9d1', // whatever hex you need
