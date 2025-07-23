@@ -1,4 +1,5 @@
 import { useState } from 'preact/hooks';
+import ThemeToggle from './ThemeToggle';
 
 type Props = {
   section?: string | null;
@@ -29,8 +30,7 @@ export default function Nav({ section }: Props) {
           </ul>
 
         </div>
-
-        {/* RIGHT SIDE HAMBURGER (excluded from hover zone) */}
+        <ThemeToggle />
         <button
           aria-label="Toggle menu"
           onClick={toggleMenu}

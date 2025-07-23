@@ -3,7 +3,7 @@
 const { name, route } = Astro.props;
 ---
 
-<a href={route} class="block border rounded-lg p-4 hover:shadow-md transition">
+<a href={route} class="bg-white dark:bg-gray-800 text-black dark:text-white block border rounded-lg p-4 hover:shadow-md transition">
   <h3 class="font-gothamBold text-md uppercase tracking-wide mb-1">{name}</h3>
   <p class="text-sm text-gray-500">{route}</p>
 </a>
