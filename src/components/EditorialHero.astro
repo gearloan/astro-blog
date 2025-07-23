@@ -16,7 +16,7 @@ const { proseStyle = 'prose-editorial' } = Astro.props;
     {leftStories.map(story => (
       <article class="!mt-2">
         <h3 class="mb-1 leading-tight">{story.title}</h3>
-        <p class="text-sm text-gray-600 mb-1">
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">
           {(story.excerpt ?? '')
             .replace(/<[^>]*>/g, '') // strip HTML
             .split(' ')              // break into words
@@ -51,7 +51,7 @@ const { proseStyle = 'prose-editorial' } = Astro.props;
     {rightStories.map(story => (
       <article class="!mt-2">
         <h3 class="mb-1">{story.title}</h3>
-        <p class="text-sm text-gray-600 mb-1">
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">
           {(story.excerpt ?? '')
             .replace(/<[^>]*>/g, '') // strip HTML
             .split(' ')              // break into words
