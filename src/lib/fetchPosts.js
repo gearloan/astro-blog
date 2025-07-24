@@ -5,7 +5,7 @@ export async function fetchPosts(limit = 10) {
     body: JSON.stringify({
       query: `
         query {
-          posts(first: ${limit}) {
+          posts(first: ${limit}, where: { categoryName: "magazine" }) {
             nodes {
               id
               slug
@@ -39,5 +39,10 @@ export async function fetchPosts(limit = 10) {
   });
 
   const json = await res.json();
+
+  if (!json.data || !json.data.posts) {
+    throw new Error(`GraphQL error: ${JSON.stringify(json.errors || json)}`);
+  }
+
   return json.data.posts.nodes;
 }

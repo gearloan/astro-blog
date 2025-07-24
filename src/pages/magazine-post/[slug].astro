@@ -1,0 +1,34 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Sidebar from '../../components/Magazine/Sidebar.astro';
+import Hero from '../../components/Magazine/Hero.astro';
+import FeaturedStories from '../../components/Magazine/FeaturedStories.astro';
+
+const dummy = {
+  issueNumber: '178',
+  issueDate: 'Oct 2025',
+  coverImage: '/cover.jpg',
+  title: 'Flying In',
+  subtitle: 'Wild Alaska',
+  teasers: ['Wings of the Iditarod', 'Disneyland for pilots', 'Budget Pilot Gift Guide'],
+  leadStory: {
+    title: 'Tip of the Iceberg',
+    image: '/feature-1.jpg'
+  },
+  otherStories: [
+    { title: 'An extra set of hands', image: '/feature-2.jpg' },
+    { title: 'French Revolution', image: '/feature-3.jpg' },
+    { title: 'The preacher’s Vagabond', image: '/feature-4.jpg' },
+    { title: 'Let’s be precise', image: '/feature-5.jpg' }
+  ]
+};
+---
+<Layout>
+  <div class="grid grid-cols-1 md:grid-cols-[250px_1fr] min-h-screen">
+    <Sidebar issueNumber={dummy.issueNumber} issueDate={dummy.issueDate} coverImage={dummy.coverImage} />
+    <section class="bg-black text-white p-6">
+      <Hero title={dummy.title} subtitle={dummy.subtitle} teasers={dummy.teasers} />
+      <FeaturedStories leadStory={dummy.leadStory} otherStories={dummy.otherStories} />
+    </section>
+  </div>
+</Layout>
