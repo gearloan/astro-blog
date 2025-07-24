@@ -15,7 +15,7 @@ const { proseStyle = 'prose-editorial' } = Astro.props;
     <h4 class="font-body tracking-widest">LATEST STORIES</h4>
     {leftStories.map(story => (
       <article class="!mt-2">
-        <h3 class="mb-1 leading-tight">{story.title}</h3>
+        <h3 class="mb-1 leading-tight hover:underline"><a href="/blog-post/${story.slug}">{story.title}</a></h3>
         <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">
           {(story.excerpt ?? '')
             .replace(/<[^>]*>/g, '') // strip HTML
@@ -38,7 +38,7 @@ const { proseStyle = 'prose-editorial' } = Astro.props;
       alt={leadStory.title}
       class="w-full h-auto mb-4 object-cover rounded"
     />
-    <h1 class="leading-tight mb-2">{leadStory.title}</h1>
+    <h1 class="leading-tight mb-2 hover:underline"><a href="/blog-post/${story.slug}">{leadStory.title}</a></h1>
     <p class="text-sm font-gothamBold uppercase tracking-wide text-gray-500 mb-4">
       By {leadStory.author} — {leadStory.date}
     </p>
@@ -50,7 +50,7 @@ const { proseStyle = 'prose-editorial' } = Astro.props;
     <h4 class="font-body tracking-widest">ADVOCACY</h4>
     {rightStories.map(story => (
       <article class="!mt-2">
-        <h3 class="mb-1">{story.title}</h3>
+        <h3 class="mb-1 hover:underline"><a href="/blog-post/${story.slug}">{story.title}</a></h3>
         <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">
           {(story.excerpt ?? '')
             .replace(/<[^>]*>/g, '') // strip HTML
