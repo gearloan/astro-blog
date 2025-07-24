@@ -1,0 +1,60 @@
+---
+// src/pages/magazine/[slug].astro
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout>
+  <div class="grid grid-cols-1 md:grid-cols-[250px_1fr] min-h-screen">
+    <!-- Left sidebar -->
+    <aside class="bg-gray-100 p-6 flex flex-col items-center text-center">
+      <img src="/logo.svg" alt="AOPA Logo" class="mb-4" />
+      <div class="text-xs uppercase tracking-widest text-pink-500 mb-2">Pilot Magazine</div>
+      <div class="text-xs">Oct 2025 | No. 178</div>
+      <img src="/path-to-cover.jpg" alt="Issue Cover" class="mt-6 w-full" />
+    </aside>
+
+    <!-- Main content -->
+    <section class="bg-black text-white p-6">
+      <!-- Hero -->
+      <div class="mb-12">
+        <h1 class="text-5xl font-bold tracking-tight mb-2">Flying In <span class="block text-3xl font-normal">Wild Alaska</span></h1>
+        <ul class="mt-4 space-y-1 text-lg text-gray-300">
+          <li>Wings of the Iditarod</li>
+          <li>Disneyland for pilots</li>
+          <li>Budget Pilot Gift Guide</li>
+        </ul>
+      </div>
+
+      <!-- Featured Stories -->
+      <section class="bg-gray-800 p-6 rounded-md">
+        <h2 class="text-pink-500 uppercase tracking-widest text-sm mb-4">Featured Stories</h2>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <!-- Big feature -->
+          <div class="lg:col-span-1">
+            <img src="/feature-1.jpg" alt="Tip of the Iceberg" />
+            <p class="mt-2 text-pink-300 text-xs uppercase">Tip of the Iceberg</p>
+          </div>
+
+          <!-- Small features -->
+          <div class="grid grid-cols-2 gap-4 lg:col-span-2">
+            <div>
+              <img src="/feature-2.jpg" alt="An extra set of hands" />
+              <p class="mt-1 text-pink-300 text-xs uppercase">An extra set of hands</p>
+            </div>
+            <div>
+              <img src="/feature-3.jpg" alt="French Revolution" />
+              <p class="mt-1 text-pink-300 text-xs uppercase">French Revolution</p>
+            </div>
+            <div>
+              <img src="/feature-4.jpg" alt="The preacher’s Vagabond" />
+              <p class="mt-1 text-pink-300 text-xs uppercase">The preacher’s Vagabond</p>
+            </div>
+            <div>
+              <img src="/feature-5.jpg" alt="Let’s be precise" />
+              <p class="mt-1 text-pink-300 text-xs uppercase">Let’s be precise</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+  </div>
+</Layout>
