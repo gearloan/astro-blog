@@ -1,10 +1,12 @@
 ---
 import { resolveProseStyle } from '../../lib/resolveProseStyle.js';
 import Layout from '../../layouts/Layout.astro';
-import EditorialMasthead from '../../components/EditorialMasthead.astro';
-import EditorialHero from '../../components/EditorialHero.astro';
-import BlogFeed from '../../components/BlogFeed.astro';
+import EditorialMasthead from '../../components/editorial/EditorialMasthead.astro';
+import EditorialHero from '../../components/editorial/EditorialHero.astro';
+import BlogFeed from '../../components/shared/Blogfeed.astro';
 import RightRail from '../../components/utility/RightRail.astro';
+import MostRead from '../../components/shared/MostRead.astro';
+import FeaturedStories from '../../components/shared/FeaturedStories.astro';
 
 const proseStyle = resolveProseStyle(null, { forcedProseStyle: 'prose-editorial' });
 
