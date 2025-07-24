@@ -1,5 +1,7 @@
-import { useState } from 'preact/hooks';
 import ThemeToggle from './ThemeToggle';
+import { useState, useRef, useEffect } from 'preact/hooks';
+
+
 
 type Props = {
   section?: string | null;
@@ -10,6 +12,28 @@ export default function Nav({ section }: Props) {
 
   const toggleMenu = () => setIsOpen((prev) => !prev);
 
+  const drawerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        drawerRef.current &&
+        !drawerRef.current.contains(event.target as Node) &&
+        !(event.target as HTMLElement).closest('#hamburger')
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
+
 
   
   return (
@@ -19,11 +43,11 @@ export default function Nav({ section }: Props) {
         {/* LEFT SIDE NAV LINKS — hover target */}
         <div class="flex text-white h-full">
           <ul class="flex h-full font-heading">
-            <li class="relative px-6 pr-[2.5rem] h-full clip-angle flex items-center bg-aopa-ltblue text-xl">
+            <li class="relative px-6 pr-[2.5rem] h-full clip-angle flex items-center bg-aopa-ltblue text-2xl tracking-wide">
               <a href="/">AOPA</a>
             </li>
             {section === 'editorial' && (
-              <li class="px-4 flex items-center h-full text-xl">
+              <li class="px-4 flex items-center h-full text-2xl tracking-wide">
                 <a href="#">NEWS</a>
               </li>
             )}
@@ -45,26 +69,42 @@ export default function Nav({ section }: Props) {
       </nav>
 
       {/* DROPDOWN: now a sibling of nav, not a child */}
-      <div class="absolute top-full left-0 w-screen bg-white text-black shadow-md transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-40">
-        <div class="max-w-7xl mx-auto p-6 grid grid-cols-3 gap-8">
+      <div class="absolute top-full left-0 w-screen bg-gray-400 text-white shadow-md transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-40">
+        <div class="max-w-7xl mx-auto p-6 grid grid-cols-5 gap-8">
           <div>
-            <h3 class="font-bold text-lg mb-2">Category 1</h3>
+            <h3 class="font-bold text-4xl mb-2 font-subheading">News & Media</h3>
             <ul class="space-y-1">
-              <li><a href="#">Item 1A</a></li>
-              <li><a href="#">Item 1B</a></li>
-              <li><a href="#">Item 1C</a></li>
+              <li><a href="#">News Home</a></li>
+              <li><a href="#">Most Recent</a></li>
+              <li><a href="#">Most Read</a></li>
             </ul>
           </div>
           <div>
-            <h3 class="font-bold text-lg mb-2">Category 2</h3>
+            <h3 class="font-bold text-4xl mb-2 font-subheading">Publications</h3>
             <ul class="space-y-1">
-              <li><a href="#">Item 2A</a></li>
-              <li><a href="#">Item 2B</a></li>
-              <li><a href="#">Item 2C</a></li>
+              <li><a href="#">Pilot Magazine</a></li>
+              <li><a href="#">Turbine Magazine</a></li>
+              <li><a href="#">Training & Safety Magazine</a></li>
             </ul>
           </div>
           <div>
-            <h3 class="font-bold text-lg mb-2">Category 3</h3>
+            <h3 class="font-bold text-4xl mb-2 font-subheading">Training & Safety</h3>
+            <ul class="space-y-1">
+              <li><a href="#">Item 3A</a></li>
+              <li><a href="#">Item 3B</a></li>
+              <li><a href="#">Item 3C</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="font-bold text-4xl mb-2 font-subheading">Events</h3>
+            <ul class="space-y-1">
+              <li><a href="#">Item 3A</a></li>
+              <li><a href="#">Item 3B</a></li>
+              <li><a href="#">Item 3C</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="font-bold text-4xl mb-2 font-subheading">Membership</h3>
             <ul class="space-y-1">
               <li><a href="#">Item 3A</a></li>
               <li><a href="#">Item 3B</a></li>
@@ -75,6 +115,7 @@ export default function Nav({ section }: Props) {
       </div>
       {/* Right-side drawer that toggles from hamburger */}
 <div
+  ref={drawerRef}
   class={`fixed top-[75px] right-0 w-64 h-[calc(100vh-75px)] bg-aopa-dkgrey text-white p-6 transform transition-transform duration-300 z-50 ${
     isOpen ? 'translate-x-0' : 'translate-x-full'
   }`}
