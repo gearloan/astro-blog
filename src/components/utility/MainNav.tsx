@@ -51,6 +51,12 @@ export default function Nav({ section }: Props) {
                 <a href="#">NEWS</a>
               </li>
             )}
+            {section === 'magazine' && (
+              <li class="px-4 flex items-center h-full text-2xl tracking-wide">
+                <a href="#">MAGAZINE </a>
+                <span class="font-body text-lg ml-4">FEB 2025</span>
+              </li>
+            )}
           </ul>
 
         </div>
