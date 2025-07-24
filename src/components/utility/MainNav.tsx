@@ -75,7 +75,7 @@ export default function Nav({ section }: Props) {
       </nav>
 
       {/* DROPDOWN: now a sibling of nav, not a child */}
-      <div class="absolute top-full left-0 w-screen bg-gray-400 text-white shadow-md transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-40">
+      <div class="absolute top-full left-0 w-screen bg-aopa-dkblue text-white shadow-md transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-40">
         <div class="max-w-7xl mx-auto p-6 grid grid-cols-5 gap-8">
           <div>
             <h3 class="font-bold text-4xl mb-2 font-subheading">News & Media</h3>
