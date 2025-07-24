@@ -17,12 +17,15 @@ const { title, children, forceDark = false } = Astro.props;
 		<meta name="generator" content={Astro.generator} />
 		<title>AOPA - astro test</title>
 	</head>
-	<body class={`bg-white dark:bg-gray-900 text-black dark:text-white min-h-screen ${isEditorial ? 'bg-zinc-200' : ''}`}>
-		<MainNav section={section} client:load />
-		<main class="max-w-7xl mx-auto px-4">
+	<body class="flex flex-col bg-white dark:bg-gray-900 text-black dark:text-white">
+		<div class="sticky top-0 z-50">
+			<MainNav section={section} client:load />
+		</div>
+		<main class="flex-grow max-w-7xl mx-auto px-4 w-full">
 			<slot />
 		</main>
 	</body>
+
 </html>
 
 <style>
@@ -31,5 +34,7 @@ const { title, children, forceDark = false } = Astro.props;
 		margin: 0;
 		width: 100%;
 		height: 100%;
+		display: flex;
+  		flex-direction: column;
 	}
 </style>

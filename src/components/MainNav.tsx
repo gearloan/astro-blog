@@ -37,7 +37,7 @@ export default function Nav({ section }: Props) {
 
   
   return (
-    <div class="relative z-40 group">
+    <div class="sticky top-0 relative z-40 group">
       {/* NAV BAR */}
       <nav class="relative z-50 h-[75px] bg-aopa-dkblue shadow-md flex justify-between items-stretch">
         {/* LEFT SIDE NAV LINKS — hover target */}

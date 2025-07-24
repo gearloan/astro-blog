@@ -12,6 +12,11 @@ export async function fetchPosts(limit = 10) {
               title
               excerpt
               date
+              author {
+                node {
+                  name
+                }
+              }
               postPresentationSettings {
                 proseStyle
               }

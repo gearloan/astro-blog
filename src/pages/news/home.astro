@@ -6,7 +6,7 @@ import EditorialHero from '../../components/EditorialHero.astro';
 import BlogFeed from '../../components/Blogfeed.astro';
 import RightRail from '../../components/RightRail.astro';
 import MostRead from '../../components/MostRead.astro';
-
+import FeaturedStories from '../../components/FeaturedStories.astro';
 
 const proseStyle = resolveProseStyle(null, { forcedProseStyle: 'prose-editorial' });
 
@@ -22,6 +22,8 @@ const proseStyle = resolveProseStyle(null, { forcedProseStyle: 'prose-editorial'
     </div>
     <RightRail>
         <MostRead />
+        <img src="/images/ad-300x250.jpg" alt="Logo" class="w-full" />
+        <FeaturedStories />
     </RightRail>
   </div>
 </Layout>
