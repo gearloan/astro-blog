@@ -80,43 +80,44 @@ export default function Nav({ section }: Props) {
           <div>
             <h3 class="font-bold text-4xl mb-2 font-subheading">News & Media</h3>
             <ul class="space-y-1">
-              <li><a href="#">News Home</a></li>
-              <li><a href="#">Most Recent</a></li>
-              <li><a href="#">Most Read</a></li>
+              <li><a href="/news/home">News Home</a></li>
+              <li><span class="text-gray-400 cursor-not-allowed">Most Recent</span></li>
+              <li><span class="text-gray-400 cursor-not-allowed">Most Read</span></li>
             </ul>
           </div>
           <div>
             <h3 class="font-bold text-4xl mb-2 font-subheading">Publications</h3>
             <ul class="space-y-1">
-              <li><a href="#">Pilot Magazine</a></li>
-              <li><a href="#">Turbine Magazine</a></li>
-              <li><a href="#">Training & Safety Magazine</a></li>
+              <li><a href="/magazine/issue">Pilot Magazine</a></li>
+              <li><span class="text-gray-400 cursor-not-allowed">Turbine Magazine</span></li>
+              <li><span class="text-gray-400 cursor-not-allowed">Training & Safety Magazine</span></li>
             </ul>
           </div>
           <div>
             <h3 class="font-bold text-4xl mb-2 font-subheading">Training & Safety</h3>
             <ul class="space-y-1">
-              <li><a href="#">Item 3A</a></li>
-              <li><a href="#">Item 3B</a></li>
-              <li><a href="#">Item 3C</a></li>
+              <li><span class="text-gray-400 cursor-not-allowed">Item 3A</span></li>
+              <li><span class="text-gray-400 cursor-not-allowed">Item 3B</span></li>
+              <li><span class="text-gray-400 cursor-not-allowed">Item 3C</span></li>
             </ul>
           </div>
           <div>
             <h3 class="font-bold text-4xl mb-2 font-subheading">Events</h3>
             <ul class="space-y-1">
-              <li><a href="#">Item 3A</a></li>
-              <li><a href="#">Item 3B</a></li>
-              <li><a href="#">Item 3C</a></li>
+              <li><span class="text-gray-400 cursor-not-allowed">Item 3A</span></li>
+              <li><span class="text-gray-400 cursor-not-allowed">Item 3B</span></li>
+              <li><span class="text-gray-400 cursor-not-allowed">Item 3C</span></li>
             </ul>
           </div>
           <div>
             <h3 class="font-bold text-4xl mb-2 font-subheading">Membership</h3>
             <ul class="space-y-1">
-              <li><a href="#">Item 3A</a></li>
-              <li><a href="#">Item 3B</a></li>
-              <li><a href="#">Item 3C</a></li>
+              <li><span class="text-gray-400 cursor-not-allowed">Item 3A</span></li>
+              <li><span class="text-gray-400 cursor-not-allowed">Item 3B</span></li>
+              <li><span class="text-gray-400 cursor-not-allowed">Item 3C</span></li>
             </ul>
           </div>
+
         </div>
       </div>
       {/* Right-side drawer that toggles from hamburger */}
