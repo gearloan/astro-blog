@@ -22,6 +22,8 @@ const teaserStories = posts.filter(
 
 
 const { proseStyle = 'prose-magazine' } = Astro.props;
+
+
 ---
 <Layout section="magazine">
   <div class={`grid grid-cols-1 md:grid-cols-[250px_1fr] min-h-screen relative ${proseStyle}`}>
@@ -62,14 +64,32 @@ const { proseStyle = 'prose-magazine' } = Astro.props;
       <section class="bg-gray-800 p-6 ">
         <h2 class="text-pink-500 uppercase tracking-widest text-sm mb-4">Featured Stories</h2>
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {featuredStories.map(story => (
-            <article>
-              <img src={story.featuredImage?.node?.sourceUrl} alt={story.title} class="..." />
-              <h3 class="...">{story.title}</h3>
-              <p class="...">{story.excerpt.replace(/<[^>]*>/g, '').split(' ').slice(0, 30).join(' ') + '...'}</p>
-              <a href={`/blog-post/${story.slug}`}>Read more</a>
-            </article>
-          ))}
+          <!-- this is ome astro with jsx in it -->
+
+          {featuredStories.map(story => {
+            const sizes = story.featuredImage?.node?.mediaDetails?.sizes;
+            console.log('Available sizes:', sizes?.map(size => size.name));
+
+            console.log(
+              story.title,
+              sizes.find(size => size.name === "thumbnail")
+            );
+
+            const thumb = sizes?.find(size => size.name === "medium")?.sourceUrl
+              ?? story.featuredImage?.node?.sourceUrl;
+
+            return (
+              <article>
+                <img src={story.featuredImage?.node?.mediaDetails?.sizes?.find(size => size.name === "story-thumb")?.sourceUrl ?? story.featuredImage?.node?.sourceUrl
+          } alt={story.title} class="..." />
+                <h3 class="...">{story.title}</h3>
+                <p class="...">
+                  {story.excerpt.replace(/<[^>]*>/g, '').split(' ').slice(0, 30).join(' ') + '...'}
+                </p>
+                <a href={`/blog-post/${story.slug}`}>Read more</a>
+              </article>
+            );
+          })}
         </div>
       </section>
     </section>

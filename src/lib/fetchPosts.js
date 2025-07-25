@@ -70,6 +70,12 @@ export async function fetchMagazinePosts(limit = 10) {
               featuredImage {
                 node {
                   sourceUrl
+                  mediaDetails {
+                    sizes {
+                      name
+                      sourceUrl
+                    }
+                  }
                 }
               }
             }
@@ -77,7 +83,9 @@ export async function fetchMagazinePosts(limit = 10) {
         }
       `
     })
-  });
+  })
+  
+
 
   const json = await res.json();
 
