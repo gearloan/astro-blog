@@ -1,5 +1,103 @@
 ---
+import Layout from '../../layouts/Layout.astro';
+import { resolveProseStyle } from '../../lib/resolveProseStyle.js';
+
 export async function getStaticPaths() {
-  return [];
+  const res = await fetch('https://aopa-porkbuns.sbs/graphql', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      query: `
+        query {
+          posts(first: 100) {
+            nodes {
+              slug
+            }
+          }
+        }
+      `,
+    }),
+  });
+
+  const { data } = await res.json();
+  if (!data?.posts?.nodes) throw new Error('Invalid GraphQL response');
+
+  return data.posts.nodes.map((post) => ({
+    params: { slug: post.slug },
+  }));
 }
+
+const { slug } = Astro.params;
+
+// Fetch post by slug
+const res = await fetch('https://aopa-porkbuns.sbs/graphql', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    query: `
+      query ($slug: String!) {
+        postBy(slug: $slug) {
+          title
+          content
+          postPresentationSettings {
+            proseStyle
+          }
+          featuredImage {
+            node {
+              mediaDetails {
+                sizes {
+                  name
+                  sourceUrl
+                }
+              }
+            }
+          }
+        }
+      }
+    `,
+    variables: { slug },
+  }),
+});
+
+const { data } = await res.json();
+const post = data?.postBy;
+if (!post) throw new Error(`Post not found for slug: ${slug}`);
+
+// Find a nice featured image variant
+const sizes = post.featuredImage?.node?.mediaDetails?.sizes;
+const featured_image =
+  sizes?.find((s) => s.name === 'large')?.sourceUrl ??
+  sizes?.[0]?.sourceUrl ??
+  null;
+
+const proseStyle = resolveProseStyle(post);
 ---
+
+<Layout>
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-x-10">
+      
+      <!-- Main article content -->
+      <article class={`lg:col-span-8 prose ${proseStyle} max-w-none`}>
+        <header class="mb-8">
+          <h1 set:html={post.title}></h1>
+
+          {featured_image && (
+            <img src={featured_image} alt={post.title} class="w-full my-4" />
+          )}
+        </header>
+
+        <div set:html={post.content}></div>
+      </article>
+
+      <!-- Right rail (optional) -->
+      <aside class="lg:col-span-4 mt-12 lg:mt-0 space-y-6">
+        <div class="bg-gray-50 p-4 rounded shadow-sm">
+          <h2 class="text-sm font-bold uppercase text-gray-600 tracking-wider">Right Rail Placeholder</h2>
+          <p class="text-sm text-gray-600">Use this for related links, promos, etc.</p>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</Layout>

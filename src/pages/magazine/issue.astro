@@ -122,7 +122,7 @@ const { proseStyle = 'prose-magazine' } = Astro.props;
                 <p class="mb-2">
                   {story.excerpt.replace(/<[^>]*>/g, '').split(' ').slice(0, 30).join(' ') + '...'}
                 </p>
-                <a class="text-[#14c682]" href={`/blog-post/${story.slug}`}>Read more</a>
+                <a class="text-[#14c682]" href={`/magazine-post/${story.slug}`}>Read more</a>
               </article>
             );
           })}
