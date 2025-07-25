@@ -87,9 +87,9 @@ export default function Nav({ section }: Props) {
           <div>
             <h3 class="font-bold text-4xl mb-2 font-subheading">Publications</h3>
             <ul class="space-y-1">
-              <li><a href="/magazine/issue">Pilot Magazine</a></li>
-              <li><span class="text-gray-400 cursor-not-allowed">Turbine Magazine</span></li>
-              <li><span class="text-gray-400 cursor-not-allowed">Training & Safety Magazine</span></li>
+              <li><a href="/magazine/home">Magazines</a></li>
+              <li><span class="text-gray-400 cursor-not-allowed">Podcasts</span></li>
+              <li><span class="text-gray-400 cursor-not-allowed">Newsletters</span></li>
             </ul>
           </div>
           <div>

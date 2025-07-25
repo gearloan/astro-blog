@@ -95,7 +95,7 @@ const proseStyle = resolveProseStyle(post);
       <!-- Main article content -->
       <article class={`prose ${proseStyle} max-w-none pt-24`}>
         <header class="mb-8">
-          <h1 class="font-subheading uppercase text-6xl" set:html={post.title}></h1>
+          <h1 class="font-heading uppercase text-6xl tracking-tight" set:html={post.title}></h1>
           <p class="text-sm">By <b>Melissa Calvert</b></p>
           {featured_image && (
             <img src={featured_image} alt={post.title} class="w-full my-4" />

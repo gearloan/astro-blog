@@ -21,7 +21,7 @@ const { post, featured_image } = Astro.props;
 const proseStyle = resolveProseStyle(post);
 
 ---
-<Layout>
+<Layout section="editorial">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-x-10">
       
@@ -35,7 +35,7 @@ const proseStyle = resolveProseStyle(post);
           )}
         </header>
 
-        <div set:html={post.content.rendered}></div>
+        <div class="text-lg leading-[1.7]" set:html={post.content.rendered}></div>
       </article>
 
       <!-- Right rail (optional) -->
