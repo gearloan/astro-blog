@@ -1,48 +1,65 @@
 ---
 // src/pages/magazine/[slug].astro
 import Layout from '../../layouts/Layout.astro';
-import { fetchPosts } from '../../lib/fetchPosts.js';
+import { fetchMagazinePosts } from '../../lib/fetchPosts.js';
 
-const posts = await fetchPosts();
+const posts = await fetchMagazinePosts();
+
 
 // Use ACF fields to categorize the stories
-const heroStory = posts.find(p => p.acf?.presentation_slot === 'hero');
-const featuredStories = posts.filter(p => p.acf?.presentation_slot === 'featured');
-const teaserStories = posts.filter(p => p.acf?.presentation_slot === 'teaser');
+const heroStory = posts.find(
+  post => post.magazinePresentationOptions?.presentationslots?.includes('hero')
+);
+
+const featuredStories = posts.filter(
+  post => post.magazinePresentationOptions?.presentationslots?.includes('featured')
+);
+
+const teaserStories = posts.filter(
+  post => post.magazinePresentationOptions?.presentationslots?.includes('teaser')
+);
+
+
 
 const { proseStyle = 'prose-magazine' } = Astro.props;
 ---
 <Layout section="magazine">
-  <div class={`grid grid-cols-1 md:grid-cols-[250px_1fr] min-h-screen ${proseStyle}`}>
-    <aside class="...">...</aside>
+  <div class={`grid grid-cols-1 md:grid-cols-[250px_1fr] min-h-screen relative ${proseStyle}`}>
+    <aside class="relative bg-[#00677f]  flex flex-col items-center text-white text-center">
+      <div class="sticky top-[75px] p-6">
+        <img src="/images/ui/logo-small-white.svg" alt="Logo" class="px-10 block dark:hidden my-6" />
+        <div class="text-sm uppercase tracking-widest mb-1">Pilot Magazine</div>
+        <div class="text-sm font-light tracking-wide mb-4">Feb 2025 | No. 178</div>
+        <img src="/images/cover.jpg" alt="Cover" class="rounded shadow-lg mt-8" />
+      </div>
+    </aside>
 
-    <section class="bg-black text-white p-6">
+
+    <section class="bg-black text-white">
       <!-- Hero -->
       {heroStory && (
-        <section class="grid grid-cols-1 md:grid-cols-[2fr_3fr] gap-8 items-center mb-12">
+        <section
+  class="grid grid-cols-1 md:grid-cols-[2fr_3fr] gap-8 items-center mb-12 bg-cover bg-center rounded shadow-lg p-6 min-h-[540px]"
+  style={`background-image: url('${heroStory.featuredImage?.node?.sourceUrl}');`}
+>
+
           <div>
-            <h1 class="text-6xl font-black tracking-tight leading-tight mb-4">
-              FLYING IN <br />
+            <h1 class="text-6xl font-black tracking-tight leading-tight mb-4">  
               <span class="text-4xl font-medium tracking-normal">{heroStory.title}</span>
             </h1>
-            <ul class="mt-6 space-y-2 text-xl text-gray-300 leading-snug">
-              {teaserStories.map(teaser => (
-                <li>{teaser.title}</li>
-              ))}
+            <ul>
+                {teaserStories.map(story => (
+                    <li>{story.title}</li>
+                ))}
             </ul>
+
           </div>
-          <div>
-            <img
-              src={heroStory.featuredImage?.node?.sourceUrl}
-              alt={heroStory.title}
-              class="w-full h-auto object-cover rounded shadow-lg"
-            />
-          </div>
+
         </section>
       )}
 
       <!-- Featured Stories -->
-      <section class="bg-gray-800 p-6 rounded-md">
+      <section class="bg-gray-800 p-6 ">
         <h2 class="text-pink-500 uppercase tracking-widest text-sm mb-4">Featured Stories</h2>
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {featuredStories.map(story => (
