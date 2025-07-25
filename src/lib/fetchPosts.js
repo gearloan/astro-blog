@@ -66,6 +66,8 @@ export async function fetchMagazinePosts(limit = 10) {
                 teaserLine1
                 teaserLine2
                 teaserLine3
+                heroTitleLine1
+                heroTitleLine2
               }
               featuredImage {
                 node {
