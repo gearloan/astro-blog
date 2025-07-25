@@ -1,0 +1,81 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout>
+  <main class="bg-white text-black">
+    <!-- Intro / Hero -->
+    <section class="bg-gray-900 text-white py-12 px-6">
+      <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+        <!-- Logo in column 1 -->
+        <div class="flex flex-col items-center justify-center text-center h-full">
+          <img src="/images/ui/logo-small-white.svg" alt="AOPA Publications" class="w-32 mb-6" />
+          <p class="uppercase font-body tracking-widest">Publications</p>
+        </div>
+
+
+        <!-- Intro text spanning columns 2 and 3 -->
+        <div class="md:col-span-2">
+          <p class="text-lg leading-relaxed mb-4">
+            Filled with must-read stories, industry news, and thought-provoking commentary, AOPA Pilot, AOPA Pilot Turbine Edition, and Flight Training are all available to AOPA members in either print or digital versions.
+          </p>
+          <p class="text-lg leading-relaxed">
+            Browse the archives and sample selected past issues of all the AOPA aviation newsletters below.
+          </p>
+        </div>
+      </div>
+
+      <hr class="border-t border-white/20 mt-10 mb-8" />
+
+      <!-- Magazine grid: each one gets a column -->
+      <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 ">
+        <!-- Magazine 1 -->
+        <article>
+          <h3 class="text-xl text-center font-heading mb-2 tracking-wider text-[#368ac4]">PILOT</h3>
+          <a href="/magazine/issue"><img src="/images/proxy/pilot-mag.jpg" alt="AOPA Pilot" class="mx-auto mb-4 rounded shadow" /></a>
+          <p class="text-sm leading-relaxed max-w-sm mx-auto">
+            AOPA’s monthly member magazine offers aviation articles on technique, aircraft, avionics, advocacy efforts, and more for veteran pilots and aviation enthusiasts alike.
+          </p>
+          <a href="/magazine/issue" class="text-[#368ac4] font-bold">Read Issue</a>
+        </article>
+
+        <!-- Magazine 2 -->
+        <article>
+          <h3 class="text-xl font-heading text-center mb-2 tracking-wider text-[#465bb0]">TURBINE</h3>
+          <img src="/images/proxy/turbine-mag.jpg" alt="AOPA Pilot Turbine" class="mx-auto mb-4 rounded shadow" />
+          <p class="text-sm leading-relaxed max-w-sm mx-auto">
+            AOPA’s monthly member magazine offers aviation articles on technique, aircraft, avionics, advocacy efforts, and more for veteran pilots and aviation enthusiasts alike.
+          </p>
+          <a href="" class="text-[#465bb0] font-bold">Read Issue</a>
+        </article>
+
+        <!-- Magazine 3 -->
+        <article>
+          <h3 class="text-xl font-heading text-center mb-2 tracking-wider text-[#ffbc1b]">FLIGHT TRAINING</h3>
+          <img src="/images/proxy/flight-training-mag.jpg" alt="Flight Training" class="mx-auto mb-4 rounded shadow" />
+          <p class="text-sm leading-relaxed max-w-sm mx-auto">
+            AOPA’s monthly member magazine offers aviation articles on technique, aircraft, avionics, advocacy efforts, and more for veteran pilots and aviation enthusiasts alike.
+          </p>
+          <a href="" class="text-[#ffbc1b] font-bold">Read Issue</a>          
+        </article>
+      </div>
+    </section>
+
+
+    <!-- Newsletters -->
+    <section class="bg-white text-black py-12 px-6">
+      <div class="max-w-6xl mx-auto">
+        <h2 class="text-2xl font-bold tracking-wide uppercase text-center mb-6">
+          Newsletters
+        </h2>
+        <div class="text-lg text-gray-700 max-w-3xl mx-auto leading-relaxed">
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam
+            nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat
+            volutpat...
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
