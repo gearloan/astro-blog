@@ -11,6 +11,19 @@ const { title, children, forceDark = false } = Astro.props;
 <!doctype html>
 <html lang="en" class={`${forceDark ? 'dark' : ''} min-h-screen`}>
 	<head>
+		<!--START preload fonts to prevent FOUT -->
+		<link rel="preload" href="/fonts/gothambold-webfont.woff" as="font" type="font/woff2" crossorigin="anonymous">
+		<link rel="preload" href="/fonts/gothambolditalic-webfont.woff" as="font" type="font/woff2" crossorigin="anonymous">
+		<link rel="preload" href="/fonts/gothambook-webfont.woff" as="font" type="font/woff2" crossorigin="anonymous">
+		<link rel="preload" href="/fonts/gothambookitalic-webfont.woff" as="font" type="font/woff2" crossorigin="anonymous">
+		<link rel="preload" href="/fonts/Knockout-HTF28-JuniorFeatherwt.otf" as="font" type="font/woff2" crossorigin="anonymous">
+		<link rel="preload" href="/fonts/Knockout-HTF94-UltmtSumo.otf" as="font" type="font/woff2" crossorigin="anonymous">
+		<link rel="preload" href="/fonts/Mercury Display Bold.otf" as="font" type="font/woff2" crossorigin="anonymous">
+		<link rel="preload" href="/fonts/Mercury Display Italic.otf" as="font" type="font/woff2" crossorigin="anonymous">
+		<link rel="preload" href="/fonts/Mercury-TextG1Roman.otf" as="font" type="font/woff2" crossorigin="anonymous">
+		<link rel="preload" href="/fonts/Mercury-TextG1Italic.otf" as="font" type="font/woff2" crossorigin="anonymous">
+		<!--END preload fonts to prevent FOUT -->
+
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
