@@ -22,6 +22,9 @@ export async function fetchPosts(limit = 10) {
                   sourceUrl
                 }
               }
+              magazinePresentationOptions {
+                presentationslots
+              }
             }
           }
         }
