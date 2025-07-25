@@ -1,6 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import Sidebar from '../../components/Magazine/Sidebar.astro';
+//import Sidebar from '../../components/Magazine/Sidebar.astro';
 import Hero from '../../components/Magazine/Hero.astro';
 import FeaturedStories from '../../components/Magazine/FeaturedStories.astro';
 
@@ -25,7 +25,7 @@ const dummy = {
 ---
 <Layout>
   <div class="grid grid-cols-1 md:grid-cols-[250px_1fr] min-h-screen">
-    <Sidebar issueNumber={dummy.issueNumber} issueDate={dummy.issueDate} coverImage={dummy.coverImage} />
+    <!--<Sidebar issueNumber={dummy.issueNumber} issueDate={dummy.issueDate} coverImage={dummy.coverImage} /> -->
     <section class="bg-black text-white p-6">
       <Hero title={dummy.title} subtitle={dummy.subtitle} teasers={dummy.teasers} />
       <FeaturedStories leadStory={dummy.leadStory} otherStories={dummy.otherStories} />
