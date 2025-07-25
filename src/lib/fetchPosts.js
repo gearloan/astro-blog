@@ -5,7 +5,7 @@ export async function fetchPosts(limit = 10) {
     body: JSON.stringify({
       query: `
         query {
-          posts(first: ${limit}, where: { categoryName: "magazine" }) {
+          posts(first: ${limit}) {
             nodes {
               id
               slug
@@ -17,18 +17,59 @@ export async function fetchPosts(limit = 10) {
                   name
                 }
               }
-              postPresentationSettings {
-                proseStyle
+              featuredImage {
+                node {
+                  sourceUrl
+                }
+              }
+            }
+          }
+        }
+      `
+    })
+  });
+
+  const json = await res.json();
+  console.dir(json, { depth: null }); // debug
+
+  if (!json.data || !json.data.posts) {
+    throw new Error('Invalid GraphQL response: ' + JSON.stringify(json));
+  }
+
+  // Only return posts that are NOT magazine posts
+  return json.data.posts.nodes.filter(
+    post => !post.magazinePresentationOptions?.presentationslots
+  );
+}
+
+export async function fetchMagazinePosts(limit = 10) {
+  const res = await fetch('https://aopa-porkbuns.sbs/graphql', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      query: `
+        query {
+          posts(first: ${limit}) {
+            nodes {
+              id
+              slug
+              title
+              excerpt
+              date
+              author {
+                node {
+                  name
+                }
+              }
+              magazinePresentationOptions {
+                presentationslots
+                teaserLine1
+                teaserLine2
+                teaserLine3
               }
               featuredImage {
                 node {
                   sourceUrl
-                  mediaDetails {
-                    sizes {
-                      name
-                      sourceUrl
-                    }
-                  }
                 }
               }
             }
@@ -41,8 +82,14 @@ export async function fetchPosts(limit = 10) {
   const json = await res.json();
 
   if (!json.data || !json.data.posts) {
-    throw new Error(`GraphQL error: ${JSON.stringify(json.errors || json)}`);
+    throw new Error('Invalid GraphQL response: ' + JSON.stringify(json));
   }
 
-  return json.data.posts.nodes;
+  // 👇 Put this block right before returning
+  const allPosts = json.data.posts.nodes;
+  for (const post of allPosts) {
+    console.log(post.title, post.magazinePresentationOptions?.presentationslots);
+  }
+
+  return allPosts;
 }
