@@ -57,20 +57,23 @@ export default function Nav({ section }: Props) {
               </li>
             )}
           </ul>
-
         </div>
-        <button
-          aria-label="Toggle menu"
-          onClick={toggleMenu}
-          id="hamburger"
-          class={`relative w-[75px] h-[75px] bg-aopa-ltblue flex flex-col justify-center items-center z-60 ${
-            isOpen ? 'open' : ''
-          }`}
-        >
+        <div class="flex">
+          <ThemeToggle/>
+          <button
+            aria-label="Toggle menu"
+            onClick={toggleMenu}
+            id="hamburger"
+            class={`ml-6 relative w-[75px] h-[75px] bg-aopa-ltblue flex flex-col justify-center items-center z-60 ${
+              isOpen ? 'open' : ''
+            }`}
+          >
             <span class="bar transition-transform duration-300 absolute w-8 h-1 rounded-lg bg-white top-[28px]"></span>
             <span class="bar transition-opacity duration-300 absolute w-8 h-1 rounded-lg bg-white top-[36px]"></span>
             <span class="bar transition-transform duration-300 absolute w-8 h-1 rounded-lg bg-white top-[44px]"></span>
-        </button>
+          </button>
+        </div>
+
       </nav>
 
       {/* DROPDOWN: now a sibling of nav, not a child */}
@@ -126,13 +129,12 @@ export default function Nav({ section }: Props) {
     isOpen ? 'translate-x-0' : 'translate-x-full'
   }`}
 >
+      
+    
   <ul class="space-y-4">
     <li><a href="#">Profile</a></li>
     <li><a href="#">Settings</a></li>
     <li><a href="#">Logout</a></li>
-    <li>        
-      <ThemeToggle />
-    </li>
   </ul>
 </div>
 

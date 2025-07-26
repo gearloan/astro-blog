@@ -1,10 +1,11 @@
 ---
 import "../styles/global.css";
 import MainNav from '../components/utility/MainNav.tsx';
+
 const { proseStyle = '' } = Astro.props;
 const isEditorial = proseStyle === 'prose-editorial';
 
-const { section } = Astro.props;
+const { section, wrapperClass = "" } = Astro.props;
 const { title, children, forceDark = false } = Astro.props;
 // e.g., '/editorial/article-slug' → 'editorial'
 ---
@@ -29,7 +30,7 @@ const { title, children, forceDark = false } = Astro.props;
 		<meta name="generator" content={Astro.generator} />
 		<title>AOPA - astro test</title>
 	</head>
-	<body class="flex flex-col bg-white dark:bg-gray-900 text-black dark:text-white min-h-screen">
+	<body class={`"flex flex-col dark:bg-gray-900 text-black dark:text-white min-h-screen ${wrapperClass}"`}>
 		<div class="sticky top-0 z-50">
 			<MainNav section={section} client:load />
 		</div>

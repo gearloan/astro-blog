@@ -1,5 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { fetchPosts } from '../../lib/fetchPosts.js';
+import { resolveProseStyle } from '../../lib/resolveProseStyle.js';
 
 export async function getStaticPaths() {
   const res = await fetch('https://aopa-porkbuns.sbs/wp-json/wp/v2/posts?_embed');
@@ -16,11 +18,13 @@ export async function getStaticPaths() {
   }));
 }
 
-import { resolveProseStyle } from '../../lib/resolveProseStyle.js';
 const { post, featured_image } = Astro.props;
 const proseStyle = resolveProseStyle(post);
 
+// 👇 New: Fetch editorial posts for "Most Read"
+const mostRead = await fetchPosts(5);
 ---
+
 <Layout section="editorial">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-x-10">
@@ -28,23 +32,38 @@ const proseStyle = resolveProseStyle(post);
       <!-- Main article content -->
       <article class={`lg:col-span-8 prose ${proseStyle} max-w-none`}>
         <header class="mb-8">
-          <h1 set:html={post.title.rendered}></h1>
+          <h1 class="dark:text-amber-50" set:html={post.title.rendered}></h1>
 
           {featured_image && (
             <img src={featured_image} alt={post.title.rendered} class="w-full my-4" />
           )}
         </header>
 
-        <div class="text-lg leading-[1.7]" set:html={post.content.rendered}></div>
+        <div class="text-lg leading-[1.7] dark:text-amber-50" set:html={post.content.rendered}></div>
       </article>
 
       <!-- Right rail (optional) -->
       <aside class="lg:col-span-4 mt-12 lg:mt-0 space-y-6">
-        <div class="bg-gray-50 p-4 rounded shadow-sm">
-          <h2 class="text-sm font-bold uppercase text-gray-600 tracking-wider">Right Rail Placeholder</h2>
-          <p class="text-sm text-gray-600">Use this for related links, promos, etc.</p>
+        <div class="prose prose-editorial">
+          <h3 class="font-body tracking-widest uppercase mb-2 pl-9 dark:text-amber-50">Most Read</h3>
+          <ol class="space-y-6 p-0">
+            {mostRead.map((item, index) => (
+              <li class="flex items-center gap-3">
+                <span class="text-5xl text-aopa-grey dark:text-amber-50 font-serif leading-none">
+                  {index + 1}
+                </span>
+                <a
+                  href={`/blog-post/${item.slug}`}
+                  class="block font-bold leading-snug hover:underline dark:text-white"
+                >
+                  <span>{item.title.replace(/<[^>]*>/g, '')}</span>
+                </a>
+              </li>
+            ))}
+          </ol>
         </div>
       </aside>
+
 
     </div>
   </div>

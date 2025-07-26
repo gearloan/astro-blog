@@ -30,7 +30,7 @@ export default function ThemeToggle() {
   };
 
   return (
-    <button onClick={toggle} class="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-sm text-gray-800 dark:text-gray-200">
+    <button onClick={toggle} class="self-center px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-sm text-gray-800 dark:text-gray-200">
       {isDark ? '🌙 Dark' : '☀️ Light'}
     </button>
   );

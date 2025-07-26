@@ -2,7 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 ---
 
-<Layout section="magazine">
+<Layout section="magazine" wrapperClass="bg-gray-900 text-amber-50">
   <main class="bg-white text-black">
     <!-- Intro / Hero -->
     <section class="bg-gray-900 text-white py-12 px-6">
@@ -32,7 +32,7 @@ import Layout from "../../layouts/Layout.astro";
         <!-- Magazine 1 -->
         <article>
           <h3 class="text-2xl text-center font-heading mb-2 tracking-wider text-[#368ac4]">PILOT</h3>
-          <a href="/magazine/issue" class="group block">
+          <a href="/magazine/issue" class="group block p-4">
             <img
               src="/images/proxy/pilot-mag.jpg"
               alt="AOPA Pilot"
@@ -49,7 +49,7 @@ import Layout from "../../layouts/Layout.astro";
         <article>
           <h3 class="text-2xl font-heading text-center mb-2 tracking-wider text-[#465bb0]">PILOT TURBINE</h3>
           <div class="group block">
-            <div class="cursor-not-allowed">
+            <div class="cursor-not-allowed p-4">
               <img
                 src="/images/proxy/turbine-mag.jpg"
                 alt="AOPA Pilot Turbine"
@@ -68,7 +68,7 @@ import Layout from "../../layouts/Layout.astro";
         <article>
           <h3 class="text-2xl font-heading text-center mb-2 tracking-wider text-[#ffbc1b]">FLIGHT TRAINING</h3>
           <div class="group block">
-            <div class="cursor-not-allowed">
+            <div class="cursor-not-allowed p-4">
               <img
                 src="/images/proxy/flight-training-mag.jpg"
                 alt="AOPA Flight Training"

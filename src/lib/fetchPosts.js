@@ -1,12 +1,12 @@
-export async function fetchPosts(limit = 10) {
+export async function fetchPosts(limit = 20) {
   const res = await fetch('https://aopa-porkbuns.sbs/graphql', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       query: `
         query {
-          posts(first: ${limit}) {
-            nodes {
+             posts(first: 100) {
+             nodes {
               id
               slug
               title
@@ -38,6 +38,14 @@ export async function fetchPosts(limit = 10) {
   if (!json.data || !json.data.posts) {
     throw new Error('Invalid GraphQL response: ' + JSON.stringify(json));
   }
+
+  const filtered = json.data.posts.nodes.filter(
+    post => !post.magazinePresentationOptions?.presentationslots
+  );
+
+  return filtered.slice(0, limit);
+
+
 
   // Only return posts that are NOT magazine posts
   return json.data.posts.nodes.filter(
