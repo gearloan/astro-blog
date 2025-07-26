@@ -77,46 +77,59 @@ export default function Nav({ section }: Props) {
       </nav>
 
       {/* DROPDOWN: now a sibling of nav, not a child */}
-      <div class="absolute top-full left-0 w-screen bg-aopa-dkblue text-white shadow-md transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-40">
-        <div class="max-w-7xl mx-auto p-6 grid grid-cols-5 gap-8">
+      <div class="leading-none absolute top-full left-0 w-screen bg-aopa-dkblue text-white shadow-md transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-40">
+        <div class="max-w-7xl mx-auto p-6 grid grid-cols-6 gap-8">
+          <div class="border-r-2 border-gray-400">                    
+            <img src="/images/ui/logo-small-white.svg" alt="Logo" class="px-10 block dark:hidden mb-4" />
+            <ul class="space-y-3 text-center">
+              <li><span class="text-gray-400 cursor-not-allowed">About AOPA</span></li>
+              <li><span class="text-gray-400 cursor-not-allowed">Member Services</span></li>
+              <li><span class="text-gray-400 cursor-not-allowed">Join AOPA</span></li>
+            </ul>
+          </div>
           <div>
-            <h3 class="font-bold text-4xl mb-2 font-subheading">News & Media</h3>
-            <ul class="space-y-1">
+              <h3 class="font-bold text-4xl mb-2 font-subheading cursor-not-allowed">News & Media</h3>
+            <ul class="space-y-3">
               <li><a href="/news/home">News Home</a></li>
               <li><span class="text-gray-400 cursor-not-allowed">Most Recent</span></li>
               <li><span class="text-gray-400 cursor-not-allowed">Most Read</span></li>
+              <li><span class="text-teal-400 cursor-not-allowed">View all</span></li>              
             </ul>
           </div>
           <div>
-            <h3 class="font-bold text-4xl mb-2 font-subheading">Publications</h3>
-            <ul class="space-y-1">
+            <h3 class="font-bold text-4xl mb-2 font-subheading cursor-not-allowed">Publications</h3>
+            <ul class="space-y-3">
               <li><a href="/magazine/home">Magazines</a></li>
               <li><span class="text-gray-400 cursor-not-allowed">Podcasts</span></li>
               <li><span class="text-gray-400 cursor-not-allowed">Newsletters</span></li>
+              <li><span class="text-teal-400 cursor-not-allowed">View all</span></li>
             </ul>
           </div>
           <div>
-            <h3 class="font-bold text-4xl mb-2 font-subheading">Training & Safety</h3>
-            <ul class="space-y-1">
-              <li><span class="text-gray-400 cursor-not-allowed">Item 3A</span></li>
-              <li><span class="text-gray-400 cursor-not-allowed">Item 3B</span></li>
-              <li><span class="text-gray-400 cursor-not-allowed">Item 3C</span></li>
+            <h3 class="font-bold text-4xl mb-2 font-subheading cursor-not-allowed">Training & Safety</h3>
+            <ul class="space-y-3">
+              <li><span class="text-gray-400 cursor-not-allowed">Learn to Fly</span></li>
+              <li><span class="text-gray-400 cursor-not-allowed">Air Safety Institute</span></li>
+              <li><span class="text-gray-400 cursor-not-allowed">CFI Renewel(eFirc)</span></li>
+              <li><span class="text-teal-400 cursor-not-allowed">View all</span></li>
             </ul>
           </div>
           <div>
-            <h3 class="font-bold text-4xl mb-2 font-subheading">Events</h3>
-            <ul class="space-y-1">
-              <li><span class="text-gray-400 cursor-not-allowed">Item 3A</span></li>
-              <li><span class="text-gray-400 cursor-not-allowed">Item 3B</span></li>
-              <li><span class="text-gray-400 cursor-not-allowed">Item 3C</span></li>
+            <h3 class="font-bold text-4xl mb-2 font-subheading cursor-not-allowed">Events</h3>
+            <ul class="space-y-3">
+              <li><span class="text-gray-400 cursor-not-allowed">AOPA Events Calendar</span></li>
+              <li><span class="text-gray-400 cursor-not-allowed">Buckeye Fly In</span></li>
+              <li><span class="text-gray-400 cursor-not-allowed">Props & Pistons</span></li>
+              <li><span class="text-teal-400 cursor-not-allowed">View all</span></li>
             </ul>
           </div>
           <div>
-            <h3 class="font-bold text-4xl mb-2 font-subheading">Membership</h3>
-            <ul class="space-y-1">
-              <li><span class="text-gray-400 cursor-not-allowed">Item 3A</span></li>
-              <li><span class="text-gray-400 cursor-not-allowed">Item 3B</span></li>
+            <h3 class="font-bold text-4xl mb-2 font-subheading cursor-not-allowed">Membership</h3>
+            <ul class="space-y-3">
+              <li><span class="text-gray-400 cursor-not-allowed">Member Services</span></li>
+              <li><span class="text-gray-400 cursor-not-allowed">Join AOPA</span></li>
               <li><span class="text-gray-400 cursor-not-allowed">Item 3C</span></li>
+              <li><span class="text-teal-400 cursor-not-allowed">View all</span></li>
             </ul>
           </div>
 
