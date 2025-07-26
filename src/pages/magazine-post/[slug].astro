@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { resolveProseStyle } from '../../lib/resolveProseStyle.js';
-import Sidebar from '../../components/magazine/sidebar.astro';
+import Sidebar from '../../components/magazine/Sidebar.astro';
 
 export async function getStaticPaths() {
   const res = await fetch('https://aopa-porkbuns.sbs/graphql', {
