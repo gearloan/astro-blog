@@ -77,7 +77,9 @@ const { proseStyle = 'prose-magazine' } = Astro.props;
             </h1>
             <ul class="tracking-wide">
               {teaserStories.map(story => (
-                  <li class="font-subheading text-3xl uppercase mb-3">{story.title}</li>
+                  <li class="font-subheading text-3xl uppercase mb-3 hover:opacity-75">                
+                    <a href={`/magazine-post/${story.slug}`}>{story.title}</a>  
+                  </li>
               ))}
             </ul>
           </div>
@@ -101,9 +103,13 @@ const { proseStyle = 'prose-magazine' } = Astro.props;
 
             return (
               <article>
-                <img src={story.featuredImage?.node?.mediaDetails?.sizes?.find(size => size.name === "story-thumb")?.sourceUrl ?? story.featuredImage?.node?.sourceUrl
-          } alt={story.title} class="..." />
-                <h3 class="my-2 font-subheading text-2xl uppercase">{story.title}</h3>
+                <a href={`/magazine-post/${story.slug}`}>
+                  <img src={story.featuredImage?.node?.mediaDetails?.sizes?.find(size => size.name === "story-thumb")?.sourceUrl ?? story.featuredImage?.node?.sourceUrl
+                  } alt={story.title} class="..." />
+                </a>
+                <a href={`/magazine-post/${story.slug}`}>                
+                  <h3 class="my-2 font-subheading text-2xl uppercase">{story.title}</h3>
+                </a>
                 <p class="mb-2">
                   {story.excerpt.replace(/<[^>]*>/g, '').split(' ').slice(0, 30).join(' ') + '...'}
                 </p>
