@@ -1,7 +1,7 @@
 ---
 import { fetchPosts } from '../../lib/fetchPosts.js';
 
-const posts = await fetchPosts();
+const posts = await fetchPosts({ tag: 'editorial' });
 const leadStory = posts[0];
 const leftStories = posts.slice(1, 3);
 const rightStories = posts.slice(3, 5);

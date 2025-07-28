@@ -1,6 +1,6 @@
 ---
 import { fetchPosts } from '../../lib/fetchPosts.js';
-const posts = await fetchPosts();
+const posts = await fetchPosts({ tag: 'editorial' });
 
 import { stripHtml } from 'string-strip-html';
 

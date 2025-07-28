@@ -1,6 +1,6 @@
 ---
 import { fetchPosts } from '../../lib/fetchPosts.js';
-const posts = await fetchPosts(5);
+const posts = await fetchPosts({ tag: 'editorial', limit: 5 });
 ---
 
 <aside class="prose prose-editorial">
