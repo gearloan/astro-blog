@@ -36,7 +36,12 @@ const { proseStyle = 'prose-magazine' } = Astro.props;
 <Layout section="magazine">
   <div class={`grid grid-cols-1 md:grid-cols-[250px_1fr] min-h-screen relative ${proseStyle}`}>
     
-    <Sidebar />
+    <Sidebar
+      publicationTitle="Pilot Magazine"
+      issueInfo="Feb 2025 | No. 178"
+      coverImg="/images/proxy/pilot-mag.jpg"
+      bgColor="#001d3d"
+    />
 
 
     <section class="bg-black text-white">
