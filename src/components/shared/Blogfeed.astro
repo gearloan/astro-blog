@@ -1,6 +1,8 @@
 ---
 import { fetchPosts } from '../../lib/fetchPosts.js';
-const posts = await fetchPosts({ tag: 'editorial' });
+const posts = (await fetchPosts({ tag: 'editorial' })).slice(1, 16);
+
+
 
 import { stripHtml } from 'string-strip-html';
 
