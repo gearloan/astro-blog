@@ -5,12 +5,11 @@ import MainNav from '../components/utility/MainNav.tsx';
 const { proseStyle = '' } = Astro.props;
 const isEditorial = proseStyle === 'prose-editorial';
 
-const { section, wrapperClass = "" } = Astro.props;
-const { title, children, forceDark = false } = Astro.props;
+const { section, wrapperClass, magazineTitle = "" } = Astro.props;
 // e.g., '/editorial/article-slug' → 'editorial'
 ---
 <!doctype html>
-<html lang="en" class={`${forceDark ? 'dark' : ''} min-h-screen`}>
+<html lang="en" class={`min-h-screen`}>
 	<head>
 		<!--START preload fonts to prevent FOUT -->
 		<link rel="preload" href="/fonts/gothambold-webfont.woff" as="font" type="font/woff2" crossorigin="anonymous">
@@ -30,13 +29,15 @@ const { title, children, forceDark = false } = Astro.props;
 		<meta name="generator" content={Astro.generator} />
 		<title>AOPA - astro test</title>
 	</head>
-	<body class={`"flex flex-col dark:bg-gray-900 text-black dark:text-white min-h-screen ${wrapperClass}"`}>
-		<div class="sticky top-0 z-50">
-			<MainNav section={section} client:load />
-		</div>
+	<body class={`"flex flex-col dark:bg-gray-900 min-h-screen text-black dark:text-white ${wrapperClass}"`}>
+    <div class="grow flex flex-col">
+      <div class="sticky top-0 z-50">
+        <MainNav section={section} magazineTitle={magazineTitle} client:load />
+      </div>
 		<main class="flex-grow max-w-7xl mx-auto px-4 w-full">
 			<slot />
 		</main>
+        </div>
 	</body>
 
 </html>

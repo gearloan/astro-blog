@@ -5,9 +5,11 @@ import { useState, useRef, useEffect } from 'preact/hooks';
 
 type Props = {
   section?: string | null;
+  magazineTitle?: string; // ← new prop
 };
 
-export default function Nav({ section }: Props) {
+
+export default function Nav({ section, magazineTitle }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => setIsOpen((prev) => !prev);
@@ -37,7 +39,7 @@ export default function Nav({ section }: Props) {
 
   
   return (
-    <div class="sticky top-0 relative z-40 group">
+    <div class="relative z-40 group">
       {/* NAV BAR */}
       <nav class="relative z-50 h-[75px] bg-aopa-dkblue shadow-md flex justify-between items-stretch">
         {/* LEFT SIDE NAV LINKS — hover target */}
@@ -52,8 +54,11 @@ export default function Nav({ section }: Props) {
               </li>
             )}
             {section === 'magazine' && (
-              <li class="px-4 flex items-center h-full text-2xl tracking-wide">
-                <a href="#">MAGAZINE </a>
+              <li class="">
+                <a class="px-4 flex items-center h-full text-2xl tracking-wide" href="#">
+                  MAGAZINE
+                  {magazineTitle && <span class="ml-2 text-lg text-teal-300 font-body"> / {magazineTitle}</span>}
+                </a>
               </li>
             )}
           </ul>
