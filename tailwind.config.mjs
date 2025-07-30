@@ -4,6 +4,14 @@ import typography from '@tailwindcss/typography';
 export default {
   // tailwind.config.js
   content: ["./src/**/*.{astro,html,js,jsx,ts,tsx,vue,svelte}"],
+  safelist: [
+    'order-1',
+    'order-2',
+    'order-3',
+    'lg:order-1',
+    'lg:order-2',
+    'lg:order-3',
+  ],
   darkMode: 'class',
   theme: {
     extend: {
@@ -108,3 +116,4 @@ export default {
   },
   plugins: [typography],
 };
+
