@@ -18,9 +18,9 @@ console.log({
   line2: heroStory.heroTitleLine2
 });
 
-const featuredStories = posts.filter(
-  post => post.magazinePresentationOptions?.presentationslots?.includes('featured')
-);
+const featuredStories = posts
+  .filter(post => post.magazinePresentationOptions?.presentationslots?.includes('featured'))
+  .reverse();
 
 const teaserStories = posts.filter(
   post => post.magazinePresentationOptions?.presentationslots?.includes('teaser')
