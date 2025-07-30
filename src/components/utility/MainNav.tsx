@@ -81,7 +81,7 @@ export default function Nav({ section, magazineTitle }: Props) {
       </nav>
 
       {/* DROPDOWN: now a sibling of nav, not a child */}
-      <div class="leading-none absolute top-full left-0 w-screen bg-aopa-dkblue text-white shadow-md transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-40">
+      <div class="hidden md:block leading-none absolute top-full left-0 w-screen bg-aopa-dkblue text-white shadow-md transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-40">
         <div class="max-w-7xl mx-auto p-6 grid grid-cols-6 gap-8">
           <div class="border-r-2 border-gray-400">                    
             <img src="/images/ui/logo-small-white.svg" alt="Logo" class="px-10 block dark:hidden mb-4" />
@@ -142,21 +142,47 @@ export default function Nav({ section, magazineTitle }: Props) {
       {/* Right-side drawer that toggles from hamburger */}
 <div
   ref={drawerRef}
-  class={`fixed top-[75px] right-0 w-64 h-[calc(100vh-75px)] bg-aopa-dkgrey text-white p-6 transform transition-transform duration-300 z-50 ${
+  class={`fixed top-[75px] right-0 w-full md:w-[400px] h-[calc(100vh-75px)] bg-aopa-dkgrey text-white p-6 transform transition-transform duration-300 z-50 ${
     isOpen ? 'translate-x-0' : 'translate-x-full'
   }`}
 >
-      
-    
-  <ul class="space-y-4">
-    <li><a href="#">Profile</a></li>
-    <li><a href="#">Settings</a></li>
-    <li><a href="#">Logout</a></li>
-    <li>
-      <ThemeToggle/>
-    </li>
-  </ul>
+  <nav class="space-y-8 overflow-y-auto">
+    <span class="block md:hidden">
+    {/* Section 1: Site Nav */}
+    <div>
+      <h3 class="font-bold text-xl mb-3 border-b border-gray-600 pb-1">Sections</h3>
+      <ul class="space-y-3">
+        <li><a href="/news/home" class="block">News</a></li>
+        <li><a href="/magazine/home" class="block">Magazine</a></li>
+        <li><a href="#" class="text-gray-400 block line-through">Podcasts</a></li>
+        <li><a href="#" class="text-gray-400 block line-through">Events</a></li>
+      </ul>
+    </div>
+
+    {/* Section 2: Membership */}
+    <div>
+      <h3 class="font-bold text-xl mb-3 border-b border-gray-600 pb-1">Membership</h3>
+      <ul class="space-y-3">
+        <li><a href="#" class="text-gray-400 block line-through">Join AOPA</a></li>
+        <li><a href="#" class="text-gray-400 block line-through">Member Services</a></li>
+      </ul>
+    </div>
+    </span>
+    {/* Section 3: User */}
+    <div>
+      <h3 class="font-bold text-xl mb-3 border-b border-gray-600 pb-1">Your Account</h3>
+      <ul class="space-y-3">
+        <li><a class="line-through" href="#">Profile</a></li>
+        <li><a class="line-through" href="#">Settings</a></li>
+        <li><a class="line-through"  href="#">Logout</a></li>
+      </ul>
+      <div class="mt-6">
+        <ThemeToggle />
+      </div>
+    </div>
+  </nav>
 </div>
+
 
     </div>
     
