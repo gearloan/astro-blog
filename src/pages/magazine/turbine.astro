@@ -3,6 +3,7 @@
 import Layout from '../../layouts/Layout.astro';
 import { fetchPosts } from '../../lib/fetchPosts.js';
 import Sidebar from '../../components/magazine/Sidebar.astro';
+import HeroTitleMobile from '../../components/magazine/HeroTitleMobile.astro';
 
 const posts = await fetchPosts({ tag: 'turbine' });
 
@@ -52,40 +53,17 @@ const { proseStyle = 'prose-magazine' } = Astro.props;
           style={`background-image: url('${heroStory.featuredImage?.node?.sourceUrl}');`}
         >
 
-
-          <!-- Top Text -->
-          <div class="flex justify-between absolute top-0 right-0 text-white w-full p-6">
-            <!-- Magazine title in top left -->
-            <span class="opacity-80 ">
-              <h1 class="text-left relative left-0 text-5xl uppercase text-[#f4c04d] leading-none">Pilot</h1>
-              <h2 class="font-body text-xl uppercase tracking-widest">Turbine Edition</h2>
-            </span>
-            <!-- Date badge in top right -->
-            <div class="flex">
-              <div class="text-right">
-                  <span class="text-sm block -mb-2">2025</span>
-                  <span class="text-6xl font-subheading opacity-75 leading-none">APR</span>
-              </div>
-              
-              <div class="flex items-start gap-2">
-                <span class="border-4 border-l border-[#e0005b] h-[4rem] self-center ml-2 mr-1"></span>
-                <div class="text-xs leading-tight -ml-1">
-                  <div class="text-sm -mb-2">No.</div>
-                  <div class="text-6xl font-subheading opacity-75 leading-none">89</div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <HeroTitleMobile />
 
 
           <!-- Headline block -->
-          <div class="w-full px-4">
+          <div class="w-full px-4 hidden md:block">
             <div class="w-full px-4 flex justify-end">
               <h1 class="relative block pt-[17rem] mr-28 text-[#00478c] text-right leading-[0.75] uppercase">
                 <span class="block text-[5rem] font-extrabold tracking-tight font-knockout p-0 m-0">
                   {line1}
                 </span>
-                <span class="block relative text-[5rem] font-medium tracking-[0.0em] font-subheading mt-1 p-0 m-0">
+                <span class="block relative text-[5rem] tracking-[0.0em] font-subheading mt-1 p-0 m-0">
                   <span class="absolute left-0  w-36 h-1 bg-[#e0005b] p-0 m-0"></span>
                   <span class="absolute left-0  w-36 h-1 bg-[#e0005b] p-0 m-0 mt-2"></span>
                   {line2}
@@ -105,8 +83,10 @@ const { proseStyle = 'prose-magazine' } = Astro.props;
       )}
 
       <!-- Featured Stories -->
-      <section class="bg-gray-800 p-10 ">
-        <h2 class="font-body text-1xl uppercase tracking-widest mb-4 text-[#e0005b]">Featured Stories</h2>
+      <section class="bg-gray-800 p-0 md:p-10 ">
+          <h2 class="inline-block uppercase pb-0 pr-0 pl-10 font-subheading text-2xl text-aopa-ltblue mb-4 mt-4 tracking-widest border-b-4 border-aopa-ltblue">
+            FEATUREs
+          </h2>        
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
           <!-- this is ome astro with jsx in it -->
 
@@ -124,13 +104,16 @@ const { proseStyle = 'prose-magazine' } = Astro.props;
                   <img class="w-full" src={story.featuredImage?.node?.mediaDetails?.sizes?.find(size => size.name === "story-thumb")?.sourceUrl ?? story.featuredImage?.node?.sourceUrl
                   } alt={story.title} class="..." />
                 </a>
-                <a href={`/magazine-post/${story.slug}`}>                
-                  <h3 class="mb-2 mt-4 font-subheading text-3xl uppercase">{story.title}</h3>
-                </a>
-                <p class="mb-2">
-                  {story.excerpt.replace(/<[^>]*>/g, '').split(' ').slice(0, 30).join(' ') + '...'}
-                </p>
-                <a class="text-[#14c682]" href={`/magazine-post/${story.slug}`}>Read more</a>
+                <span class="px-4 md:px-0 inline-block">
+                  <a href={`/magazine-post/${story.slug}`}>                
+                    <h3 class="mb-2 mt-4 font-subheading text-3xl uppercase block">{story.title}</h3>
+                  </a>
+                  <p class="mb-2">
+                    {story.excerpt.replace(/<[^>]*>/g, '').split(' ').slice(0, 30).join(' ') + '...'}
+                  </p>
+                  <a class="text-[#14c682]" href={`/magazine-post/${story.slug}`}>Read more</a>
+                </span>
+
               </article>
             );
           })}

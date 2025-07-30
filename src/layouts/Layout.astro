@@ -34,7 +34,7 @@ const { section, wrapperClass, magazineTitle = "" } = Astro.props;
       <div class="sticky top-0 z-50">
         <MainNav section={section} magazineTitle={magazineTitle} client:load />
       </div>
-		<main class="flex-grow max-w-7xl mx-auto px-4 w-full">
+    <main class="flex-grow max-w-7xl mx-auto w-full px-0 md:px-4">
 			<slot />
 		</main>
         </div>
