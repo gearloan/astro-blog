@@ -11,7 +11,7 @@ const { proseStyle = 'prose-editorial' } = Astro.props;
 
 <section class={`max-w-7xl mx-auto px-4 pt-8 pb-4 border-b border-gray-350 mb-8 grid grid-cols-1 lg:grid-cols-12 gap-6 ${proseStyle}`}>
   <!-- Left Column -->
-  <aside class="lg:col-span-2 space-y-8 order-2 md:order-1">
+  <aside class="lg:col-span-2 space-y-8 order-2 lg:order-1">
     <h4 class="font-body tracking-widest">LATEST STORIES</h4>
     {leftStories.map(story => (
       <article class="!mt-2">
@@ -30,7 +30,7 @@ const { proseStyle = 'prose-editorial' } = Astro.props;
   </aside>
 
   <!-- Center Column -->
-  <article class="lg:col-span-8 order-1 md:order-2">
+  <article class="lg:col-span-8 order-1 lg:order-2">
     <img
       src={leadStory.featuredImage?.node?.sourceUrl}
       alt={leadStory.title}

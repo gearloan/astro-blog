@@ -1,39 +1,35 @@
 ---
 const { proseStyle = 'prose-editorial' } = Astro.props;
+
+import WeatherMobile from './WeatherMobile.astro';
+
 ---
+<section>
+  <section class={`max-w-7xl mx-auto mt-8 px-4 grid grid-cols-1 md:grid-cols-12 gap-6 items-center border-t border-b border-gray-350 dark:text-amber-50 ${proseStyle ?? ''}`}>
+      <article class="md:col-span-4 text-center text-gray-600 dark:text-amber-50 order-3 lg:order-1">
+          <h2 class="font-serifItalic text-2xl mt-8">Your Freedom to Fly</h2>
+          <p class="font-serifItalic text-lg mt-1">Aviation News & Current Affairs Since 1939</p>
 
-<section class={`max-w-7xl mx-auto mt-8 px-4 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center border-t border-b border-gray-350 dark:text-amber-50 ${proseStyle ?? ''}`}>
-    <article class="order-2 lg:order-1 lg:col-span-4 text-center text-gray-600 dark:text-amber-50">
-        <h2 class="font-serifItalic text-2xl mt-8">Your Freedom to Fly</h2>
-        <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod laoreet dolore.</p>
-        <a href=""><b>Join Today!</b></a>
-    </article>
-    <article class="order-1 lg:order-2 lg:col-span-4 p-5 text-center">
-        <img src="/images/ui/aopa-logo.svg" alt="Logo" class="px-10 block dark:hidden" />
-        <img src="/images/ui/aopa-logo-darkmode.svg" alt="Logo" class="px-10 hidden dark:block" />
-        <p class="font-serifItalic text-lg mt-1">Aviation News & Current Affairs Since 1939</p>
-    </article>
-    <article class="order-3 lg:order-3 lg:col-span-4 text-center">
-        <p class="font-bold">Current Conditions</p>
-        <p class="font-subheading text-xl text-aopa-grey dark:text-amber-50">July 21st 2024 | 10:03 EST | <span class="rounded bg-aopa-dkblue text-white py-1 px-3">FDK</span></p>
-        <ul class="flex gap-4 items-center justify-center pb-5">
-            <li>  
-                <img src="/images/mh-icon-1.png" alt="Logo" class="px-10 block dark:hidden" />
-                <img src="/images/mh-icon-1-white.png" alt="Logo" class="px-10 hidden dark:block" />    
-
-                <p class="font-subheading leading-none text-xl text-aopa-grey dark:text-amber-50">Winds: From WSW
-                <br> 240° at 2 knots</p>
-            </li>
-            <li>        
-                <img src="/images/mh-icon-2.png" alt="Logo" class="px-10 block dark:hidden" />
-                <img src="/images/mh-icon-2-white.png" alt="Logo" class="px-10 hidden dark:block" />  
-                <p class="font-subheading leading-none text-xl text-aopa-grey dark:text-amber-50">Pressure: 29.86
-                <br> Rising slowly</p>
-            </li>
-            <li>        
-                <p class="font-subheading leading-none text-xl cursor-not-allowed">View Full Report</p>
-            </li>
-        </ul>
-    </article>
+      </article>
+      <article class="md:col-span-4 p-5 text-center order-2 lg:order-2">
+          <img src="/images/ui/aopa-logo.svg" alt="Logo" class="block dark:hidden max-w-[150px] md:max-w-none m-auto" />
+          <img src="/images/ui/aopa-logo-darkmode.svg" alt="Logo" class="px-10 hidden dark:block w-full" />
+      </article>
+      <article class="md:col-span-4 text-center order-1 lg:order-3 hidden md:block">
+          <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod laoreet dolore.</p>
+          <a href=""><b>Join Today!</b></a>
+      </article>
+  </section>  
+  <article class="border-b border-gray-350 py-3">
+    <ul class="flex justify-center">
+      <li>
+        <b class="font-serif">Current Conditions</b> <span class="rounded bg-aopa-dkblue text-white py-1 px-3 mr-2"> 10:00 FDK</span>
+      </li>
+      <li> Temp: 78° | &nbsp</li>
+      <li> Humidity: 78° | &nbsp</li>
+      <li> Wind: 2 knots | &nbsp</li>
+      <li> Pressure: 29.83 </li>
+      
+    </ul>
+  </article>
 </section>
-
