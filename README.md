@@ -26,3 +26,5 @@ This is a proof-of-concept for a modern editorial publishing platform built on a
 ---
 
 If you want a PDF or want to inline a diagram, let me know. Otherwise, you can drop this directly into the repo root or README.md.
+
+Big Credit to ChatGPT and Copilot, prototyping visual and technical simultaneously is hard to do quickly. On my own it would've taken double the time.
