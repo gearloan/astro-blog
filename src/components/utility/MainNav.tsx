@@ -45,7 +45,7 @@ export default function Nav({ section, magazineTitle }: Props) {
         {/* LEFT SIDE NAV LINKS — hover target */}
         <div class="flex text-white h-full">
           <ul class="flex h-full font-heading">
-            <li class="relative px-6 pr-[2.5rem] h-full clip-angle flex items-center bg-aopa-ltblue text-2xl tracking-wide">
+            <li class="relative px-3 md:px-6 pr-6 md:pr-[2.5rem] h-full clip-angle flex items-center bg-aopa-ltblue text-2xl tracking-wide">
               <a href="/">AOPA</a>
             </li>
             {section === 'editorial' && (
@@ -55,9 +55,9 @@ export default function Nav({ section, magazineTitle }: Props) {
             )}
             {section === 'magazine' && (
               <li class="">
-                <a class="px-4 flex items-center h-full text-2xl tracking-wide" href="#">
+                <a class="px-2 md:px-4 flex items-center h-full text-2xl tracking-wide" href="#">
                   MAGAZINE
-                  {magazineTitle && <span class="ml-2 text-lg text-teal-300 font-body capitalize"> / {magazineTitle}</span>}
+                  {magazineTitle && <span class="ml-2 text-lg text-teal-300 font-body capitalize hidden md:block"> / {magazineTitle}</span>}
                 </a>
               </li>
             )}
@@ -82,7 +82,7 @@ export default function Nav({ section, magazineTitle }: Props) {
 
       {/* DROPDOWN: now a sibling of nav, not a child */}
       <div class="hidden md:block leading-none absolute top-full left-0 w-screen bg-aopa-dkblue text-white shadow-md transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-40">
-        <div class="max-w-7xl mx-auto p-6 grid grid-cols-6 gap-8">
+        <div class="mx-auto md:p-6 grid grid-cols-6 gap-8">
           <div class="border-r-2 border-gray-400">                    
             <img src="/images/ui/logo-small-white.svg" alt="Logo" class="px-10 block dark:hidden mb-4" />
             <ul class="space-y-3 text-center">
