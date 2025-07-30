@@ -4,14 +4,14 @@ const { proseStyle = 'prose-editorial' } = Astro.props;
 
 <section class={`max-w-7xl mx-auto mt-8 px-4 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center border-t border-b border-gray-350 dark:text-amber-50 ${proseStyle ?? ''}`}>
     <article class="lg:col-span-4 text-center text-gray-600 dark:text-amber-50">
-        <h2 class="font-serifItalic text-2xl">Your Freedom to Fly</h2>
+        <h2 class="font-serifItalic text-2xl mt-8">Your Freedom to Fly</h2>
         <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod laoreet dolore.</p>
         <a href=""><b>Join Today!</b></a>
     </article>
-    <article class="lg:col-span-4 p-5">
+    <article class="lg:col-span-4 p-5 text-center">
         <img src="/images/ui/aopa-logo.svg" alt="Logo" class="px-10 block dark:hidden" />
         <img src="/images/ui/aopa-logo-darkmode.svg" alt="Logo" class="px-10 hidden dark:block" />
-        <p class="font-serifItalic text-lg">Aviation News & Current Affairs Since 1939</p>
+        <p class="font-serifItalic text-lg mt-1">Aviation News & Current Affairs Since 1939</p>
     </article>
     <article class="lg:col-span-4 text-center">
         <p class="font-bold">Current Conditions</p>
@@ -31,7 +31,7 @@ const { proseStyle = 'prose-editorial' } = Astro.props;
                 <br> Rising slowly</p>
             </li>
             <li>        
-                <p class="font-subheading leading-none text-xl">View Full Report</p>
+                <p class="font-subheading leading-none text-xl cursor-not-allowed">View Full Report</p>
             </li>
         </ul>
     </article>
