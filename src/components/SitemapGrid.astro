@@ -5,13 +5,13 @@ const sections = [
   {
     title: "News",
     routes: [
-      { name: "Home Page", route: "/news/home" },
+      { name: "News Home", route: "/news/home" },
     ],
   },
   {
     title: "Magazine",
     routes: [
-      { name: "Issue Page", route: "/magazine/issue" },
+      { name: "Magazines", route: "/magazine/home" },
     ],
   },
 ];
@@ -20,7 +20,7 @@ const sections = [
 {sections.map(section => (
   <div>
     <section class="mb-16">
-      <h2 class="text-xl font-subheading mb-4 text-black dark:text-white">{section.title}</h2>
+      <h2 class="text-xl font-body mb-4 text-black dark:text-white">{section.title}</h2>
       <div class="grid grid-cols- sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {section.routes.map(r => (
           <SitemapCard name={r.name} route={r.route} />
