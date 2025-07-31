@@ -114,17 +114,17 @@ const sidebarMeta = publicationMeta[pub] ?? publicationMeta['pilot'];
       <!-- Main article content -->
       <article class={`prose ${proseStyle} max-w-none`}>
         <header class="mb-8 relative">
-          <span class="pb-0 pr-0 pl-10 font-subheading text-2xl text-aopa-ltblue relative left-0 top-8 tracking-widest border-b-4 border-aopa-ltblue">
+          <span class="pb-0 pr-0 pl-4 md:pl-10 font-subheading text-2xl text-aopa-ltblue relative left-0 top-8 tracking-widest border-b-4 border-aopa-ltblue">
             FEATURE
           </span>
-          <h1 class="pl-10 font-heading uppercase text-6xl tracking-tight pt-24" set:html={post.title}></h1>
-          <p class="pl-10 text-sm">By <b>Melissa Calvert</b></p>
+          <h1 class="pl-4 md:pl-10 font-heading uppercase text-6xl tracking-tight pt-24" set:html={post.title}></h1>
+          <p class="pl-4 md:pl-10 text-sm">By <b>Melissa Calvert</b></p>
           {featured_image && (
             <img src={featured_image} alt={post.title} class="w-full my-4" />
           )}
         </header>
 
-        <div class="pl-10 lg:pr-36" set:html={post.content}></div>
+        <div class="px-4 md:px-10 lg:pr-36" set:html={post.content}></div>
       </article>
     </div>
   </div>
