@@ -153,7 +153,7 @@ export default function Nav({ section, magazineTitle }: Props) {
       <h3 class="font-bold text-xl mb-3 border-b border-gray-600 pb-1">Sections</h3>
       <ul class="space-y-3">
         <li><a href="/news/home" class="block">News</a></li>
-        <li><a href="/magazine/home" class="block">Magazine</a></li>
+        <li><a href="/magazine/home" class="block">Magazines</a></li>
         <li><a href="#" class="text-gray-400 block line-through">Podcasts</a></li>
         <li><a href="#" class="text-gray-400 block line-through">Events</a></li>
       </ul>

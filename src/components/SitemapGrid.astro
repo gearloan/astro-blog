@@ -18,16 +18,16 @@ const sections = [
 ---
 
 {sections.map(section => (
-  <div>
-    <section class="mb-16">
-      <h2 class="text-xl font-body mb-4 text-black dark:text-white">{section.title}</h2>
-      <div class="grid grid-cols- sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {section.routes.map(r => (
-          <SitemapCard name={r.name} route={r.route} />
-        ))}
-      </div>
-    </section>
+<section class="mb-16">
+  <div class="">
+    <div class="max-w-sm m-auto">
+      {section.routes.map(r => (
+        <SitemapCard name={r.name} route={r.route} />
+      ))}
+    </div>
   </div>
+</section>
+
 
 ))}
 
