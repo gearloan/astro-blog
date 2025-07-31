@@ -55,7 +55,7 @@ export default function Nav({ section, magazineTitle }: Props) {
             )}
             {section === 'magazine' && (
               <li class="">
-                <a class="px-2 md:px-4 flex items-center h-full text-2xl tracking-wide" href="#">
+                <a class="px-2 md:px-4 flex items-center h-full text-lg md:text-2xl tracking-wide font-body md:font-heading" href="#">
                   MAGAZINE
                   {magazineTitle && <span class="ml-2 text-lg text-teal-300 font-body capitalize hidden md:block"> / {magazineTitle}</span>}
                 </a>
