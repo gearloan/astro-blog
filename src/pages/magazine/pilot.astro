@@ -3,6 +3,7 @@
 import Layout from '../../layouts/Layout.astro';
 import { fetchPosts } from '../../lib/fetchPosts.js';
 import Sidebar from '../../components/magazine/Sidebar.astro';
+import HeroTitleMobilePilot from '../../components/magazine/HeroTitleMobilePilot.astro';
 
 const posts = await fetchPosts({ tag: 'pilot' });
 
@@ -17,9 +18,9 @@ console.log({
   line2: heroStory.heroTitleLine2
 });
 
-const featuredStories = posts.filter(
-  post => post.magazinePresentationOptions?.presentationslots?.includes('featured')
-);
+const featuredStories = posts
+  .filter(post => post.magazinePresentationOptions?.presentationslots?.includes('featured'))
+  .reverse();
 
 const teaserStories = posts.filter(
   post => post.magazinePresentationOptions?.presentationslots?.includes('teaser')
@@ -48,42 +49,25 @@ const { proseStyle = 'prose-magazine' } = Astro.props;
       <!-- Hero -->
       {heroStory && (
         <section
-          class="relative flex items-center bg-cover bg-center text-white rounded shadow-lg p-6 min-h-[540px]"
-          style={`background-size: 101%; background-image: url('${heroStory.featuredImage?.node?.sourceUrl}');`}
+          class="relative flex items-center bg-size-[var_201%] lg:bg-size-[var_101%] bg-center text-white rounded shadow-lg p-6 min-h-[540px]"
+          style={`background-image: url('${heroStory.featuredImage?.node?.sourceUrl}');`}
         >
-          <!-- Magazine title in top left -->
-          <span class="opacity-90 absolute bottom-24 right-24 text-right">
-            <h1 class="text-left relative left-0 text-6xl uppercase text-[#368bc4] leading-none">Pilot</h1>
-            <h2 class="font-body text-xl uppercase tracking-widest">MAGAZINE</h2>
-          </span>          
-          <!-- Date badge in top right -->
-          <div class="flex absolute top-6 right-6 text-white">
-            <div class="text-right">
-                <span class="text-sm block -mb-2">2025</span>
-                <span class="text-6xl font-subheading opacity-75">OCT</span>
-            </div>
 
-            <div class="flex items-start gap-2">
-              <span class="border-l border-white h-full ml-1"></span>
-              <div class="text-xs leading-tight -ml-1">
-                <div class="text-sm -mb-2">No.</div>
-                <div class="text-6xl font-subheading opacity-75">178</div>
-              </div>
-            </div>
-          </div>
-
+          <HeroTitleMobilePilot />
 
           <!-- Headline block -->
-          <div class="w-full px-4">
-            <h1 class="text-[#0aa7b7] text-right inline-block leading-[0.75] uppercase mb-20">
-              <span class="block text-[4.5rem] font-extrabold tracking-tight font-knockout p-0 m-0">
-                {line1}
-              </span>
-              <span class="block relative text-[5rem] font-medium tracking-[0.02em] font-subheading mt-2 p-0 m-0">
-                <span class="absolute left-0  w-36 h-1 bg-[#368bc4] p-0 m-0"></span>
-                {line2}
-              </span>
-            </h1>
+          <div class="w-full px-4 hidden md:block">
+            <span class="opacity-80">
+              <h1 class="text-[#0aa7b7] text-right inline-block leading-[0.75] uppercase mb-20">
+                <span class="block text-[4.5rem] font-extrabold tracking-tight font-knockout p-0 m-0">
+                  {line1}
+                </span>
+                <span class="block relative text-[5rem] font-medium tracking-[0.02em] font-subheading mt-2 p-0 m-0">
+                  <span class="absolute left-0  w-36 h-1 bg-[#368bc4] p-0 m-0"></span>
+                  {line2}
+                </span>
+              </h1>
+            </span>
             <ul class="tracking-wide">
               {teaserStories.map(story => (
                   <li class="font-subheading text-3xl uppercase mb-3 hover:opacity-75">                
@@ -98,8 +82,10 @@ const { proseStyle = 'prose-magazine' } = Astro.props;
 
       <!-- Featured Stories -->
       <section class="bg-gray-800 p-10 ">
-        <h2 class="font-body text-1xl uppercase tracking-widest mb-4 text-[#14c682]">Featured Stories</h2>
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          <h2 class="inline-block uppercase pb-0 pr-0 pl-10 font-subheading text-2xl text-aopa-ltblue mb-4 mt-4 tracking-widest border-b-4 border-aopa-ltblue">
+            FEATURES
+          </h2> 
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
           <!-- this is ome astro with jsx in it -->
 
           {featuredStories.map(story => {
