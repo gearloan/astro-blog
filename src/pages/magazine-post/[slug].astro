@@ -117,7 +117,7 @@ const sidebarMeta = publicationMeta[pub] ?? publicationMeta['pilot'];
           <span class="pb-0 pr-0 pl-4 md:pl-10 font-subheading text-2xl text-aopa-ltblue relative left-0 top-8 tracking-widest border-b-4 border-aopa-ltblue">
             FEATURE
           </span>
-          <h1 class="pl-4 md:pl-10 font-heading uppercase text-6xl tracking-tight pt-24" set:html={post.title}></h1>
+          <h1 class="pl-4 md:pl-10 font-heading uppercase text-[clamp(2rem,10vw,4rem)] break-words leading-none tracking-tight pt-24" set:html={post.title}></h1>
           <p class="pl-4 md:pl-10 text-sm">By <b>Melissa Calvert</b></p>
           {featured_image && (
             <img src={featured_image} alt={post.title} class="w-full my-4" />
