@@ -1,0 +1,118 @@
+---
+import Sidebar from './Sidebar.astro';
+
+const props = Astro.props;
+const posts = props.posts;
+const publicationTitle = props.publicationTitle;
+const issueInfo = props.issueInfo;
+const coverImg = props.coverImg;
+const bgColor = props.bgColor;
+
+// Now it's safe to reference `posts`
+const heroStory = posts.find(
+  post =>
+    Array.isArray(post.magazinePresentationOptions?.presentationslots) &&
+    post.magazinePresentationOptions.presentationslots.includes('hero')
+);
+
+const featuredStories = posts
+  .filter(
+    post =>
+      Array.isArray(post.magazinePresentationOptions?.presentationslots) &&
+      post.magazinePresentationOptions.presentationslots.includes('featured')
+  )
+  .reverse();
+
+const teaserStories = posts.filter(
+  post =>
+    Array.isArray(post.magazinePresentationOptions?.presentationslots) &&
+    post.magazinePresentationOptions.presentationslots.includes('teaser')
+);
+
+const line1 = heroStory?.magazinePresentationOptions?.heroTitleLine1 ?? heroStory?.title ?? '';
+const line2 = heroStory?.magazinePresentationOptions?.heroTitleLine2 ?? '';
+console.log('✅ MagazineIssue component initialized');
+---
+
+
+<div class="grid grid-cols-1 md:grid-cols-[250px_1fr] min-h-screen relative prose-magazine">
+  <Sidebar
+    publicationTitle={publicationTitle}
+    issueInfo={issueInfo}
+    coverImg={coverImg}
+    bgColor={bgColor}
+  />
+
+  <section class="bg-black text-white">
+    {heroStory && (
+      <section
+        class="relative flex items-center bg-cover bg-center text-white rounded shadow-lg p-6 min-h-[540px]"
+        style={`background-size: 101%; background-image: url('${heroStory.featuredImage?.node?.sourceUrl}');`}
+      >
+        <span class="opacity-90 absolute bottom-24 right-24 text-right">
+          <h1 class="text-left relative left-0 text-6xl uppercase text-[#368bc4] leading-none">Pilot</h1>
+          <h2 class="font-body text-xl uppercase tracking-widest">MAGAZINE</h2>
+        </span>
+        <div class="flex absolute top-6 right-6 text-white">
+          <div class="text-right">
+            <span class="text-sm block -mb-2">2025</span>
+            <span class="text-6xl font-subheading opacity-75">OCT</span>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="border-l border-white h-full ml-1"></span>
+            <div class="text-xs leading-tight -ml-1">
+              <div class="text-sm -mb-2">No.</div>
+              <div class="text-6xl font-subheading opacity-75">178</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="w-full px-4">
+          <h1 class="text-[#0aa7b7] text-right inline-block leading-[0.75] uppercase mb-20">
+            <span class="block text-[4.5rem] font-extrabold tracking-tight font-knockout p-0 m-0">
+              {line1}
+            </span>
+            <span class="block relative text-[5rem] font-medium tracking-[0.02em] font-subheading mt-2 p-0 m-0">
+              <span class="absolute left-0  w-36 h-1 bg-[#368bc4] p-0 m-0"></span>
+              {line2}
+            </span>
+          </h1>
+          <ul class="tracking-wide">
+            {teaserStories.map(story => (
+              <li class="font-subheading text-3xl uppercase mb-3 hover:opacity-75">
+                <a href={`/magazine-post/${story.slug}`}>{story.title}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )}
+
+    <section class="bg-gray-800 p-10 ">
+      <h2 class="font-body text-1xl uppercase tracking-widest mb-4 text-[#14c682]">Featured Stories</h2>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        {featuredStories.map(story => {
+          const sizes = story.featuredImage?.node?.mediaDetails?.sizes;
+          const thumb =
+            sizes?.find(size => size.name === 'medium')?.sourceUrl ??
+            story.featuredImage?.node?.sourceUrl;
+
+          return (
+            <article>
+              <a href={`/magazine-post/${story.slug}`}>
+                <img class="w-full" src={thumb} alt={story.title} />
+              </a>
+              <a href={`/magazine-post/${story.slug}`}>
+                <h3 class="mb-2 mt-4 font-subheading text-3xl uppercase">{story.title}</h3>
+              </a>
+              <p class="mb-2">
+                {story.excerpt.replace(/<[^>]*>/g, '').split(' ').slice(0, 30).join(' ') + '...'}
+              </p>
+              <a class="text-[#14c682]" href={`/magazine-post/${story.slug}`}>Read more</a>
+            </article>
+          );
+        })}
+      </div>
+    </section>
+  </section>
+</div>
