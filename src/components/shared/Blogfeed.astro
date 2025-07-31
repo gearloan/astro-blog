@@ -14,23 +14,36 @@ function truncateExcerpt(html, wordCount = 30) {
 
 ---
 
-<ul class="prose prose-editorial max-w-4xl mx-auto">
+<ul class="prose-editorial w-full max-w-none mx-auto">
   {posts.map(post => (
-    <li class="flex gap-6 items-start">
-      <a href={`/blog-post/${post.slug}`}>
+    <li class="flex flex-col md:flex-row gap-4 md:gap-6 mb-8 border-b border-gray-200 pb-6 last:pb-0 last:border-none">
+      <a
+        href={`/blog-post/${post.slug}`}
+        class="block w-full md:w-36 md:h-36 overflow-hidden rounded shrink-0 self-start"
+      >
         <img
-          src={post.featuredImage?.node?.mediaDetails?.sizes?.find(size => size.name === "thumbnail")?.sourceUrl ?? post.featuredImage?.node?.sourceUrl}
+          src={
+            post.featuredImage?.node?.mediaDetails?.sizes?.find(size => size.name === "medium")?.sourceUrl ??
+            post.featuredImage?.node?.sourceUrl
+          }
           alt=""
-          class="w-48 h-48 object-cover rounded mt-0"
+          class="w-full h-full object-cover"
         />
       </a>
-      <div class="flex-1">
-        <a href={`/blog-post/${post.slug}`} class="text-blue-600 dark:text-white hover:underline">
-          <h2 set:html={post.title} class="text-3xl font-semibold mb-1 mt-0 dark:text-white"></h2>
+
+      <div class="flex-1 mt-4 md:mt-0 not-prose self-start">
+        <a href={`/blog-post/${post.slug}`} class="hover:underline block">
+          <h2
+            set:html={post.title}
+            class="text-2xl md:text-xl md:text-2xl font-semibold text-gray-900 dark:text-white m-0 leading-tight"
+          ></h2>
         </a>
-        <div class="text-lg text-gray-600 dark:text-white">{truncateExcerpt(post.excerpt)}</div>
+        <p class="text-lg md:text-base text-gray-700 dark:text-gray-300 m-0 mt-1 leading-snug">
+          {truncateExcerpt(post.excerpt)}
+        </p>
       </div>
     </li>
   ))}
 </ul>
+
 
