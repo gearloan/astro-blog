@@ -49,8 +49,8 @@ export default function Nav({ section, magazineTitle }: Props) {
               <a href="/">AOPA</a>
             </li>
             {section === 'editorial' && (
-              <li class="px-4 flex items-center h-full text-2xl tracking-wide">
-                <a href="#">NEWS</a>
+              <li class="px-2 md:px-4 flex items-center h-full  tracking-wide">
+                <a href="#" class="font-body text-lg md:text-2xl md:font-heading">NEWS</a>
               </li>
             )}
             {section === 'magazine' && (

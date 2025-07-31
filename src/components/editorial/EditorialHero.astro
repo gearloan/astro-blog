@@ -34,11 +34,11 @@ const { proseStyle = 'prose-editorial' } = Astro.props;
     <img
       src={leadStory.featuredImage?.node?.sourceUrl}
       alt={leadStory.title}
-      class="w-full h-auto mb-4 object-cover rounded"
+      class="w-full h-auto mb-1 md:mb-4 object-cover rounded"
     />
     <h1 class="leading-tight mb-2 hover:underline"><a href={`/blog-post/${leadStory.slug}`}>{leadStory.title}</a></h1>
     <p class="text-sm font-gothamBold uppercase tracking-wide text-gray-500 mb-4">
-      By {leadStory.author} — {leadStory.date}
+      <!--By {leadStory.author} — {leadStory.date} -->
     </p>
     <p class="text-base text-gray-700">{leadStory.blurb}</p>
   </article>
