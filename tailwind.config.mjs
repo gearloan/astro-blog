@@ -16,20 +16,17 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        // Core roles
-        body: ['"Gotham-Book"', 'sans-serif'],
-        bodyItalic: ['"Gotham-BookItalic"', 'sans-serif'],
-        heading: ['"Knockout-94"', 'sans-serif'],
-        subheading: ['"Knockout-28"', 'sans-serif'],
+        body:       ['var(--font-body, "Gotham-Book")', 'sans-serif'],
+        bodyItalic: ['var(--font-body-italic, "Gotham-BookItalic")', 'sans-serif'],
+        heading:    ['var(--font-heading, "Knockout-94")', 'sans-serif'],
+        subheading: ['var(--font-subheading, "Knockout-28")', 'sans-serif'],
 
-        // Serif editorial roles
-        serif: ['"Mercury-Roman"', 'serif'],
-        serifBold: ['"Mercury-Bold"', 'serif'],
-        serifItalic: ['"Mercury-BookItalic"', 'serif'],
+        serif:       ['var(--font-serif, "Mercury-Roman")', 'serif'],
+        serifBold:   ['var(--font-serif-bold, "Mercury-Bold")', 'serif'],
+        serifItalic: ['var(--font-serif-italic, "Mercury-BookItalic")', 'serif'],
 
-        // System roles
-        ui: ['"Gotham-Bold"', 'sans-serif'],
-        uiLabel: ['"Gotham-Bold"', 'sans-serif'], // + tracking-wide, uppercase
+        ui:      ['var(--font-ui, "Gotham-Bold")', 'sans-serif'],
+        uiLabel: ['var(--font-ui-label, "Gotham-Bold")', 'sans-serif'],
       },
       colors: {
         'aopa-ltblue': '#00a3e0',

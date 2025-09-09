@@ -1,83 +1,41 @@
-/* Gotham */
-@font-face {
-  font-family: "Gotham-Bold";
-  src: url("/fonts/gothambold-webfont.woff") format("woff");
-  font-weight: bold;
-  font-style: normal;
-  font-display: swap;
+/* src/styles/fonts.css */
+
+/* Defaults */
+:root {
+  --font-body: "Gotham-Book";
+  --font-body-italic: "Gotham-BookItalic";
+  --font-heading: "Knockout-94";
+  --font-subheading: "Knockout-28";
+  --font-serif: "Mercury-Roman";
+  --font-serif-bold: "Mercury-Bold";
+  --font-serif-italic: "Mercury-BookItalic";
+  --font-ui: "Gotham-Bold";
+  --font-ui-label: "Gotham-Bold";
 }
 
-@font-face {
-  font-family: "Gotham-BoldItalic";
-  src: url("/fonts/gothambolditalic-webfont.woff") format("woff");
-  font-weight: bold;
-  font-style: italic;
-  font-display: swap;
+/* ——— Editorial axis ——— */
+html[data-editorial="noe"] {
+  --font-serif: "Noe Text";
+  --font-serif-bold: "Noe Text";
+  --font-serif-italic: "Noe Text";
+}
+html[data-editorial="canela"] {
+  --font-serif: "Canela";
+  --font-serif-bold: "Canela";
+  --font-serif-italic: "Canela";
 }
 
-@font-face {
-  font-family: "Gotham-Book";
-  src: url("/fonts/gothambook-webfont.woff") format("woff");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
+/* ——— Magazine axis ———
+   Decide which roles you want Söhne to occupy. Typical: body/ui on “magazine” templates. */
+html[data-mag="soehne-fat"] {
+  --font-body: "Sohne";
+  --font-body-italic: "Sohne";
+  --font-ui: "Sohne";
+  --font-ui-label: "Sohne";
 }
-
-@font-face {
-  font-family: "Gotham-BookItalic";
-  src: url("/fonts/gothambookitalic-webfont.woff") format("woff");
-  font-weight: normal;
-  font-style: italic;
-  font-display: swap;
+html[data-mag="soehne-schmal"] {
+  --font-body: "Sohne Schmal";
+  --font-body-italic: "Sohne Schmal";
+  --font-ui: "Sohne Schmal";
+  --font-ui-label: "Sohne Schmal";
 }
-
-/* Knockout */
-@font-face {
-  font-family: "Knockout-28";
-  src: url("/fonts/Knockout-HTF28-JuniorFeatherwt.otf") format("opentype");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Knockout-94";
-  src: url("/fonts/Knockout-HTF94-UltmtSumo.otf") format("opentype");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* Mercury */
-@font-face {
-  font-family: "Mercury-Bold";
-  src: url("/fonts/Mercury Display Bold.otf") format("opentype");
-  font-weight: bold;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Mercury-BoldItalic";
-  src: url("/fonts/Mercury Display Bold Italic.otf") format("opentype");
-  font-weight: bold;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Mercury-Roman";
-  src: url("/fonts/Mercury-TextG1Roman.otf") format("opentype");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Mercury-BookItalic";
-  src: url("/fonts/Mercury-TextG1Italic.otf") format("opentype");
-  font-weight: normal;
-  font-style: italic;
-  font-display: swap;
-}
-

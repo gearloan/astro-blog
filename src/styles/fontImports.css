@@ -1,0 +1,157 @@
+/* src/styles/fontfaces.css */
+
+/* ——— Editorial: Noe ——— */
+@font-face {
+  font-family: "Noe Text";
+  src: url("/fonts/noe/NoeTextTrial-Regular.otf") format("otf");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Noe Text";
+  src: url("/fonts/noe/NoeTextTrial-RegularItalic.otf") format("otf");
+  font-weight: 400; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: "Noe Text";
+  src: url("/fonts/noe/NoeDisplayTrial-Bold.otf") format("otf");
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Noe Text";
+  src: url("/fonts/noe/NoeDisplayTrial-BoldItalic.otf") format("otf");
+  font-weight: 700; font-style: italic; font-display: swap;
+}
+
+/* ——— Editorial: Canela ——— */
+@font-face {
+  font-family: "Canela";
+  src: url("/fonts/canela/CanelaText-RegularNo2-Trial.otf") format("otf");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Canela";
+  src: url("/fonts/canela/CanelaText-RegularNo2-Trial.otf") format("otf");
+  font-weight: 400; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: "Canela";
+  src: url("/fonts/canela/Canela-Black-Trial.otf") format("otf");
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Canela";
+  src: url("/fonts/canela/Canela-BlackItalic-Trial.otf") format("otf");
+  font-weight: 700; font-style: italic; font-display: swap;
+}
+
+/* ——— Magazine: Söhne ———
+   Map “Extrafett” to 800/900 depending on the vendor’s CSS;
+   “Buch” is usually 400. Keep a single family name for both widths if you like. */
+@font-face {
+  font-family: "Sohne";
+  src: url("/fonts/soehne/TestSohne-Extrafett.otf") format("otf");
+  font-weight: 800; font-style: normal; font-display: swap; /* or 900 */
+}
+@font-face {
+  font-family: "Sohne";
+  src: url("/fonts/soehne/TestSohne-ExtrafettItalic.otf") format("otf");
+  font-weight: 800; font-style: italic; font-display: swap; /* or 900 */
+}
+/* Narrow (Schmal) Book */
+@font-face {
+  font-family: "Sohne Schmal";
+  src: url("/fonts/soehne/TestSohneSchmal-Buch.otf") format("otf");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Sohne Schmal";
+  src: url("/fonts/soehne/TestSohneSchmal-BuchItalic.otf") format("otf");
+  font-weight: 400; font-style: italic; font-display: swap;
+}
+
+/* ——— News: Knockout (Sumo 94 / 28) ——— */
+/* Knockout */
+@font-face {
+  font-family: "Knockout-28";
+  src: url("/fonts/knockout/Knockout-HTF28-JuniorFeatherwt.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Knockout-94";
+  src: url("/fonts/knockout/Knockout-HTF94-UltmtSumo.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Mercury */
+@font-face {
+  font-family: "Mercury-Bold";
+  src: url("/fonts/mercury/Mercury Display Bold.otf") format("opentype");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Mercury-BoldItalic";
+  src: url("/fonts/mercury/Mercury Display Bold Italic.otf") format("opentype");
+  font-weight: bold;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Mercury-Roman";
+  src: url("/fonts/mercury/Mercury-TextG1Roman.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Mercury-BookItalic";
+  src: url("/fonts/mercury/Mercury-TextG1Italic.otf") format("opentype");
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Gotham */
+@font-face {
+  font-family: "Gotham-Bold";
+  src: url("/fonts/gotham/gothambold-webfont.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Gotham-BoldItalic";
+  src: url("/fonts/gotham/gothambolditalic-webfont.woff") format("woff");
+  font-weight: bold;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Gotham-Book";
+  src: url("/fonts/gotham/gothambook-webfont.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Gotham-BookItalic";
+  src: url("/fonts/gotham/gothambookitalic-webfont.woff") format("woff");
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Optional: avoid faux styles */
+html { font-synthesis: none; }

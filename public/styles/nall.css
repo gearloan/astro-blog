@@ -1,0 +1,776 @@
+/* -- Begin Nall CSS ------------------------------------- */
+
+.nallReport {
+  background: #e8e5e5;
+  padding: 20px 0 50px 0;
+}
+
+svg.graph {
+  cursor: default;
+  width: inherit;
+  height: inherit;
+  height: 300px;
+  width: 100%;
+  /*border: 1px solid lime;*/
+  /* padding:1px; */
+  margin: 0 auto;
+  display: block;
+}
+
+#heading-intro,
+.reportText p {
+  font-size: 90%;
+  line-height: 145%;
+}
+
+#heading-intro {
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 1em;
+  padding-bottom: 1em;
+}
+
+#heading-controls-container {
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 1em;
+  padding-bottom: 10px;
+}
+
+#report-archive-block {
+  display: inline-block;
+}
+
+svg.graph path.graphData,
+svg.graph polygon.graphData {
+  transform: scale(1, 1);
+  animation: drawgraph 1s forwards;
+}
+
+svg.graph text.points {
+  font-size: 12px;
+  /*transition: 0.2s;
+  animation: drawtext 1s forwards;*/
+  opacity: 1;
+}
+
+svg.graph text.axis-labels,
+svg.graph text.noDataSVG {
+  font-size: 12px;
+}
+
+svg.graph text.points.textShadow {
+  text-shadow: 0 2px 2px rgba(0, 0, 0, 0.5);
+}
+
+svg.graph text.points.textShadowWhite {
+
+  text-shadow:
+    -1px -1px 2px #fff,
+    1px -1px 2px #fff,
+    -1px 1px 2px #fff,
+    1px 1px 2px #fff;
+  text-shadow:
+    -1px -1px 0px #fff,
+    1px -1px 0px #fff,
+    -1px 1px 0px #fff,
+    1px 1px 0x #fff;
+  -webkit-text-stroke: 2px white;
+}
+
+svg.graph text.noData {
+  fill: #333;
+  transform: rotate(-90deg) translateX(60px) translateY(5px);
+  font-size: 12px;
+  fill: #777;
+  /* transform: rotate(0); */
+}
+
+svg.graph text.noDataSVG {
+  fill: #777;
+  font-size: 12px;
+}
+
+svg.graph text.noData.noDataBar {
+  transform: rotate(-90deg) translateX(40px) translateY(25px);
+}
+
+.testButton {
+  display: inline-block;
+  border-radius: 5px;
+  padding: 0.5em 1.5em;
+  background: #ccc;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 1em;
+}
+
+.testButton:hover {
+  background: #ddd;
+}
+
+.graph-key-label {
+  display: inline-block;
+  font-size: 90%;
+  margin-right: 1em;
+}
+
+.graph-key-color {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  vertical-align: text-top;
+  margin-right: 0.35em;
+}
+
+.aopa-graph {
+  background: #fff;
+  padding: 15px 0;
+}
+
+.aopa-graph text {
+  font-size: 90%;
+}
+
+#heading-main {
+  text-transform: none;
+}
+
+#heading-controls,
+.heading-buttons {
+  font-family: 'Roboto Condensed', sans-serif;
+}
+
+#heading-controls {
+  margin-bottom: 15px;
+}
+
+a.heading-control {
+  color: #1AADE3;
+  margin: 10px 0;
+  margin-right: 0.5em;
+}
+
+#heading-controls p,
+#heading-controls select,
+#heading-controls a {
+  display: inline-block;
+  margin-bottom: 0;
+}
+
+#heading-control-links {
+  display: inline-block;
+}
+
+#heading-controls select {
+  padding: 5px;
+  margin-right: 0.5em;
+  margin-top: 10px;
+}
+
+#heading-controls a {
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: normal;
+}
+
+#heading-control-filter {
+  padding-left: 10px;
+}
+
+img.heading-control-icon {
+  width: 24px;
+  height: 24px;
+  vertical-align: sub;
+  margin-right: 5px;
+}
+
+#heading-back {
+  cursor: pointer;
+  visibility: hidden;
+}
+
+.heading-buttons {
+  margin-bottom: 0;
+}
+
+/* #heading-back,
+    .heading-buttons {
+        max-height: 0;
+        opacity: 0;
+        overflow-y: hidden;
+    } */
+#heading-buttons-conditions {
+  border-top: 1px solid #ccc;
+  padding-top: 10px;
+  display: none;
+}
+
+.heading-button {
+  background: #fff;
+  border: 2px solid #fff;
+  font-size: 100%;
+  color: #555;
+  display: inline-block;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-right: 5px;
+  margin-bottom: 10px;
+}
+
+.heading-button.active,
+.heading-button.active:hover {
+  background: #EEFFFF;
+  border: 2px solid #1AADE3;
+  color: #333;
+}
+
+.heading-button:hover {
+  background: #1AADE3;
+  border: 2px solid #1AADE3;
+  color: #fff;
+}
+
+#heading-controls a.hidden {
+  display: none;
+}
+
+#heading-back.open {
+  max-height: 5em;
+  opacity: 1;
+  transition: max-height 2s, opacity 2s;
+}
+
+.heading-buttons.open {
+  /*max-height: 5em;
+        opacity: 1;
+        transition: max-height 1s, opacity 1.5s;*/
+}
+
+.nall-report-figure {
+  background: #fff;
+  /* border-bottom: 3px solid #bbb; */
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.25);
+  margin-bottom: 20px;
+}
+
+.nall-report-figure table {
+  border: none;
+  margin: 0;
+  width: 100%;
+}
+
+.nall-report-figure h3 {
+  background: #f5f6f7;
+  border-bottom: 3px solid #ddd;
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 24px;
+  font-weight: normal;
+  margin: 0;
+  padding: 0.8125rem;
+  background: #686868 url(/~/media/FCAB9992EC104D0C9183432820BD1074.ashx);
+  background-repeat: no-repeat;
+  color: #fff;
+  background-position: calc(100% - 10px) 15px;
+  background-size: 80px;
+  padding-right: 90px;
+}
+
+
+.nall-report-figure h3 span.graph-subtitle {
+  font-size: 18px;
+}
+
+.nall-report-figure table th {
+  background: #fff;
+  font-family: 'Raleway', sans-serif;
+  text-transform: none;
+  vertical-align: bottom;
+}
+
+.nall-report-figure table th,
+.nall-report-figure table td {
+  border: none;
+  border-bottom: 1px solid #ddd;
+  line-height: 125%;
+}
+
+.nall-report-figure table td strong {
+  margin-right: 1em;
+}
+
+.nall-report-figure table td.subitem {
+  padding-left: 2em;
+}
+
+.nall-report-chart {
+  background: #fff;
+}
+
+.nall-report-chartlist td+td {
+  text-align: right;
+}
+
+p.nall-report-figure-footnote {
+  font-size: 70%;
+  font-style: italic;
+  color: #777;
+  margin-bottom: 0;
+  padding: 1em;
+}
+
+p.nall-report-figure-footnote+p.nall-report-figure-footnote {
+  margin-top: -2em;
+}
+
+p.svg-text-foreignobject {
+  color: #333;
+  font-size: 12px;
+  text-align: center;
+  line-height: 100%;
+}
+
+.graphContainer {
+  background: url('https://suppwww.aopa.org/~/media/65374F76A68245C9BC4DD4453A762BCD.ashx') no-repeat 50% 50%;
+  min-height: 300px;
+}
+
+#pdfOutput {
+  display: none;
+}
+
+.nall-pdf {
+  background: #fff;
+  /* padding-left: 2em; */
+}
+
+.nall-pdf .nallReport {
+  padding: 0;
+}
+
+.nall-pdf .nall-report-figure {
+  padding-left: 1em;
+}
+
+div.html2pdf__page-break+.nall-report-figure {
+  margin-top: 2em;
+  border: 2px solid red;
+}
+
+.nall-pdf #heading-controls,
+.nall-pdf .heading-buttons,
+.nall-pdf #heading-back {
+  display: none;
+}
+
+.nall-pdf h1#heading-main {
+  font-family: 'Raleway', sans-serif;
+  font-size: 14pt;
+  font-weight: bold;
+}
+
+.nall-pdf h2.pdf-title {
+  font-family: 'Raleway', sans-serif;
+  font-size: 12pt;
+  font-weight: bold;
+  line-height: 100%;
+  margin: 0;
+  text-transform: none;
+}
+
+.nall-pdf p.pdf-subtitle {
+  font-size: 11pt;
+  line-height: 100%;
+  margin: 0;
+  margin-bottom: 0.5em;
+}
+
+.nall-pdf .nall-report-figure h3,
+.nall-pdf .nall-report-figure h3 span.graph-subtitle {
+  font-family: 'Raleway', sans-serif;
+  font-size: 12pt;
+  font-weight: bold;
+  line-height: 100%;
+  margin-bottom: 0;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.nall-pdf .nall-report-figure h3 span.graph-subtitle {
+  font-size: 11pt;
+}
+
+.nall-pdf .nall-report-figure table td {
+  font-size: 80%;
+  line-height: 100%;
+  padding: 0.5em;
+}
+
+span#permalink-message {
+  background: #ccc;
+  border-radius: 3px;
+  color: #333;
+  margin-left: 1em;
+  padding: 0.5em 0.75em;
+  display: none;
+}
+
+.graph-error {
+  padding: 1em;
+  padding-bottom: 0;
+}
+
+p.label-preliminary {
+  background: #f2c762;
+  color: #333;
+  font-size: 90%;
+  font-weight: bold;
+  margin: 0;
+  padding: 0.5em 1em;
+}
+
+.graphContainer h5.tableview-heading {
+  background: #eee;
+  border-top: 1px solid #ccc;
+  margin-top: 0.5em;
+}
+
+.graphContainer h5.tableview-heading a {
+  color: #333;
+  cursor: pointer;
+  display: block;
+  padding: 1em;
+}
+
+.graphContainer h5.tableview-heading a:hover {
+  background: #ddd;
+}
+
+.aopa-graph-tableview {
+  display: none;
+}
+
+.aopa-graph-tableview th {
+  font-weight: bold;
+}
+
+.aopa-graph-tableview td+td,
+.aopa-graph-tableview th+th {
+  text-align: center;
+  font-weight: bold;
+}
+
+.accordion-arrow {
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  padding: 3px;
+  margin: 5px;
+  /* display: inline-block; */
+  float: right;
+  margin: 10px;
+  transform: rotate(-45deg);
+  position: relative;
+  top: -2px;
+  -webkit-transform: rotate(-45deg);
+}
+
+a.tableview-expand.open .accordion-arrow {
+  transform: rotate(-45deg);
+  position: relative;
+  top: -2px;
+  -webkit-transform: rotate(45deg);
+}
+
+.reportText {
+  display: none;
+}
+
+#graphOutput .reportText {
+  display: block;
+  clear: left;
+  padding: 2em 0;
+  border-bottom: 1px solid #bbb;
+  padding-bottom: 1em;
+  margin-bottom: 2em;
+}
+
+.reportText p {
+  margin-bottom: 1em;
+}
+
+p.override-intro {
+  display: none;
+}
+
+#jsonCacheOutput {
+  height: 600px;
+  width: 100%;
+  background: #fff;
+  margin: 1em 0;
+  padding: 1em;
+  overflow: auto;
+}
+
+@keyframes drawgraph {
+  0% {
+    transform: scale(1, 0);
+  }
+}
+
+@keyframes drawtext {
+  0% {
+    transform: translateY(300px);
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (min-width: 881px) {
+  #graphOutput {
+    /* column-count: 2;
+          column-gap: 1em; */
+  }
+
+  #graphOutput .nall-report-figure {
+    float: left;
+    display: block;
+    /* display: inline-block; */
+    /* width: 100%; */
+  }
+
+  .nall-container-single {
+    width: 580px;
+  }
+
+  .nall-container-double {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .nall-container-single+.nall-container-single {}
+
+  .container-clear-left {
+    clear: left;
+  }
+
+  /*#graphOutput .nall-report-figure:nth-child(even) {
+            margin-right: 0;
+        }
+        #graphOutput .nall-report-figure:nth-child(2n+1) {
+            /* clear: left; */
+  /*}*/
+}
+
+@media (max-width: 560px) {
+  table.nall-report-chart tr {
+    display: table-row !important;
+    border: none;
+  }
+
+  table.nall-report-chart td {
+    display: table-cell !important;
+    /* width: auto !important; */
+    padding-left: 5px;
+  }
+
+  table.nall-report-chart td+td {
+    border-left: 1px solid #eee;
+  }
+
+  table.nall-report-chart th {
+    display: table-cell !important;
+    /* width: auto !important; */
+  }
+
+  table.nall-report-chart {
+    /* table-layout: auto !important; */
+  }
+
+  .heading-button {
+    padding: 4px 8px;
+    font-size: 90%;
+  }
+
+  #heading-buttons-conditions {
+    padding-bottom: 0;
+  }
+
+  p.svg-text-foreignobject {
+    font-size: 11px;
+  }
+
+  svg.graph text.points,
+  svg.graph text.axis-labels,
+  svg.graph text.noDataSVG,
+  p.svg-text-foreignobject {
+    font-size: 10px;
+  }
+
+  .nall-report-figure h3 {
+    font-size: 18px;
+    line-height: 125%;
+    background-position: calc(100% - 5px) 8px;
+    background-size: 70px;
+    padding-right: 80px;
+  }
+
+  .nall-report-figure h3 span.graph-subtitle {
+    font-size: 16px;
+  }
+
+  .nall-report-chart td,
+  .graph-key-label,
+  .nall-report-chart-headings th {
+    font-size: 10pt;
+  }
+
+}
+
+.graph-polyline-vertical {
+  fill: rgba(0, 0, 0, 0.1);
+  /* fill: #eee; */
+  stroke: none;
+}
+
+.graph-polyline-horizontal {
+  fill: rgba(0, 0, 0, 0.25);
+  /* fill: #ddd; */
+  stroke: none;
+}
+
+@media (max-width: 1219px) {
+
+  .nall-container-single {
+    width: 100%;
+  }
+}
+
+@media (min-width: 1220px) {
+  .nall-container-single {
+    width: 580px;
+  }
+
+  .container-margin-left {
+    /* margin-left: 40px; */
+    margin-right: 40px;
+  }
+}
+
+@media print {
+  .breadcrumbs {
+    display: none;
+  }
+
+  .nallReport {
+    background: #fff;
+    padding: 0;
+  }
+
+  a#heading-back {
+    display: none;
+  }
+
+  .nall-report-figure {
+    box-shadow: none;
+    margin-top: 15px;
+    margin-bottom: 0;
+    page-break-inside: avoid;
+    border: 1px solid #ccc;
+    border: none;
+  }
+
+  #heading-controls {
+    display: none;
+  }
+
+  h1#heading-main {
+    font-size: 2rem;
+    margin-top: 20px;
+  }
+
+  .heading-buttons {
+    display: none;
+  }
+
+  .nall-report-figure h3 {
+    background: #fff;
+    font-size: 14pt;
+    border-bottom: none;
+    margin-bottom: 0;
+    padding: 10px;
+    padding-left: 10px;
+    line-height: 100%;
+  }
+
+  .nall-report-figure h3 span.graph-subtitle {
+    font-size: 12pt;
+    margin-bottom: 0.25em;
+  }
+
+  .nall-report-chart td {
+    border: none;
+    border-bottom: 1px solid #eee;
+    font-size: 10pt;
+    padding: 0.25em;
+  }
+
+  .aopa-graph {
+    padding: 0;
+  }
+
+  .graph-lines-vertical {
+    stroke: #eee;
+    stroke: #fff;
+    stroke: rgba(127, 127, 127, 0.5);
+    stroke-width: 1px;
+  }
+
+  .graph-lines-horizontal {
+    stroke: #ddd;
+  }
+
+  .graph-key-color {
+    width: 12px;
+    height: 12px;
+  }
+
+  .graph-key-0 {
+    box-shadow: inset 0 0 0 100px #e1e2e4;
+  }
+
+  .graph-key-1 {
+    box-shadow: inset 0 0 0 100px #091c32;
+  }
+
+  .graph-key-label {
+    font-size: 80%;
+    line-height: 100%;
+  }
+
+  .nall-report-figure table {
+    border-top: 1px solid #ddd;
+  }
+
+  .nall-report-figure table .nall-report-chart-headings th {
+    font-size: 10pt;
+    line-height: 100%;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+  }
+
+}
+
+@media(min-width:1200px) {
+#report-archive-select {
+padding-right: 410px!important;  
+}
+}
+
+/* @page {
+        size: auto;   
+        margin: 1em;  
+    } */
+
+/* -- End CSS --------------------------------------- */

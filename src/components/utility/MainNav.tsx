@@ -2,7 +2,6 @@ import ThemeToggle from './ThemeToggle';
 import { useState, useRef, useEffect } from 'preact/hooks';
 
 
-
 type Props = {
   section?: string | null;
   magazineTitle?: string; // ← new prop
@@ -63,6 +62,8 @@ export default function Nav({ section, magazineTitle }: Props) {
             )}
           </ul>
         </div>
+
+
         <div class="flex">
           <button
             aria-label="Toggle menu"
@@ -79,6 +80,7 @@ export default function Nav({ section, magazineTitle }: Props) {
         </div>
 
       </nav>
+
 
       {/* DROPDOWN: now a sibling of nav, not a child */}
       <div class="hidden md:block leading-none absolute top-full left-0 w-screen bg-aopa-dkblue text-white shadow-md transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-40">

@@ -1,0 +1,2143 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/nall/Header.astro'
+import Graphs from '../components/nall/Graphs.astro'
+import ReportText from '../components/nall/ReportText.astro'
+
+---
+
+<link rel="stylesheet" href="../../public/styles/nall.css">
+<script src="../../public/js/nall-top.js" defer></script>
+
+<script type="text/javascript" src="https://download.aopa.org/test/html2pdf.bundle.min.js"></script>
+<Layout>
+  <div class="nallReport">
+    <Header>
+    <Graphs>
+  </div>
+
+<ReportText>
+
+<script>
+
+  // Begin Nall Report JS ---------------------------------------------------- //
+
+  // Global toggle for using cached API data
+  // Default: true
+  var usingCache = false;
+
+  // Global toggle to activate writing full data output to the console. 
+  // Used to "freeze" annual data for annually published reports
+  // Data can be copied from the console and added to jsonCacheDB in Top JS section, with a year (string) as index. Format:
+  // Set to "true" to use, on local. Not meant for production use - remember to deactivate after copying data
+  // Example test of frozen data: Change a value in Fig 1.1 (or any other non-Summary figure) and reload the page with "cacheOnlyReport" set to false. Your value should appear instead of the live API value
+  // jsonCacheDB['yyyy'] = `[outputhere]`;
+  // Default: false
+  var outputDataFreeze = false;
+
+  // Will only use cached data for pages in the numbered Nall Report contexts if true
+  // Set to false to force using cached data for any year in the jsonCacheDb object
+  // E.g. if false, and a jsonCacheDB['2018'] exists, all 2018 data will use that cache instead of querying the API
+  // Useful for times when expecting heavy data traffic, and a recent data freeze exists
+  // Note: Cannot freeze data if this is false, because it will not be running the ajax query that writes out the data freeze
+  // Default: true
+  var cacheOnlyReport = true;
+
+  // Global JSON Cache object, initialized as empty
+  var jsonCache = {};
+
+  // -- Setup ---------------------------------------------------------------- //
+  // If true, adds a "Table View" button below all visual graphs
+  // This button expands a table with the numerical data for that graph in readable format, for better accessibility
+  // Default: false
+  var drawTableView = false;
+
+  // Default list of normalized y-axis ranges, for graphs to choose based on data
+  // Chosen for most useful value ranges for visualizing existing data
+  // Format is [lower, upper, increment],
+  // e.g. graphs with data falling between 0 and 5 will use those as the graph y-axis values, with an increment of 1 unit
+  var rangeList = [
+    [0, 5, 1],
+    [5, 10, 2],
+    [10, 20, 5],
+    [20, 30, 6],
+    [30, 40, 8],
+    [40, 50, 10],
+    [50, 100, 20],
+    [100, 150, 30],
+    [150, 200, 40],
+    [200, 300, 60],
+    [300, 500, 100],
+    [500, 1000, 200],
+    [1000, 1500, 300],
+    [1500, 2000, 400],
+    [2000, 3000, 600],
+    [3000, 5000, 1000]
+  ];
+
+  // Theme Colors --------------------------------------
+  // Default colors for graphs
+  var layerColors = ["#e1e2e4", "#091c32"];
+  var layerTextColors = ["#333", "#333"];
+  // ---------------------------------------------------
+
+  // All graph types
+  var graphTypes = [
+    'area', 'bar', 'chart', 'list', 'parts', 'summary', 'summaryrates', 'text'
+  ];
+  // Graph types that utilize double-sized (full-width) columns
+  var doubleColumnTypes = [
+    'area', 'bar', 'summary', 'summaryrates', 'text'
+  ];
+  var singleColumnCounter = 0; // Counter, incremented while iterating through graphs in dual-column widths
+
+
+  // ---------------------------------------------------------
+  // Preliminary Data and Excluded Preliminary Data
+  // ---------------------------------------------------------
+
+  // For any figure that renders:
+  // - If its year is marked "preliminary" (e.g. found in "prelimYears" below),
+  // - and if that year is also included in "prelimExcludeYears" below,
+  // - and the figure is one of the figure numbers in the "prelimExcludeList" below,
+  // that figure will not be rendered
+
+  // Graphs are compared to these array years, and marked preliminary if they match
+  // Years must be listed as strings
+  // Note: this is separate from prelimExcludeYears (below) that handles whether or not to exclude figures based on preliminary status
+  var prelimYears = ["2023", "2024"];
+
+  // Years that exclude figures if marked preliminary
+  // Graphs are compared to these array years, and if they are for one of these years, they will be excluded from rendering if they are found in the "prelimExcludeList" below
+  var prelimExcludeYears = ["2023", "2024"];
+
+  // Default list of figures to be excluded during iteration through preliminary year data
+  var prelimExcludeList = [
+    "1.9", "1.10", "1.11",
+    "1.1.1", "1.1.2", "1.1.3", "1.1.4", "1.1.5",
+    "1.2.1",
+    "1.3.1", "1.3.2", "1.3.3", "1.3.4", "1.3.5",
+    "1.4.1", "1.4.2", "1.4.3", "1.4.4", "1.4.5",
+    "1.5.1", "1.5.2", "1.5.3", "1.5.4", "1.5.5",
+    "1.6.1", "1.6.2", "1.6.3", "1.6.4", "1.6.5",
+    "1.7.1", "1.7.2", "1.7.3", "1.7.4", "1.7.5", 
+    "1.8.1", "1.8.2", "1.8.3", "1.8.4", "1.8.5",
+    "1.9.1", "1.9.2", "1.9.3", "1.9.4", "1.9.5",
+    "1.10.1", "1.10.2", "1.10.3", "1.10.4", "1.10.5",
+    "2.4",
+    "3.2", "3.9",
+    "4.2",
+    "5.2"
+  ];
+
+  // ---------------------------------------------------------
+  // Far part numbers
+  // ---------------------------------------------------------
+  // FAR part numbers for Commercial Fixed-Wing and Commercial Helicopters
+  // Charts of type "parts" are sorted and divided by/into these subheadings
+  // Used in Figs 2.5, 2.6, 2.7 / 4.5, 4.6, 4.7
+  var farParts = {
+    'cfw': ['135', '137'],
+    'ch': ['133', '135', '137']
+  }
+
+  // Labels to accompany FAR part numbers, see above
+  var farPartLabels = {
+    '133': 'External Load',
+    '135': 'Charter or Cargo',
+    '137': 'Aerial application'
+  }
+
+  // -----------------------------------------------
+  // Json "Database" Caching
+  // -----------------------------------------------
+  var jsonDBParse = JSON.parse(jsonQueryDB);
+  var cacheDBParse; // Parsed cache data, will be set by updateCacheToActiveYear function, whenever activeYear is set
+
+  // Array of all figures contained by each category -- "all" contains full list
+  var figureLists = {
+    'overall': ["1.2", "1.3", "2.2", "2.3", "3.3", "3.4", "4.3", "4.4"],
+    'ncfw': ["Text-Intro-NCFW", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.9", "1.10", "1.11"],
+    'cfw': ["Text-Intro-CFW", "2.1", "2.2", "2.3", "2.4", "2.5", "2.6", "2.7"], //"2.8"],
+    'nch': ["Text-Intro-NCH", "3.1", "3.2", "3.3", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9"],
+    'ch': ["Text-Intro-CH", "4.1", "4.2", "4.3", "4.4", "4.5", "4.6", "4.7"], //"4.8"],
+    'se': ["5.1", "5.2", "5.3"],
+    'all': ["Text-Intro", "Summary 1", "Summary 2",
+      "Text-Intro-NCFW",
+      "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.9", "1.10", "1.11",
+      "1.1.1", "1.1.2", "1.1.3", "1.1.4", "1.1.5",
+      "1.2.1",
+      "1.3.1", "1.3.2", "1.3.3", "1.3.4", "1.3.5",
+      "1.4.1", "1.4.2", "1.4.3", "1.4.4", "1.4.5",
+      "1.5.1", "1.5.2", "1.5.3", "1.5.4", "1.5.5",
+      "1.6.1", "1.6.2", "1.6.3", "1.6.4", "1.6.5", 
+      "1.7.1", "1.7.2", "1.7.3", "1.7.4", "1.7.5", 
+      "1.8.1", "1.8.2", "1.8.3", "1.8.4", "1.8.5",
+      "1.9.1", "1.9.2", "1.9.3", "1.9.4", "1.9.5",
+      "1.10.1", "1.10.2", "1.10.3", "1.10.4", "1.10.5",
+      "Text-Intro-CFW",
+      "2.1", "2.2", "2.3", "2.4", "2.5", "2.6", "2.7", //"2.8",
+      "Text-Intro-NCH",
+      "3.1", "3.2", "3.3", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9",
+      "Text-Intro-CH",
+      "4.1", "4.2", "4.3", "4.4", "4.5", "4.6", "4.7", //"4.8",
+      "5.1", "5.2", "5.3"],
+    'report': ["Text-Intro",
+      "Summary 1", "Summary 2",
+      "Text-Intro-NCFW",
+      "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.9", "1.10", "1.11",
+      "1.1.1", "1.1.2", "1.1.3", "1.1.4", "1.1.5",
+      "1.2.1",
+      "1.3.1", "1.3.2", "1.3.3", "1.3.4", "1.3.5",
+      "1.4.1", "1.4.2", "1.4.3", "1.4.4", "1.4.5",
+      "1.5.1", "1.5.2", "1.5.3", "1.5.4", "1.5.5",
+      "1.6.1", "1.6.2", "1.6.3", "1.6.4", "1.6.5",
+      "1.7.1", "1.7.2", "1.7.3", "1.7.4", "1.7.5", 
+      "1.8.1", "1.8.2", "1.8.3", "1.8.4", "1.8.5",
+      "1.9.1", "1.9.2", "1.9.3", "1.9.4", "1.9.5",
+      "1.10.1", "1.10.2", "1.10.3", "1.10.4", "1.10.5",
+      "Text-Intro-CFW",
+      "2.1", "2.2", "2.3", "2.4", "2.5", "2.6", "2.7", //"2.8",
+      "Text-Intro-NCH",
+      "3.1", "3.2", "3.3", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9",
+      "Text-Intro-CH",
+      "4.1", "4.2", "4.3", "4.4", "4.5", "4.6", "4.7", //"4.8",
+      "5.1", "5.2", "5.3"]
+  };
+
+  // Array of all figures that pertain to each condition, as sub-grouping to category (above)
+  // These are used to filter the view to particular sub categories from header links
+  // E.g. clicking "Non-Commercial Fixed Wing" category in the header, will then show these conditions as a second header bar of clickable links. 
+  // The buttons each have their own collection of related graphs, from this array
+  var conditionLists = {
+    'fuel': ["1.4.1", "1.4.2", "1.4.3", "1.4.4", "1.4.5"],
+    'weather': ["1.7.1", "1.7.2", "1.7.3", "1.7.4", "1.7.5"],
+    'takeoff': ["1.3.1", "1.3.2", "1.3.3", "1.3.4", "1.3.5"],
+    'maneuvering': ["1.5.1", "1.5.2", "1.5.3", "1.5.4", "1.5.5"],
+    'descent': ["1.6.1", "1.6.2", "1.6.3", "1.6.4", "1.6.5"],
+    'landing': ["1.1.1", "1.1.2", "1.1.3", "1.1.4", "1.1.5"],
+    'mechanical': ["1.8.1", "1.8.2", "1.8.3", "1.8.4", "1.8.5"],
+    'enroute': ["1.9.1", "1.9.2", "1.9.3", "1.9.4", "1.9.5"],
+    'preflight': ["1.10.1", "1.10.2", "1.10.3", "1.10.4", "1.10.5"],
+    'other': ["1.2.1"]
+  }
+
+  // Fixed value, used to calculate which numbered report a given year is (see below)
+  var firstReportYear = 1988;
+
+  // Calculates the grammatically proper ordinal suffix, given an input number
+  // E.g. 21 returns "21st" where 11 returns "11th"
+  function ordinal_suffix_of(i) {
+    var j = i % 10,
+      k = i % 100;
+    if (j == 1 && k != 11) {
+      return i + "st";
+    }
+    if (j == 2 && k != 12) {
+      return i + "nd";
+    }
+    if (j == 3 && k != 13) {
+      return i + "rd";
+    }
+    return i + "th";
+  }
+
+  // Returns grammatically proper number of a given year's edition, including ordinal suffix
+  // E.g. 2019 returns "31st"
+  function getNallReportEditionNumberByYear(year) {
+    return ordinal_suffix_of(year - firstReportYear);
+  }
+
+  // ---------------------------------------------------------
+  // Globals
+  // ---------------------------------------------------------
+  // Global variables to record current state
+  var activeButton;
+  var activeButtonCategory;
+  var activeButtonConditions;
+
+  // Default starting parameters for a blank page load
+  // These are overriden by the results of queryVals (below) if any, before render
+  var activeCategory = 'all';
+  var activeYear = 2022;
+
+  // Empty public array that will be filled by query URL parameters (if any) to create initial states from permalinks
+  var queryVals = new Array();
+
+  // Check query vals on initial load, to accomodate loading Report (cached) versions of the default year
+  checkQueryVals();
+
+  // Updates the cache to use the active year, if it was changed by queryVals
+  updateCacheToActiveYear();
+  var activeCondition = 'all';
+  // activeFigureList is the main list that determines what figures will finally be drawn, when the page is rendered
+  // This is declared here, based on the activeCategory from the initial state or the queryVals
+  var activeFigureList = figureLists[activeCategory];
+
+  // Event handlers for header controls
+  function showHeaderControls() {
+    $('#heading-control-filter').removeClass('hidden');
+    $('.heading-buttons').addClass('open');
+  }
+  function hideHeaderControls() {
+    $('#heading-control-filter').addClass('hidden');
+    $('.heading-buttons').removeClass('open');
+    $('#heading-back').removeClass('open');
+  }
+  function showHeaderConditions() {
+    // $('#heading-buttons-conditions').addClass('open');
+  }
+  function hideHeaderConditions() {
+    $('#heading-buttons-conditions').removeClass('open');
+  }
+
+  // Updates the cacheDBParse to the current year, or disables caching if year data is not cached
+  function updateCacheToActiveYear() {
+
+    if (!usingCache) return;
+
+    // Forces a loading error if a page tries to load using a non-existent cache
+    cacheDBParse = null;
+
+    if (jsonCacheDB[activeYear] != null) {
+      if (cacheOnlyReport) {
+        if (queryVals['report']) {
+          cacheDBParse = JSON.parse(jsonCacheDB[activeYear]);
+        }
+      } else {
+        cacheDBParse = JSON.parse(jsonCacheDB[activeYear]);
+      }
+    } else {
+      console.log(`No cache data found for ${activeYear}`);
+    }
+
+  }
+
+  // Restore initial conditions
+  function resetAll() {
+    //activeCategory = 'overall';
+    activeCategory = 'all';
+    activeYear = 2022;
+    updateCacheToActiveYear();
+
+    activeCondition = 'all';
+    activeFigureList = figureLists[activeCategory];
+
+    var prelimText = (prelimYears.includes(activeYear.toString())) ? ' Preliminary ' : '';
+
+    updatePageTitle(`Calendar Year ${activeYear}${prelimText} Accident Conditions`);
+    //updateActiveButton();
+    activeButtonCategory = $('.heading-button-category[data-category="all"]');
+    $(activeButtonCategory).addClass('active');
+
+  }
+
+  // Reads in URL parameters (if any) and loads queryVals array (above) with page parameters
+  function checkQueryVals() {
+
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString);
+    var entries = urlParams.entries();
+    for (const entry of entries) {
+      queryVals[`${entry[0]}`] = `${entry[1]}`;
+    }
+
+    // Debug: Test values for local override
+    // queryVals['category'] = 'cfw';
+    // queryVals['year'] = 2018;
+    // queryVals['condition'] = 'fuel';
+    //queryVals['report'] = 'true';
+
+    // Debug: Test Report (cached) version of year
+    // queryVals['category'] = 'all';      
+    // queryVals['year'] = 2018;
+    // queryVals['condition'] = 'all';
+    // queryVals['report'] = 'true';
+
+    // console.log("queryVals:");
+    // console.log(queryVals);
+
+    if (queryVals['category'] != null) {
+
+      //console.log(queryVals);
+
+      if (activeButtonCategory != null) {
+        $(activeButtonCategory).removeClass('active');
+        activeButtonCategory = null;
+      }
+
+      if (['ncfw', 'cfw', 'nch', 'ch', 'se', 'report'].indexOf(queryVals['category']) >= 0) {
+        $('.heading-buttons').addClass('open');
+        activeCategory = queryVals['category'];
+        activeFigureList = figureLists[activeCategory];
+        activeButtonCategory = $(`.heading-button[data-category="${activeCategory}"]`);
+        $(activeButtonCategory).addClass('active');
+      }
+
+      if (activeCategory == 'ncfw') {
+        if (!prelimYears.includes(activeYear)) {
+          $('#heading-buttons-conditions').slideDown(500);
+          if (queryVals['condition'] != null) {
+            if (['landing', 'other', 'takeoff', 'fuel', 'maneuvering', 'descent', 'weather', 'mechanical', 'enroute', 'preflight'].indexOf(queryVals['condition']) >= 0) {
+              activeCondition = queryVals['condition'];
+              activeButtonConditions = $(`.heading-button-condition[data-conditions="${activeCondition}"]`);
+              $(activeButtonConditions).addClass('active');
+              activeFigureList = conditionLists[activeCondition];
+            }
+          }
+        }
+      }
+    }
+
+    if (queryVals['year'] != null) {
+      $('.heading-buttons').addClass('open');
+      activeYear = parseInt(queryVals['year']);
+      updateCacheToActiveYear();
+      $('#nall-select-year').val(activeYear);
+
+      var prelimText = (prelimYears.includes(activeYear.toString())) ? ' Preliminary ' : '';
+
+      updatePageTitle(`Calendar Year ${activeYear}${prelimText} Accident Conditions`);
+    }
+
+    if (queryVals['report'] == 'true') {
+      var prelimText = (prelimYears.includes(activeYear.toString())) ? ' (Preliminary Data)' : '';
+      //updatePageTitle(`The ${getNallReportEditionNumberByYear(activeYear)} Richard G. McSpadden Report ${prelimText}`);
+      updatePageTitle(`The Richard G. McSpadden Report`);
+      $('#heading-sub').text(`${getNallReportEditionNumberByYear(activeYear)} AOPA Air Safety Institute Accident Report ${prelimText}`);
+
+
+      if ($(`#reportTextYear-${activeYear}`).length > 0) {
+        $(`#heading-intro`).html($(`#reportTextYear-${activeYear} p.override-intro`).html());
+      }
+
+    }
+
+  }
+
+  // Empty graphOutput container
+  function clearGraphOutput() {
+    $('#graphOutput').empty();
+    singleColumnCounter = 0;
+  }
+
+  var nallFigureList = new Array();
+
+  // Load all graphs from activeFigureList into graphOutput container
+  function updateGraphOutput() {
+    for (var i = 0; i < activeFigureList.length; i++) {
+
+      // Cache builder: instantiate blank objects in the same order as activeFigureList, to prevent the list building out of order, given that ajax returns asynchronously
+      jsonCache[activeFigureList[i]] = {};
+
+      // prelimExcludeYears (separate from prelimYears) marks years that should skip certain figures
+      // If this year is in prelimExcludeYears...
+      if (prelimExcludeYears.includes(activeYear)) {
+
+        // ...and that figure index is not in the prelimExcludeList, draw the figure
+        if (!prelimExcludeList.includes(activeFigureList[i])) {
+          var figure = new NallReportFigure(activeFigureList[i], activeYear);
+          nallFigureList.push(figure);
+        }
+
+        // (Otherwise, skip that figure)
+
+        // ...if not, draw the figure as normal
+      } else {
+        var figure = new NallReportFigure(activeFigureList[i], activeYear);
+        nallFigureList.push(figure);
+      }
+
+    }
+  }
+
+  // Redraw all graphs based on cached result data
+  // Called when resizing the browser frame, to redraw exising graphs
+  // This does not require or call new API queries
+  function refreshDrawOutput() {
+    // Remove previous preliminary tags
+    $("p.label-preliminary").remove();
+    for (var i = 0; i < nallFigureList.length; i++) {
+      // Check if the figure has resultData (all types except Text)
+      if (nallFigureList[i].resultData) {
+        // If so, reprocess the cached data (stored in its NallReportFigure object)
+        nallFigureList[i].ProcessData(nallFigureList[i].resultData);
+      }
+    }
+  }
+
+  // Updates the main page heading with input string
+  function updatePageTitle(title) {
+    $('#heading-main').text(title);
+  }
+
+  // Update highlighted buttons in header area to match state
+  function updateActiveButton(category = null) {
+    var newCategory = (category) ? category : activeCategory;
+    $(activeButton).removeClass('active');
+    activeButton = $(`.heading-button[data-category="${newCategory}"]`);
+    $(activeButton).addClass('active');
+  }
+
+  // Copy permalink to current graph output parameters to clipboard
+  function copyPermalink() {
+    var permalink = `https://suppwww.aopa.org/test-section/nall-test?category=${activeCategory}&year=${activeYear}&condition=${activeCondition}`;
+    navigator.clipboard.writeText(permalink);
+  }
+
+  // -- JQuery Document Ready ------------------------------------------------ //
+  $(document).ready(function (e) {
+
+    $('#showHeaderControls').click(function (e) {
+      showHeaderControls();
+    });
+    $('#hideHeaderControls').click(function (e) {
+      hideHeaderControls();
+    });
+
+    $('.heading-button').click(function (e) {
+      // $(activeButton).removeClass('active');
+      // activeButton = this;
+      // $(this).addClass('active');
+    });
+    $('.heading-button-category').click(function (e) {
+      clearGraphOutput();
+      activeCategory = $(this).data('category')
+      activeFigureList = figureLists[activeCategory];
+      if ($(this).data('hasconditions')) {
+        if (!prelimYears.includes(activeYear)) {
+          showHeaderConditions();
+          $('#heading-buttons-conditions').slideDown(500);
+          $('#heading-back').css('visibility', 'visible');
+        } else {
+          hideHeaderConditions();
+          $('#heading-buttons-conditions').slideUp(250);
+        }
+      } else {
+        hideHeaderConditions();
+        $('#heading-buttons-conditions').slideUp(250);
+      }
+      updateGraphOutput();
+      $(activeButtonCategory).removeClass('active');
+      activeButtonCategory = this;
+      $(this).addClass('active');
+      if (activeButtonConditions) {
+        $(activeButtonConditions).removeClass('active');
+        activeButtonConditions = null;
+      }
+    });
+    $('.heading-button-condition').click(function (e) {
+      clearGraphOutput();
+      activeCondition = $(this).data('conditions');
+      activeFigureList = conditionLists[activeCondition];
+      updateGraphOutput();
+      $(activeButtonConditions).removeClass('active');
+      activeButtonConditions = this;
+      $(this).addClass('active');
+    });
+    $('#heading-back').click(function () {
+      $('#heading-back').css('visibility', 'hidden');
+      $('#heading-buttons-conditions').slideUp(250);
+      $(activeButtonCategory).removeClass('active');
+      activeButtonCategory = null;
+      $(activeButtonConditions).removeClass('active');
+      activeButtonConditions = null;
+      clearGraphOutput();
+      hideHeaderControls();
+      resetAll();
+      updateGraphOutput();
+    });
+
+    // Currently unused, in favor of formatting the built-in print function of the browser
+    // This button can be restored to the header bar if desired, and this will prepare and save a local pdf file. [Update the title <h2> with the active year]
+    $('#heading-control-print').click(function () {
+      $('#pdfOutput').empty();
+      $('.nallReport').clone().addClass('nall-pdf').appendTo('#pdfOutput');
+      $('#pdfOutput .nall-pdf h1#heading-main').before(`<h2 class="pdf-title">Richard G. McSpadden Report</h2><p class="pdf-subtitle">General Aviation Accidents in 2020</p>`);
+      $('#pdfOutput .nall-report-figure:odd').after('<div class="html2pdf__page-break"></div>');
+
+      var pdf = html2pdf().from($('#pdfOutput').html()).set({
+        margin: 0.5,
+        filename: 'nall-export.pdf',
+        html2canvas: { scale: 2 },
+        jsPDF: { orientation: 'portrait', unit: 'in', format: 'letter', compressPDF: true }
+      });
+      pdf.save();
+    });
+
+    // Also unused currently, can be restored by adding an element of this ID
+    $('#heading-control-permalink').click(function () {
+      copyPermalink();
+      $('#permalink-message').fadeIn(500);
+      setTimeout(function () { $('#permalink-message').fadeOut(500); }, 3000);
+    });
+
+    // Year dropdown menu select change
+    $('#nall-select-year').change(function (e) {
+      if ($(this).val()) {
+        activeYear = $(this).val();
+        updateCacheToActiveYear();
+        //showHeaderControls();
+        clearGraphOutput();
+
+        var prelimText = (prelimYears.includes(activeYear.toString())) ? ' Preliminary ' : '';
+
+        // Preliminary years don't show conditions, hide menu
+        if (prelimYears.includes(activeYear)) {
+          $('#heading-buttons-conditions').slideUp(250);
+        } else {
+          $('#heading-buttons-conditions').slideDown(250);
+        }
+
+        updatePageTitle(`Calendar Year ${activeYear}${prelimText} Accident Conditions`);
+        updateGraphOutput();
+      }
+    });
+    $('#report-archive-select').change(function (e) {
+      if ($(this).val()) {
+        window.open(`${$(this).val()}`, '_blank');
+      }
+    });
+
+  });
+
+  // -----------------------------------------------------
+  // Resize functionality --------------------------------
+  // The page is setup to be responsive, but the layouts are optimized for
+  // desktop/mobile separately. These functions let the page detect a resize and, 
+  // upon resize end, redraw the graphs appropriately for the new width
+  // Note: this redraw uses refreshDrawOutput, which uses cached data, and
+  // does not require new API calls upon redrawing
+  // ------------------------------------------------------
+  var rtime;
+  var timeout = false;
+  var delta = 200;
+
+  // Set timeout on resize
+  $(window).resize(function () {
+    rtime = new Date();
+    if (timeout === false) {
+      timeout = true;
+      setTimeout(resizeend, delta);
+    }
+  });
+
+  // After timeout (on end of resizing), refresh all graphs to new sizes
+  function resizeend() {
+    if (new Date() - rtime < delta) {
+      setTimeout(resizeend, delta);
+    } else {
+      timeout = false;
+
+      // These two statements would reload the whole state, with new API calls
+      //clearGraphOutput();
+      //updateGraphOutput();
+
+      // This just redraws, from cached return data of the initial load
+      refreshDrawOutput();
+
+    }
+  }
+
+  // Main page load routine
+  $(document).ready(function (e) {
+    resetAll();
+    checkQueryVals();
+    updateGraphOutput();
+  });
+
+</script>
+
+<script>
+
+  var graphIndex = 0;
+  var graphTemplate = `
+<div class="nall-report-figure">\
+    <h3>Loading</h3>\
+    <div class="graphContainer"></div>\
+</div>`;
+
+  // ----------------------------------------------------------------
+  // NALL Report
+  // Main "class" for handling API queries, provided by Brian Tenberg
+  // ----------------------------------------------------------------
+  // Example uses:
+  // nall.getOverall(2016, "Airplane", "N");
+  // nall.getTrend(null, 2017, "Airplane", "Y", "Landing");
+  // nall.trendData
+  // nall.trendData.params
+  var nall = {
+    baseUrl: "https://webapp.aopa.org/NtsbApi/nall", // PROD
+    //baseUrl: "https://webappsfstage.aopa.org/NtsbApi/nall/", //STAGING
+    overallData: [],
+    trendData: [],
+    resultData: [],
+    // Get Overall data
+    getOverall: function (year, category, commercial, graphType, container = null) {
+      $.ajax({
+        type: "POST",
+        url: nall.baseUrl + "/overall/",
+        crossDomain: true,
+        contentType: "application/json",
+        data: JSON.stringify({ year: year, category: category, commercial: commercial }),
+        success: function (xhr, textStatus, data) {
+          nall.overallData = data.responseJSON;
+          nall.overallData.params = { year: year, category: category, commercial: commercial };
+
+          // Do other stuff here to assure synchronization ...
+
+        },
+        error: function (xhr, textStatus, error) {
+          alert("Error", textStatus);
+        }
+      });
+    },
+    // Get Trend data
+    getTrend: function (startYear, endYear, category, commercial, accidentType, caller = null) {
+      $.ajax({
+        type: "POST",
+        url: nall.baseUrl + "/trend/",
+        crossDomain: true,
+        contentType: "application/json",
+        data: JSON.stringify({ startYear: startYear, endYear: endYear, category: category, commercial: commercial, accidentType: accidentType }),
+        success: function (xhr, textStatus, data) {
+          nall.trendData = data.responseJSON;
+          nall.trendData.params = { startYear: startYear, endYear: endYear, category: category, commercial: commercial, accidentType: accidentType };
+          if (caller) caller.ProcessData(nall.trendData);
+        },
+        error: function (xhr, textStatus, error) {
+          alert("Error", textStatus);
+        }
+      });
+    },
+
+    // ajaxQuery -- added to Brian's class to provide a single generic function
+    // accepts a "url" parameter to allow any API endpoint, and generic queryParams
+    // Get Ajax data from API
+    ajaxQuery: function (index, url, queryParams, caller = null) {
+      $.ajax({
+        type: "POST",
+        url: nall.baseUrl + `/${url}/`,
+        crossDomain: true,
+        contentType: "application/json",
+        data: JSON.stringify(queryParams),
+        success: function (xhr, textStatus, data) {
+          nall.resultData = data.responseJSON;
+          nall.resultData.params = queryParams;
+          if (caller) caller.ProcessData(nall.resultData);
+          jsonCache[index] = nall.resultData;
+
+          // console.log("DATA: ");
+          // console.log(data);
+
+          if (outputDataFreeze) {
+            // console.log("Full data output----------");
+            console.log(JSON.stringify(jsonCache));
+            // console.log("-----------End data output");
+          }
+
+        },
+        error: function (xhr, textStatus, error) {
+          nall.error = "Error";
+          if (caller) caller.ProcessError("Error returning data");
+          //alert("Error", textStatus);
+        }
+      });
+    },
+    // Get cached JSON data from stored JSON (no API call)
+    // Used in place of a normal API call in cases of wanting cached data instead
+    // Requires cached year JSON data to be present in jsonCacheDB, indexed by year (string)
+    cacheQuery: function (index, queryParams, caller = null) {
+      if (caller) {
+        caller.ProcessData(cacheDBParse[index]);
+      }
+    }
+
+  }
+
+  // Main AOPAGraph class, to be used or overriden by extension classes
+  class AOPAGraph {
+
+    constructor(data, dataLayers, graphWidth, graphHeight, graphPadding) {
+
+      this.data = data;
+      this.dataLayers = dataLayers;
+      this.PreProcessData();
+
+      this.graphWidth = graphWidth;
+      this.graphHeight = graphHeight;
+      this.graphPadding = graphPadding;
+      this.graphDrawWidth = this.graphWidth - this.graphPadding.l - this.graphPadding.r;
+      this.graphDrawHeight = this.graphHeight - this.graphPadding.b - this.graphPadding.t;
+
+      this.dataMaximums;
+
+      // console.log(data);
+      // console.log(dataLayers);
+
+      this.graph = this.ConstructGraph();
+      this.outputHTML = this.BuildGraphHTML();
+
+    }
+
+    PreProcessData() {
+      // Placeholder, to be overridden by extension classes
+    }
+
+    ConstructGraph() {
+
+      //console.log(this.data);
+
+      this.dataMaximums = this.CalculateDataMaximums();
+      var axisData = this.ConstructGraphAxisData(this.data, { x: this.dataMaximums.x, y: this.CalculateYOverhead(this.dataMaximums.y) });
+
+      var layerDataPoints = new Array();
+      for (var i = 0; i < this.dataLayers.length; i++) {
+        var dataPoints = this.ConstructDataPoints(this.data, axisData, this.dataLayers[i].x.parameter, this.dataLayers[i].y.parameter);
+        layerDataPoints.push(dataPoints);
+      }
+
+      var graph = {
+        axisData: axisData,
+        dataPoints: layerDataPoints
+      }
+
+      return graph;
+
+    }
+
+    BuildGraphHTML() {
+
+      var xAxisColor = "#aaa";
+      var yAxisColor = "#aaa";
+      // var xLineColor = "#bbb";
+      // var yLineColor = "#f5f5f5";
+      var xLineColor = "rgba(0,0,0,0.15)";
+      var yLineColor = "rgba(0,0,0,0.05)";
+      var textOffsetX = -10;
+      var textOffsetY = -10;
+      var lineOffsetY = 0;
+
+      var graphZeroY = this.graphDrawHeight;
+      var graphMaxY = 0 + lineOffsetY;  // Would be zero, except we push the top down 1 pixel to let top lines not get cut off
+
+      var graphZeroX = this.graph.dataPoints[0][0].x + this.graphPadding.l;
+      var graphMaxX = this.graph.dataPoints[0][this.graph.dataPoints[0].length - 1].x + this.graphPadding.l;
+
+      var divisionX = this.graph.axisData.x.pixelsPerDivision;
+      var divisionXPadding = Math.ceil(divisionX * 0.1);
+      var divisionXWidth = divisionX - divisionXPadding;
+      var divisionXHalf = divisionX * 0.5;
+      graphMaxX += divisionX; // Extend xboundary by another division
+
+      var graphOutput = `<div class="aopa-graph area-graph"><svg class="graph" width="${this.graphWidth}" height="${this.graphHeight}" style="width: ${this.graphWidth}px; height: ${this.graphHeight}px">`;
+      var tableOutput = `<div class="aopa-graph-tableview" style="display: none">`;
+
+      var graphPathString = String.empty;
+
+      // Buffers null values, so that graphs can either resume past gaps, or terminate at the last data point
+      var graphNullPathString = new Array();
+
+      var boxOutput = '';
+      var nullBoxOutput = '';
+
+      // Style definitions for squares at each data point
+      var boxHeight = 6;
+      var boxWidth = 6;
+      var boxColor = "#ea5229"; // Air Safety Institute Orange
+
+      // ---------------------------------------------------------------------
+      // - Main graph polygon - Vertices/Path
+      // ---------------------------------------------------------------------
+      // Data: Draw vertices/path for area graph data layer
+      for (var dl = 0; dl < this.dataLayers.length; dl++) {
+
+        var lastX = 0;
+
+        graphNullPathString = new Array();
+        graphPathString = `<path class="graphData" style="transform-origin: 0 ${graphZeroY}px" d="M ${graphZeroX + divisionXHalf} ${graphZeroY}`;
+
+        for (var i = 0; i < this.graph.dataPoints[dl].length; i++) {
+
+          var value = this.data[i][this.dataLayers[dl].y.parameter];
+
+          if (value == null) {
+
+            // Buffer this value, so that any data after it can resume the plotting
+            // Otherwise, the area graph will terminate at this point (if no data after this)
+            graphNullPathString.push(` L ${this.graph.dataPoints[dl][i].x + this.graphPadding.l + divisionXHalf} ${this.graph.dataPoints[dl][i].y}`);
+            var boxX = (this.graph.dataPoints[dl][i].x + this.graphPadding.l + divisionXHalf) - (boxWidth * 3);
+            var boxY = this.graph.dataPoints[dl][i].y - (boxHeight);
+
+            // This generates the white vertical rectangle that covers a year with "No data available", to create
+            // the appearance of an interrupted line graph. The text will be added later in this function
+            nullBoxOutput += `<polygon points="${boxX},${0} ${boxX + boxWidth * 6},${0} ${boxX + boxWidth * 6},${graphZeroY} ${boxX},${graphZeroY}" class="graphData" style="transform-origin: 0 ${graphZeroY}px" fill="#ffffff" />`;
+
+          } else {
+
+            // If we have buffered null values, add them retroactively now
+            if (graphNullPathString.length > 0) {
+              for (var n = 0; n < graphNullPathString.length; n++) {
+                graphPathString += graphNullPathString[n];
+              }
+              graphNullPathString = new Array();
+            }
+
+            graphPathString += ` L ${this.graph.dataPoints[dl][i].x + this.graphPadding.l + divisionXHalf} ${this.graph.dataPoints[dl][i].y}`;
+            lastX = this.graph.dataPoints[dl][i].x + this.graphPadding.l + divisionXHalf;
+            var boxX = (this.graph.dataPoints[dl][i].x + this.graphPadding.l + divisionXHalf) - (boxWidth / 2);
+            var boxY = this.graph.dataPoints[dl][i].y - (boxHeight / 2);
+
+            // Buffer the polygon of the box that centers on the data point, to be rendered later
+            boxOutput += `<polygon points="${boxX},${boxY} ${boxX + boxWidth},${boxY} ${boxX + boxWidth},${boxY + boxHeight} ${boxX},${boxY + boxHeight}" class="graphData" style="transform-origin: 0 ${graphZeroY}px" fill="${boxColor}" />`;
+
+          }
+        }
+        // graphPathString += ` L ${graphMaxX} ${graphZeroY} Z" fill="${this.dataLayers[dl].fillColor}" />`;
+        graphPathString += ` L ${lastX} ${graphZeroY} Z" fill="${layerColors[dl]}" />`;
+
+        graphOutput += graphPathString;
+      }
+
+      // Draw the null boxes (above) overtop of the graph
+      graphOutput += nullBoxOutput;
+
+      // ---------------------------------------------------------------------
+      // - X Axis Lines - VERTICAL
+      // ---------------------------------------------------------------------
+
+      //graphOutput += `<line class="graph-lines-vertical" x1="${this.graph.dataPoints[0][0].x + this.graphPadding.l + 1}" y1="${graphMaxY + lineOffsetY}" x2="${this.graph.dataPoints[0][0].x + this.graphPadding.l + 1}" y2="${graphZeroY}" stroke="${yAxisColor}" stroke-width="0.999px" shape-rendering="crispEdges" />`;
+      //graphOutput += `<line class="graph-lines-vertical" x1="${graphMaxX}" y1="${graphMaxY + lineOffsetY}" x2="${graphMaxX}" y2="${graphZeroY}" stroke="${yAxisColor}" stroke-width="0.999px" shape-rendering="crispEdges" />`;
+
+      var xEdge1 = this.graph.dataPoints[0][0].x + this.graphPadding.l + 1;
+      var xEdge2 = graphMaxX;
+      var yEdge1 = graphMaxY + lineOffsetY;
+      var yEdge2 = graphZeroY;
+      graphOutput += `<polygon points="${xEdge1},${yEdge1} ${xEdge1 - 1},${yEdge1} ${xEdge1 - 1},${yEdge2} ${xEdge1},${yEdge2}" class="graph-polyline-vertical" />`;
+      graphOutput += `<polygon points="${xEdge2},${yEdge1} ${xEdge2 - 1},${yEdge1} ${xEdge2 - 1},${yEdge2} ${xEdge2},${yEdge2}" class="graph-polyline-vertical" />`;
+
+      for (var i = 0; i <= this.graph.dataPoints[0].length; i++) {
+        var xVal = (i < this.graph.dataPoints[0].length) ? (this.graph.dataPoints[0][i].x + this.graphPadding.l + 1) : graphMaxX;
+        // Darker color on first/last lines
+        //var lineColor = ((i == 0) || (i == this.graph.dataPoints[0].length)) ? yAxisColor : yLineColor;
+
+        //graphOutput += `<line class="graph-lines-vertical" x1="${xVal + divisionXHalf}" y1="${graphMaxY + lineOffsetY}" x2="${xVal + divisionXHalf}" y2="${graphZeroY}" stroke="${yLineColor}" stroke-width="0.999px" shape-rendering="crispEdges" />`;
+        var x1 = xVal + divisionXHalf;
+        var y1 = graphMaxY + lineOffsetY;
+        var y2 = graphZeroY;
+        graphOutput += `<polygon points="${x1},${y1} ${x1 - 1},${y1} ${x1 - 1},${y2} ${x1},${y2}" class="graph-polyline-vertical" />`;
+      }
+
+      // ---------------------------------------------------------------------
+      // - Y Axis Lines - HORIZONTAL
+      // ---------------------------------------------------------------------
+      for (var i = 0; i < this.graph.axisData.y.coordinates.length; i++) {
+        // SVG coordinates are measured from top/left; need to subtract from height to align to bottom/left
+        var yVal = this.graphHeight - this.graph.axisData.y.coordinates[i].value + 1;
+        yVal -= this.graphPadding.b;
+        var lineColor = (i == 0) ? xAxisColor : xLineColor;
+        var xLeft = (i == 0) ? this.graphPadding.l : this.graphPadding.l - 5;
+        if (i == 0) yVal = graphZeroY;
+        //graphOutput += `<line class="graph-lines-horizontal" x1="${xLeft}" y1="${yVal}" x2="${graphMaxX}" y2="${yVal}" stroke="${lineColor}" stroke-width="0.999px" shape-rendering="crispEdges" />`;
+        var x1 = xLeft;
+        var x2 = graphMaxX;
+        var y1 = yVal;
+        graphOutput += `<polygon points="${x1},${y1} ${x2},${y1} ${x2},${y1 - 1} ${x1},${y1 - 1}" class="graph-polyline-horizontal" />`;
+      }
+
+      // Render the buffered boxOutput (the boxes that sit on each data point)
+      graphOutput += boxOutput;
+
+      // ---------------------------------------------------------------------
+      // - Labels
+      // ---------------------------------------------------------------------
+      // Data Labels: Draw text elements for each vertex in each data layer, add shadow for foreground layers
+      for (var dl = 0; dl < this.dataLayers.length; dl++) {
+
+        for (var i = 0; i < this.graph.dataPoints[dl].length; i++) {
+
+          var offset = 0;
+
+          // DELETE: These offsets were based on area graphs going to edges, no longer needed
+          //if (i == 0) offset = 15;
+          //if (i + 1 == this.graph.dataPoints[dl].length) offset = -15;
+
+          // var textShadow = (dl > 0) ? " textShadow" : 'textShadowWhite';
+
+          // Create vertical margin between 0th and 1st layers, if text would normally overlap
+          var textVerticalMargin = 10;  // Threshhold and gap size
+          if (dl == 0) {
+            if (this.data[i][this.dataLayers[dl].y.parameter] != null) {
+              if (Math.abs(this.graph.dataPoints[0][i].y - this.graph.dataPoints[1][i].y) < textVerticalMargin) {
+                this.graph.dataPoints[0][i].y -= textVerticalMargin;
+              }
+            }
+          }
+
+          // Text value to display
+          var value = this.data[i][this.dataLayers[dl].y.parameter];
+          if (value == null) {  // Null data value, results in vertical (rotated) "No data available"
+            value = "No data available";
+            // graphOutput += `<text text-anchor="middle" class="noData" x="${this.graph.dataPoints[dl][i].x + offset + this.graphPadding.l + divisionXHalf}" y="200" style="transform-origin: ${this.graph.dataPoints[dl][i].x + offset + this.graphPadding.l + divisionXHalf}px 200px">${value}</text>`;
+            var noDataX = this.graph.dataPoints[dl][i].x + offset + this.graphPadding.l + divisionXHalf + 5;
+            var noDataY = graphZeroY - 10; //200;
+            graphOutput += `<text class="noDataSVG" font-family="Arial, Helvetica, sans-serif" font-size="12px" fill="#333" x="${noDataX}" y="${noDataY}" transform="rotate(-90 ${noDataX},${noDataY})">${value}</text>`;
+          } else { // Numerical data
+            // graphOutput += `<text text-anchor="middle" class="points ${textShadow}" x="${this.graph.dataPoints[dl][i].x + offset + this.graphPadding.l}" fill="${this.dataLayers[dl].textColor}" style="transform: translateY(${this.graph.dataPoints[dl][i].y + textOffsetY}px); font-family: 'Arial',sans-serif">${value}</text>`; 
+            graphOutput += `<text class="points textShadowWhite" text-anchor="middle" x="${this.graph.dataPoints[dl][i].x + offset + this.graphPadding.l + divisionXHalf}" fill="${layerTextColors[dl]}" style="transform: translateY(${this.graph.dataPoints[dl][i].y + textOffsetY}px); font-family: 'Arial',sans-serif">${value}</text>`;
+          }
+        }
+
+      }
+
+      // Y Axis Labels - Vertical - Begins at 1, to skip 0th label
+      for (var i = 1; i < this.graph.axisData.y.coordinates.length; i++) {
+        var yOffset = 10;
+        var yVal = this.graphHeight - this.graph.axisData.y.coordinates[i].value - this.graphPadding.b;
+        graphOutput += `<text class="axis-labels" text-anchor="end" x="${this.graphPadding.l - 10}" y="${yVal + yOffset}" style="font-family: 'Arial',sans-serif">${this.graph.axisData.y.coordinates[i].label}</text>`;
+      }
+
+      // X Axis Labels - Horizontal
+      for (var i = 0; i < this.graph.axisData.x.coordinates.length; i++) {
+        var offset = this.graphDrawHeight + 20;
+        graphOutput += `<text class="axis-labels" text-anchor="middle" x="${this.graph.axisData.x.coordinates[i].value + this.graphPadding.l + (divisionXHalf)}" y="${offset}" style="font-family: 'Arial',sans-serif">${this.graph.axisData.x.coordinates[i].label}</text>`;
+      }
+
+      graphOutput += `</svg>`;
+
+      // Keys, beneath graph
+      graphOutput += `<div class='graph-key' style='margin-left: ${this.graphPadding.l}px'>`
+      for (var i = 0; i < this.dataLayers.length; i++) {
+        // graphOutput += `<div class="graph-key-label"><span class="graph-key-color" style="background: ${this.dataLayers[i].fillColor}"></span>${this.dataLayers[i].y.label}</div>`;
+        graphOutput += `<div class="graph-key-label"><span class="graph-key-color graph-key-${i}" style="background: ${layerColors[i]}"></span>${this.dataLayers[i].y.label}</div>`;
+      }
+      graphOutput += `</div>`;
+      graphOutput += `</div>`;
+
+      // Begin Table View content ------------------------------------ //
+      var tableHeadings = new Array();
+      var tableData = new Array();
+      // Table setup and X Axis Labels (Column A)
+      for (var i = 0; i < this.graph.axisData.x.coordinates.length; i++) {
+        tableData[i] = [null, null, null];
+        tableData[i][0] = this.graph.axisData.x.coordinates[i].label;
+        //this.graph.axisData.x.
+      }
+      // Table headings and table data
+      for (var dl = 0; dl < this.dataLayers.length; dl++) {
+        tableHeadings[0] = 'Year';                            // Always year for area graphs
+        tableHeadings[dl + 1] = this.dataLayers[dl].y.label;    // dl+1 as 0th index is Year label
+        for (var i = 0; i < this.graph.dataPoints[dl].length; i++) {
+          var value = this.data[i][this.dataLayers[dl].y.parameter];
+          if (value == null) {
+            value = "No data available";
+          }
+          tableData[i][dl + 1] = value;
+        }
+      }
+      // console.log("Table Data---------");
+      // console.log(tableHeadings);
+      // console.log(tableData);          
+      // console.log("-------------------");
+
+      // Generate Table View and button
+      if (drawTableView) graphOutput += "<h5 class='tableview-heading'><a class='tableview-expand' data-open='0'>Table View <i class='accordion-arrow'></i></a></h5>"
+      tableOutput += "<table>";
+      tableOutput += "<tr>";
+      for (var i = 0; i < tableHeadings.length; i++) {
+        tableOutput += `<th>${tableHeadings[i]}</th>`;
+      }
+      tableOutput += "</tr>";
+      for (var i = 0; i < tableData.length; i++) {
+        tableOutput += "<tr>";
+        for (var x = 0; x < tableData[i].length; x++) {
+          tableOutput += `<td>${tableData[i][x]}</td>`;
+        }
+        tableOutput += "</tr>";
+      }
+      tableOutput += "</table>";
+      tableOutput += `</div>`;
+      //console.log(tableOutput);
+
+      graphOutput += tableOutput;
+
+      // End Table View content ---------------------------------------- //
+
+      return graphOutput;
+    }
+
+    // Calculate the X/Y maximums for this graph (or subgraph)
+    // parameter: the array index (string) of the JSON data in this.data
+    // e.g. parameter value of "totalAccidents" iterates through this.data[i]["totalAccidents"]
+    // Returns {x,y} object
+    CalculateDataMaximums() {
+      
+      // console.log(this.data);
+      // console.log(this.dataLayers);
+
+      var maxX = 0;
+      var maxY = 0;
+      for (var d = 0; d < this.dataLayers.length; d++) {
+        for (var i = 0; i < this.data.length; i++) {
+          if (this.data[i][this.dataLayers[d].y.parameter] > maxY)
+            maxY = this.data[i][this.dataLayers[d].y.parameter]
+          maxX = i;
+        }
+      }
+      // console.log("Maximum: " + maxX + " / " + maxY);
+      return { x: maxX, y: maxY };
+    }
+
+    // Returns a y-axis value with approx 20% overhead (additional vertical room for labels)
+    CalculateYOverhead(y) {
+      // var overhead = y * 1.2;
+      // var round = Math.round(overhead * 0.1);
+      // if (round < 1) return 5;
+      // else return (round * 10);
+
+      // Return a value from the rangeList array (2D array of boundaries and increments suitable for graphing)
+      // Returns the 1st element, from rangeList's format of format of [lower, upper, increment]
+      for (var i = 0; i < rangeList.length; i++) {
+        var yAdjusted = y * 1.1;
+        if ((yAdjusted >= rangeList[i][0]) && (yAdjusted <= rangeList[i][1])) {
+          return rangeList[i][1]
+        }
+      }
+
+      console.log("Error: Spilled out of range List");
+      var overhead = y * 1.2;
+      var round = Math.round(overhead * 0.1);
+      if (round < 1) return 5;
+      else return (round * 10);
+
+    }
+
+    // Construct axisData element, building two AOPAGraphAxis classes as axisData.x and axisData.y to return to graph
+    ConstructGraphAxisData(data, axisMaximums) {
+
+      var xDivisions = data.length;   // Number of x data points dictates number of horizontal divisions
+      var yDivisions = 0;             // Number of y divisions depends on cleanly dividing y-range / Calculated below
+
+      var yAxisMax = axisMaximums.y;  // Highest y-value, may increase during division calculations below
+
+      var xUnitsPerDivision = 1;      // Temp: Assuming one x unit per year
+      var yUnitsPerDivision = 0;      // This will be replaced below, after division calculations
+
+      // Find y value in the range list corresponding to value maximums, default to 5 vertical divisions
+      for (var i = 0; i < rangeList.length; i++) {
+        if (axisMaximums.y == rangeList[i][1]) {
+          yDivisions = 5;
+        }
+      }
+
+      // Outdated: Build graph divisions from cleanest number that produces 10-unit divisions, 5 or 6
+      // If neither 5 or 6 divisions produce 10-unit increments:
+      //      Divide into into 5, round down to nearest tens place, and then divide into 6 units of that number
+      // if ((axisMaximums.y / 5) % 10 == 0) {
+      //     yDivisions = 5;
+      // } else if ((axisMaximums.y / 6) % 10 == 0) {
+      //     yDivisions = 6;
+      // } else {                // Create 6 equal units from rounded-down 5-division
+      //     yDivisions = 6;
+      //     yAxisMax = ((Math.floor(axisMaximums.y / 5) * 0.1) * 10) * 6;
+      // }
+
+      // Update number of units per division along y axis
+      yUnitsPerDivision = yAxisMax / yDivisions;
+
+      // Create two AOPAGraphAxis classes, one for each axis, as x/y fields of axisData object
+      var axisData = {
+        // Temp: using first dataLayers index as labels
+        x: new AOPAGraphAxis(data, this.dataLayers[0].x.label, xDivisions, xUnitsPerDivision, this.graphDrawWidth, this.dataLayers[0].x.parameter),
+        y: new AOPAGraphAxis(data, this.dataLayers[0].y.label, yDivisions, yUnitsPerDivision, this.graphDrawHeight)
+      }
+
+      return axisData;
+
+    }
+    // Get x/y pixel coordinate location values of each data value
+    ConstructDataPoints(data, axisData, xParameter, yParameter) {
+      var points = new Array();
+
+      for (var i = 0; i < this.data.length; i++) {
+        var point = {
+          x: axisData.x.coordinates[i].value,
+          y: this.ConvertUnitsToPixels(this.data[i][yParameter], axisData)
+        }
+        points.push(point);
+      }
+      // console.log("Points");
+      // console.log(points);
+      return points;
+    }
+    // Get the pixel value of a data value (calculate its pixel height offset based on the vertical data scale)
+    ConvertUnitsToPixels(unit, axisData) {
+      var yAxisMax = axisData.y.divisions * axisData.y.unitsPerDivision;
+      return (this.graphDrawHeight - Math.floor((unit / yAxisMax) * this.graphDrawHeight));
+    }
+
+  }
+
+  // Exention of AOPAGraph, assembles data into a bar graph vs normal area graph
+  class AOPAGraphBar extends AOPAGraph {
+    BuildGraphHTML() {
+
+      //console.log(this.graph);
+
+      var xAxisColor = "#aaa";
+      var yAxisColor = "#aaa";
+      // var xLineColor = "#bbb";
+      // var yLineColor = "#f5f5f5";
+      var xLineColor = "rgba(0,0,0,0.15)";
+      var yLineColor = "rgba(0,0,0,0.05)";
+      var textOffsetX = -10;
+      var textOffsetY = -10;
+      var lineOffsetY = 0;
+
+
+      var graphZeroY = this.graphDrawHeight;
+      var graphMaxY = 0 + lineOffsetY;  // Would be zero, except we push the top down 1 pixel to let top lines not get cut off
+
+      var graphZeroX = this.graph.dataPoints[0][0].x + this.graphPadding.l;
+      var graphMaxX = this.graph.dataPoints[0][this.graph.dataPoints[0].length - 1].x + this.graphPadding.l;
+
+      // Bar Graph specific vars
+      var divisionX = this.graph.axisData.x.pixelsPerDivision;
+      var divisionXPadding = Math.ceil(divisionX * 0.1);
+      var divisionXWidth = divisionX - divisionXPadding;
+      var divisionXHalf = divisionX * 0.5;
+      graphMaxX += divisionX; // Extend xboundary by another division
+
+      var graphOutput = `<div class="aopa-graph area-graph"><svg class="graph" width="${this.graphWidth}" height="${this.graphHeight}" style="width: ${this.graphWidth}px; height: ${this.graphHeight}px">`;
+      var tableOutput = `<div class="aopa-graph-tableview" style="display: none">`;
+
+      var graphPathString = String.empty;
+
+      // X Axis Lines - VERTICAL
+      for (var i = 0; i <= this.graph.dataPoints[0].length; i++) {
+        var xVal = (i < this.graph.dataPoints[0].length) ? (this.graph.dataPoints[0][i].x + this.graphPadding.l + 1) : graphMaxX;
+        // Darker color on first/last lines
+        var lineColor = ((i == 0) || (i == this.graph.dataPoints[0].length)) ? yAxisColor : yLineColor;
+        //graphOutput += `<line class="graph-lines-vertical" x1="${xVal}" y1="${graphMaxY + lineOffsetY}" x2="${xVal}" y2="${graphZeroY}" stroke="${lineColor}" stroke-width="0.999px" shape-rendering="crispEdges" />`;
+        var x1 = xVal;
+        var y1 = graphMaxY + lineOffsetY;
+        var y2 = graphZeroY;
+        graphOutput += `<polygon points="${x1},${y1} ${x1 - 1},${y1} ${x1 - 1},${y2} ${x1},${y2}" class="graph-polyline-vertical" />`;
+      }
+
+      // Y Axis Lines - HORIZONTAL
+      for (var i = 0; i < this.graph.axisData.y.coordinates.length; i++) {
+        // SVG coordinates are measured from top/left; need to subtract from height to align to bottom/left
+        var yVal = this.graphHeight - this.graph.axisData.y.coordinates[i].value + 1;
+        yVal -= this.graphPadding.b;
+        var lineColor = (i == 0) ? xAxisColor : xLineColor;
+        var xLeft = (i == 0) ? this.graphPadding.l : this.graphPadding.l - 5;
+        //graphOutput += `<line class="graph-lines-horizontal" x1="${xLeft}" y1="${yVal}" x2="${graphMaxX}" y2="${yVal}" stroke="${lineColor}" stroke-width="0.999px" shape-rendering="crispEdges" />`;
+        var x1 = xLeft;
+        var x2 = graphMaxX;
+        var y1 = yVal;
+        graphOutput += `<polygon points="${x1},${y1} ${x2},${y1} ${x2},${y1 - 1} ${x1},${y1 - 1}" class="graph-polyline-horizontal" />`;
+
+      }
+
+      // Data: Draw polygon bars for each data point in each data layer
+      for (var dl = 0; dl < this.dataLayers.length; dl++) {
+
+        for (var i = 0; i < this.graph.dataPoints[dl].length; i++) {
+          var x = this.graph.dataPoints[dl][i].x + this.graphPadding.l;
+          var y = this.graph.dataPoints[dl][i].y;
+          // graphPathString = `<polygon points="${x + divisionXPadding},${y} ${x + divisionXWidth},${y} ${x + divisionXWidth},${graphZeroY} ${x + divisionXPadding},${graphZeroY}" class="graphData" style="transform-origin: 0 ${graphZeroY}px" fill="${this.dataLayers[dl].fillColor}" />`;
+          graphPathString = `<polygon points="${x + divisionXPadding},${y} ${x + divisionXWidth},${y} ${x + divisionXWidth},${graphZeroY} ${x + divisionXPadding},${graphZeroY}" class="graphData" style="transform-origin: 0 ${graphZeroY}px" fill="${layerColors[dl]}" />`;
+
+          graphOutput += graphPathString;
+        }
+
+      }
+
+      // Data Labels: Draw text elements for each polygon bar in each data layer, add shadow for foreground layers
+      for (var dl = 0; dl < this.dataLayers.length; dl++) {
+        var layerTextY = null;
+        for (var i = 0; i < this.graph.dataPoints[dl].length; i++) {
+
+          if (this.data[i][this.dataLayers[dl].y.parameter] == 0) {
+            continue;
+          }
+          var offset = 0;
+          // if (i == 0) offset = 15;
+          // if (i + 1 ==  this.graph.dataPoints[dl].length) offset = -15;                
+          var textShadow = (dl > 0) ? " textShadow" : 'textShadowWhite';
+
+          var layerOffsetY = 0;
+          if (dl == 0) {
+            // Skip rendering text element if both layers have the same value
+            if (this.data[i][this.dataLayers[dl].y.parameter] == this.data[i][this.dataLayers[dl + 1].y.parameter]) {
+              continue;
+            }
+            layerTextY = this.graph.dataPoints[dl][i].y + textOffsetY;
+            if (this.graph.dataPoints[dl].length > 1) {
+              var nextLayerY = this.graph.dataPoints[dl + 1][i].y + textOffsetY;
+              if (Math.abs(layerTextY - nextLayerY) < 12) {
+                //  console.log("***************Too close together");
+                //  console.log(layerTextY + " / " + nextLayerY);
+                //  console.log(this.data[i][this.dataLayers[dl].y.parameter]);
+                layerOffsetY = -10;
+              }
+            }
+          }
+
+          var value = this.data[i][this.dataLayers[dl].y.parameter];
+          if (value == null) {
+            value = "No data available";
+            var noDataX = this.graph.dataPoints[dl][i].x + offset + this.graphPadding.l;
+            var noDataY = graphZeroY - 10;
+            graphOutput += `<text class="noDataSVG" font-family="Arial, Helvetica, sans-serif" fill="#333" x="${noDataX}" y="${noDataY}" transform="rotate(-90 ${noDataX},${noDataY})">${value}</text>`;
+            //graphOutput += `<text text-anchor="middle" class="noData noDataBar" x="${this.graph.dataPoints[dl][i].x + offset + this.graphPadding.l}" y="200" style="transform-origin: ${this.graph.dataPoints[dl][i].x + offset + this.graphPadding.l}px 200px">${value}</text>`;
+          } else {
+            // graphOutput += `<text text-anchor="middle" class="points ${textShadow}" x="${this.graph.dataPoints[dl][i].x + offset + this.graphPadding.l + (divisionXHalf)}" fill="${this.dataLayers[dl].textColor}" style="transform: translateY(${this.graph.dataPoints[dl][i].y + textOffsetY + layerOffsetY}px); font-family: 'Arial',sans-serif">${value}</text>`;
+            graphOutput += `<text class="points" text-anchor="middle" class="points textShadowWhite" x="${this.graph.dataPoints[dl][i].x + offset + this.graphPadding.l + (divisionXHalf)}" fill="${layerTextColors[dl]}" style="transform: translateY(${this.graph.dataPoints[dl][i].y + textOffsetY + layerOffsetY}px); font-family: 'Arial',sans-serif">${value}</text>`;
+          }
+
+        }
+      }
+
+      // Y Axis Labels - Vertical - Begins at 1, to skip 0th label
+      for (var i = 1; i < this.graph.axisData.y.coordinates.length; i++) {
+        var yOffset = 10;
+        var yVal = this.graphHeight - this.graph.axisData.y.coordinates[i].value - this.graphPadding.b;
+        graphOutput += `<text class="axis-labels" text-anchor="end" x="${this.graphPadding.l - 10}" y="${yVal + yOffset}" style="font-family: 'Arial',sans-serif">${this.graph.axisData.y.coordinates[i].label}</text>`;
+      }
+
+      // X Axis Labels - Horizontal
+      for (var i = 0; i < this.graph.axisData.x.coordinates.length; i++) {
+        var offset = this.graphDrawHeight + 20;
+
+        // // Vertically offset x-axis labels if they are longer text labels (not years)
+        // if (this.graph.axisData.x.parameter != "eventYear") {                      
+        //   // Raise odd-numbered labels, lower even-numbered labels
+        //   offset += (i % 2) ? 8 : -6;
+        // }
+        // graphOutput += `<text text-anchor="middle" x="${this.graph.axisData.x.coordinates[i].value + this.graphPadding.l + (divisionXHalf)}" y="${offset}" style="font-family: 'Arial',sans-serif; font-size: 12px">${this.graph.axisData.x.coordinates[i].label}</text>`;
+
+        // Vertically offset x-axis labels if they are longer text labels (not years)
+        if (this.graph.axisData.x.parameter != "eventYear") {
+          // Raise odd-numbered labels, lower even-numbered labels
+          //offset += (i % 2) ? 8 : -6;
+          graphOutput += `<foreignObject x="${this.graph.axisData.x.coordinates[i].value + this.graphPadding.l}" y="${offset - 15}" width="${divisionXWidth}" height="150"><p class="svg-text-foreignobject" style="font-family: 'Arial',sans-serif">${this.graph.axisData.x.coordinates[i].label}</p></foreignObject>`;
+        } else {
+          graphOutput += `<text class="axis-labels" text-anchor="middle" x="${this.graph.axisData.x.coordinates[i].value + this.graphPadding.l + (divisionXHalf)}" y="${offset}" style="font-family: 'Arial',sans-serif">${this.graph.axisData.x.coordinates[i].label}</text>`;
+        }
+      }
+
+      graphOutput += `</svg>`;
+
+      // Keys, beneath graph
+      graphOutput += `<div class='graph-key' style='margin-left: ${this.graphPadding.l}px'>`
+      for (var i = 0; i < this.dataLayers.length; i++) {
+        graphOutput += `<div class="graph-key-label"><span class="graph-key-color graph-key-${i}" style="background: ${layerColors[i]}"></span>${this.dataLayers[i].y.label}</div>`;
+      }
+      graphOutput += `</div>`;
+      graphOutput += `</div>`;
+
+      // Begin Table View content ------------------------------------ //
+      var tableHeadings = new Array();
+      var tableData = new Array();
+      // Table setup and X Axis Labels (Column A)
+      for (var i = 0; i < this.graph.axisData.x.coordinates.length; i++) {
+        tableData[i] = [null, null, null];
+        tableData[i][0] = this.graph.axisData.x.coordinates[i].label;
+        //this.graph.axisData.x.
+      }
+      // Table headings and table data
+      for (var dl = 0; dl < this.dataLayers.length; dl++) {
+        tableHeadings[0] = 'Type';                            // Default as "Type" for now, could replace with custom label added to JSON structure
+        tableHeadings[dl + 1] = this.dataLayers[dl].y.label;    // dl+1 as 0th index is Year label
+        for (var i = 0; i < this.graph.dataPoints[dl].length; i++) {
+          var value = this.data[i][this.dataLayers[dl].y.parameter];
+          if (value == null) {
+            value = "No data available";
+          }
+          tableData[i][dl + 1] = value;
+        }
+      }
+      // console.log("Table Data---------");
+      // console.log(tableHeadings);
+      // console.log(tableData);          
+      // console.log("-------------------");
+
+      // Generate Table View and button
+      if (drawTableView) graphOutput += "<h5 class='tableview-heading'><a class='tableview-expand' data-open='0'>Table View <i class='accordion-arrow'></i></a></h5>"
+      tableOutput += "<table>";
+      tableOutput += "<tr>";
+      for (var i = 0; i < tableHeadings.length; i++) {
+        tableOutput += `<th>${tableHeadings[i]}</th>`;
+      }
+      tableOutput += "</tr>";
+      for (var i = 0; i < tableData.length; i++) {
+        tableOutput += "<tr>";
+        for (var x = 0; x < tableData[i].length; x++) {
+          tableOutput += `<td>${tableData[i][x]}</td>`;
+        }
+        tableOutput += "</tr>";
+      }
+      tableOutput += "</table>";
+      tableOutput += `</div>`;
+      //console.log(tableOutput);
+
+      graphOutput += tableOutput;
+
+      // End Table View content ---------------------------------------- //
+
+      return graphOutput;
+    }
+  }
+
+  // Extension of AOPAGraph, Trends: creates area graph with additional processing to compile multiple years
+  // Used in "General Aviation Accident Trends" (also sometimes called "Executive Summary: Trends")
+  // Note: this class is one of two exceptions to the rule that the frontend should not be processing data, as it is adding the values of multiple query results and showing the sums
+  class AOPAGraphSummary extends AOPAGraph {
+
+    PreProcessData() {
+
+      var apiData = this.data;
+      var processedData = new Array();
+
+      // console.log(this.dataLayers);
+      // console.log(this.data);
+
+      var currentYear = apiData[0].eventYear;
+      var currentYearTotal = 0;
+      var currentYearFatal = 0;
+
+      for (var i = 0; i < apiData.length; i++) {
+
+        // If this is another item (category) in the same year, add its totals
+        if (apiData[i].eventYear == currentYear) {
+
+          currentYearTotal += apiData[i].accidents;
+          currentYearFatal += apiData[i].fatalAccidents;
+
+        } else { // If not, process the numbers, push the total to the array and reset
+
+          var yearData = {
+            "eventYear": currentYear,
+            "accidentType": "Total",
+            "accidents": currentYearTotal,
+            "fatalAccidents": currentYearFatal
+          }
+
+          processedData.push(yearData);
+          currentYear = apiData[i].eventYear;
+          currentYearTotal = 0;
+          currentYearFatal = 0;
+          currentYearTotal += apiData[i].accidents;
+          currentYearFatal += apiData[i].fatalAccidents;
+        }
+
+        // If this is the last item in apiData, there would not be another year change/handoff
+        // So process the current (final) totals and push that to the array, to conclude
+        if (i + 1 == apiData.length) {
+          var yearData = {
+            "eventYear": currentYear,
+            "accidentType": "Total",
+            "accidents": currentYearTotal,
+            "fatalAccidents": currentYearFatal
+          }
+          processedData.push(yearData);
+        }
+      }
+
+      this.data = processedData;
+
+      //console.log(this.data);
+      //console.log("Summary class, preprocess function");
+    }
+
+  }
+
+  // Extension of AOPAGraph, Rates: creates area graph with additional processing to compile multiple years
+  // Used in "General Aviation Accident Rates" (also sometimes called "Executive Summary: Rates")
+  // Note: this class is one of two exceptions to the rule that the frontend should not be processing data, as it is adding the values of multiple query results and showing the sums
+  class AOPAGraphSummaryRates extends AOPAGraph {
+
+    PreProcessData() {
+
+      var apiData = this.data;
+      var processedData = new Array();
+
+      // console.log(this.data);
+      // console.log(this.dataLayers);
+
+      var currentYear = apiData[0].eventYear;
+      var currentYearTotal = 0;
+      var currentYearFatal = 0;
+      var currentYearHours = 0;
+
+      for (var i = 0; i < apiData.length; i++) {
+        //for (var n = 0; n < this.dataLayers.length; n++) {
+
+        // If this is another item (category) in the same year, add its totals
+        if (apiData[i].eventYear == currentYear) {
+
+          currentYearHours += apiData[i].accidentHours;
+          currentYearTotal += apiData[i].accidents;
+          currentYearFatal += apiData[i].fatalAccidents;
+
+
+        } else { // If not, process the numbers, push the total to the array and reset
+
+          var rate = currentYearHours / 100000;
+          var accidentRate = currentYearTotal / rate;
+          var fatalAccidentRate = currentYearFatal / rate;
+          // console.log(currentYear);
+          // console.log(rate);
+          // console.log(accidentRate);
+          // console.log(fatalAccidentRate);
+
+          if (rate == 0) {
+            accidentRate = null;
+            fatalAccidentRate = null;
+          } else {
+            accidentRate = accidentRate.toFixed(2);
+            fatalAccidentRate = fatalAccidentRate.toFixed(2);
+          }
+
+          var yearData = {
+            "eventYear": currentYear,
+            "accidentType": "Total",
+            "accidentRate": accidentRate,
+            "fatalAccidentRate": fatalAccidentRate
+          }
+
+          processedData.push(yearData);
+          currentYear = apiData[i].eventYear;
+          currentYearTotal = 0;
+          currentYearFatal = 0;
+          currentYearHours = 0;
+          currentYearHours += apiData[i].accidentHours;
+          currentYearTotal += apiData[i].accidents;
+          currentYearFatal += apiData[i].fatalAccidents;
+
+        }
+
+        // If this is the last item in apiData, there would not be another year change/handoff
+        // So process the current (final) totals and push that to the array, to conclude
+        if (i + 1 == apiData.length) {
+
+          rate = currentYearHours / 100000;
+          accidentRate = currentYearTotal / rate;
+          fatalAccidentRate = currentYearFatal / rate;
+
+          if (rate == 0) {
+            accidentRate = null;
+            fatalAccidentRate = null;
+          } else {
+            accidentRate = accidentRate.toFixed(2);
+            fatalAccidentRate = fatalAccidentRate.toFixed(2);
+          }
+
+          var yearData = {
+            "eventYear": currentYear,
+            "accidentType": "Total",
+            "accidentRate": accidentRate,
+            "fatalAccidentRate": fatalAccidentRate
+          }
+          processedData.push(yearData);
+        }
+        //}
+      }
+
+      this.data = processedData;
+
+    }
+
+  }
+
+  // Text table figures, two or more columns (ex. Figure 1.4)
+  class AOPAChart {
+
+    constructor(data, fields, jsonParams = null) {
+
+      // Permanently store the input data with the class
+      this.data = data;
+
+      // 2-dimensional array, each sub array containing grouped objects to be shown individually or in pairs
+      // Each object has a human-readable 'fieldName' and 'parameter' name for each field in a results set
+      // Example:
+      // { fieldName: "Type of Operation", parameter: "typeOperation" }
+      this.fields = fields;
+      this.jsonParams = jsonParams;
+
+      // Set up a this.footnotes if there are any in the parameters, or null
+      this.footnotes = ((jsonParams) && (jsonParams.footnotes)) ? jsonParams.footnotes : null;
+
+      // Call generic chart and output HTML functions classes
+      this.chart = this.ConstructChart();
+      this.outputHTML = this.BuildChartHTML();
+
+    }
+
+    // Generic ConstructChart function, to be overridden by extension classes
+    ConstructChart() {
+
+    }
+
+    // Generic BuildChartHTML function, to be used or overridden by extension classes
+    BuildChartHTML() {
+      var chartOutput = `<table class="nall-report-chart">`;    // Begin new chart table
+      chartOutput += `<tr class="nall-report-chart-headings">`; // Chart table headings row
+      for (var f = 0; f < this.fields.length; f++) {
+        // Always show first index of sub-array in fields -- important to put table-heading fields first
+        chartOutput += `<th>${this.fields[f][0].fieldName}</th>\n`;
+      }
+      chartOutput += `</tr>`;                                   // End chart table headings row
+
+      // Main chart construction loop
+      for (var i = 0; i < this.data.length; i++) {
+
+        // Skip iteration if "includeItems" is set and does not include this index
+        if (this.jsonParams) {
+          if (this.jsonParams.includeItems != null) {
+            if (!this.jsonParams.includeItems.includes(this.data[i][this.fields[0][0].parameter])) {
+              continue; // Skip this iteration of this for loop, will advance to next
+            }
+          }
+        }
+
+        chartOutput += `<tr>`;  // Begin new chart row
+
+        // Flag to hold whether row is a child (aircraftSubClass) to parent classes (aircraftClass)
+        var isSubClass = false;
+
+        // Fields per row, as "f"
+        for (var f = 0; f < this.fields.length; f++) {
+
+          // Table cells, values per field (e.g. Accidents has two, "accidents" and "pctAccidents") to display as "75 78.9%"
+          chartOutput += `<td>`;
+          // Table cells, as "s"
+          for (var s = 0; s < this.fields[f].length; s++) {
+
+            // If there is more than one value per field, this indicates pairs (e.g. accidents, pctAccidents)
+            if ((this.fields[f].length > 1)) {
+
+              // Bold the first number in these pairs
+              if (s == 0) {
+                chartOutput += `<strong>${this.data[i][this.fields[f][s].parameter]}</strong> `;
+              } else {
+                // If this is a aircraftSubClass, hide the percentage, only parent aircraftClasses show these
+                if (!isSubClass) {
+                  chartOutput += this.data[i][this.fields[f][s].parameter];
+                }
+              }
+
+            } else { // Else, this is a single value per field
+              // Indent output for subclasses of "aircraftInvolved" queries
+              // The first field (name of row) will test this item's aircraftSubClass vs its aircraftClass
+              // All items have both -- but if these differ, this is a subClass, mark flag as true
+              if ((this.fields[f][s].parameter == "aircraftSubClass") && (this.data[i]['aircraftSubClass'] != this.data[i]['aircraftClass'])) {
+                isSubClass = true;
+                chartOutput += `<span style="padding-left: 1em">${this.data[i][this.fields[f][s].parameter]}</span>`;
+              } else {
+                // Normal output
+                // String replace to prevent long strings (one culprit caused by two names with a slash) stretching table wide
+                chartOutput += `${this.data[i][this.fields[f][s].parameter]}`.replace("/", " / ");
+              }
+            }
+            // If the field value has a unit parameter...
+            if (this.fields[f][s].unit != null) {
+              // Display the unit, unless this is a subclass 
+              // Measure f number, to only exlude this in 1st/2nd columns (accidents/fatal accidents), show past third row (lethality)
+              if (!isSubClass || (isSubClass && (f > 2))) {
+                chartOutput += `${this.fields[f][s].unit}`;
+              }
+            }
+
+          }
+          chartOutput += `</td>\n`; // End chart cell
+        }
+        chartOutput += `</tr>\n`; // End chart row
+      }
+      chartOutput += `</table>`;  // End chart table
+
+      // Add any footnotes to the figure
+      if (this.footnotes != null) {
+        for (var i = 0; i < this.footnotes.length; i++) {
+          chartOutput += `<p class="nall-report-figure-footnote">${this.footnotes[i]}</p>\n`;
+        }
+      }
+
+      // console.log(chartOutput);
+      return chartOutput;
+    }
+
+  }
+
+  // Extension of AOPAChart, breaking down results by categorized sub-headings by FAR part (ex. Figure 2.5)
+  class AOPAChartFarParts extends AOPAChart {
+
+    // Override normal AOPAChart BuildChartHTML, incorporating FAR Part headings per part
+    BuildChartHTML() {
+
+      // for (var i = this.jsonParams.farParts.length - 1; i >= 0; i--) {
+      //   console.log(this.jsonParams.farParts[i]);
+      //   for (var data in this.data) {
+      //     console.log(this.data[data]);
+      //   }
+      // }
+
+      var chartOutput = '';
+      chartOutput += `<table class="nall-report-chart">`;
+
+      // FAR Parts, as "p"
+      for (var p = 0; p < this.jsonParams.farParts.length; p++) {
+
+        var farPart = this.jsonParams.farParts[p];
+
+        if (p == 0) { // Only draw headings the first time through
+          chartOutput += `<tr class="nall-report-chart-headings">`;
+
+          for (var f = 0; f < this.fields.length; f++) {
+            // Always show first index of sub-array in fields -- important to put table-heading fields first
+            chartOutput += `<th>${this.fields[f][0].fieldName}</th>\n`;
+          }
+
+          chartOutput += `</tr>`;
+        }
+        chartOutput += `<tr><td colspan="${this.fields.length}"><strong>${farPartLabels[farPart]} (Part ${farPart}):</strong></td></tr>`;
+
+        for (var i = 0; i < this.data.length; i++) {
+
+          // Skip iteration if farPart does not match
+          if (this.data[i].farPart != farPart) {
+            continue;
+          }
+
+          // Skip iteration if "includeItems" is set and does not include this index
+          if (this.jsonParams) {
+            if (this.jsonParams.includeItems != null) {
+              if (!this.jsonParams.includeItems.includes(this.data[i][this.fields[0][0].parameter])) {
+                continue;
+              }
+            }
+          }
+
+          chartOutput += `<tr>`;
+          for (var f = 0; f < this.fields.length; f++) {
+
+            chartOutput += `<td>`;
+            for (var s = 0; s < this.fields[f].length; s++) {
+
+              if ((this.fields[f].length > 1) && (s == 0)) {
+                chartOutput += `<strong>${this.data[i][this.fields[f][s].parameter]}</strong> `;
+              } else {
+                // Indents output for subclasses of "aircraftInvolved" queries
+                if ((this.fields[f][s].parameter == "aircraftSubClass") && (this.data[i]['aircraftSubClass'] != this.data[i]['aircraftClass'])) {
+                  chartOutput += `<span style="padding-left: 1em">${this.data[i][this.fields[f][s].parameter]}</span>`;
+                } else {
+                  // Normal output
+                  chartOutput += `${this.data[i][this.fields[f][s].parameter]}`;
+                }
+              }
+              if (this.fields[f][s].unit != null) {
+                chartOutput += `${this.fields[f][s].unit}`;
+              }
+
+            }
+            chartOutput += `</td>\n`;
+          }
+          chartOutput += `</tr>\n`;
+        }
+
+      }
+
+      chartOutput += `</table>`;
+
+
+      // Add any footnotes to the figure
+      if (this.footnotes != null) {
+        for (var i = 0; i < this.footnotes.length; i++) {
+          chartOutput += `<p class="nall-report-figure-footnote">${this.footnotes[i]}</p>\n`;
+        }
+      }
+
+      return chartOutput;
+    }
+
+  }
+
+  // Extension of AOPAChart, simplified two column numerical data (ex. Figure 3.1)
+  class AOPAChartList extends AOPAChart {
+
+    // Override normal AOPAChart BuildChartHTML, with simple headings/values, and footnotes
+    BuildChartHTML() {
+
+      var chartOutput = `<table class="nall-report-chart nall-report-chartlist">`;
+      for (var i = 0; i < this.fields.length; i++) {
+        chartOutput += "<tr>";
+        chartOutput += `<td>${this.fields[i].fieldName}</td>`;
+        chartOutput += `<td><strong>${this.data[this.fields[i].parameter]}</strong></td>`;
+        chartOutput += "</tr>";
+      }
+      chartOutput += `</table>`;
+
+      // Add any footnotes to the figure
+      if (this.footnotes != null) {
+        for (var i = 0; i < this.footnotes.length; i++) {
+          chartOutput += `<p class="nall-report-figure-footnote">${this.footnotes[i]}</p>\n`;
+        }
+      }
+
+      return chartOutput;
+
+    }
+
+  }
+
+  // Extension of AOPAGraph, simplified constructor that bypasses construction methods to render plain text
+  // (ex. Figure "Text-Intro")
+  class AOPANallText extends AOPAGraph {
+
+    constructor(data, dataLayers) {
+
+      this.skipRefresh = true;
+      //this.outputHTML = this.BuildGraphHTML();
+      this.outputHTML = "<p>Loading content</p>";
+
+    }
+
+  }
+
+  // Class to construct and store data per graph axis
+  class AOPAGraphAxis {
+
+    constructor(data, name, divisions, unitsPerDivision, lengthPx, parameter = null) {
+
+      this.name = name;
+      this.divisions = divisions;
+      this.unitsPerDivision = unitsPerDivision,
+        this.lengthPx = lengthPx;
+      this.parameter = parameter;
+
+      this.pixelsPerDivision = this.CalculatePixelsPerUnit();
+      this.coordinates = this.ConstructAxis(data);
+    }
+
+    CalculatePixelsPerUnit() {
+      return Math.floor(this.lengthPx / this.divisions);
+    }
+
+    ConstructAxis(data) {
+      return (this.parameter) ? this.ConstructCoordinatesFromParameter(data, this.parameter) : this.ConstructCoordinates();
+    }
+
+    ConstructCoordinates() {
+      var coordinates = new Array();
+      for (var i = 0; i <= this.divisions; i++) {
+        var coordinate = {
+          label: (Math.floor(this.unitsPerDivision * i)),
+          value: (this.pixelsPerDivision * i)
+        }
+        coordinates.push(coordinate)
+      }
+      return coordinates;
+    }
+    ConstructCoordinatesFromParameter(data, parameter) {
+      var coordinates = new Array();
+      for (var i = 0; i < this.divisions; i++) {
+        var coordinate = {
+          label: data[i][parameter],
+          value: (this.pixelsPerDivision * i)
+        }
+        coordinates.push(coordinate)
+      }
+      return coordinates;
+    }
+
+  }
+
+  // Class for each Figure object, including data and layout/formatting
+  // Sets up the appropriate type of graph or chart per figure, based on its definition in JSON
+  // Sets up the API query (or cache JSON query) for that figure object
+  // The API query then handles the processing and rendering of that object, by calling the ProcessData function on this object as a callback
+  class NallReportFigure {
+
+    constructor(index, year = null) {
+
+      //console.log(index);
+
+      this.index = index;
+      this.tableView = null;
+      this.isTextFigure = false;
+
+      // Clone passed JSON object
+      // Workaround to prevent overwriting variables (like renaming the graph)
+      this.jsonParams = JSON.parse(JSON.stringify(jsonDBParse["figures"][index]));
+
+      //this.jsonParams = JSON.parse(JSON.stringify(jsonParams));
+
+
+      //if (index.includes("Text-")) {
+      if (this.jsonParams.graphType == "text") {
+        if (queryVals["report"]) {
+          singleColumnCounter = 0;
+          // $(graphTemplate).appendTo('#graphOutput').attr('id', `nallGraph-${graphIndex}`).addClass(`${containerType}`).addClass(addMarginLeft).addClass(addClear);
+          if ($(`#reportTextYear-${activeYear}`).length > 0) {
+            $(`#reportTextYear-${activeYear} #${this.jsonParams.id}`).clone().appendTo("#graphOutput");
+          } else {
+            //console.log("Text Year doesn't exist");
+          }
+        }
+        return;
+      }
+
+      // If a year is provided, override the default year of the query from the JSON DB
+      if (year) {
+        if (this.jsonParams.queryParams.year) this.jsonParams.queryParams.year = year;
+        if (this.jsonParams.queryParams.startYear) {
+          this.jsonParams.queryParams.startYear = (year - 9).toString();
+        }
+        if (this.jsonParams.queryParams.endYear) this.jsonParams.queryParams.endYear = year.toString();
+        //console.log(this.jsonParams.queryParams);
+      }
+
+      // Override the placeholder [[YEAR]] or [[YEAR-RANGE]] variables from the graphTitle in the JSON DB
+      if (this.jsonParams.queryParams.year) {
+        this.jsonParams.graphTitle = this.jsonParams.graphTitle.replace("[[YEAR]]", this.jsonParams.queryParams.year);
+      }
+      if (this.jsonParams.queryParams.endYear) {
+        this.jsonParams.graphTitle = this.jsonParams.graphTitle.replace("[[YEAR-RANGE]]", `${this.jsonParams.queryParams.endYear - 9}-${this.jsonParams.queryParams.endYear}`);
+      }
+
+      this.graphType = this.jsonParams.graphType;
+      this.figureName = this.jsonParams.graphTitle;
+
+      // Default layout options / optional overrides if passed as layoutOptions object parameter
+      this.padding = { t: 0, r: 10, b: 30, l: 40 };
+      this.fontSizes = { axes: 12, data: 12 };
+      if (this.jsonParams.layoutOptions != null) {
+        this.padding = (this.jsonParams.layoutOptions.padding) ? this.jsonParams.layoutOptions.padding : this.padding;
+        this.fontSizes = (this.jsonParams.layoutOptions.fontSizes) ? this.jsonParams.layoutOptions.fontSizes : this.fontSizes;
+      }
+
+      this.footnotes = (this.jsonParams.footnotes != null) ? this.jsonParams.footnotes : null;
+
+      // Set up a new container in #graphOutput, with a unique ID: graphIndex-#
+      if (!this.container) {
+
+        // Manage columns layout
+
+        // Set up which class this receives based on size
+        var containerType = (doubleColumnTypes.includes(this.graphType)) ? 'nall-container-double' : 'nall-container-single';
+        var doubleContainer = (doubleColumnTypes.includes(this.graphType));
+
+        // Increment counter of single-column graphs, to add margins
+        if (doubleContainer) {
+          singleColumnCounter = 0;
+        } else {
+          singleColumnCounter++;
+        }
+
+        // Reset temporary classes, and prepare them if this is a single-column graph
+        // Even numbered graphs receive left margins
+        // Odd numbered graphs clear left, to prevent floating left of long graphs
+        var addMarginLeft = '';
+        var addClear = '';
+        if (!doubleContainer) {
+          if ((singleColumnCounter % 2) == 1) {
+            addMarginLeft = 'container-margin-left';
+            //singleColumnCounter = 0;
+          } else {
+            // if (singleColumnCounter > 2) {
+            //   addClear = 'container-clear-left';
+            // }
+          }
+        }
+        // Apply all classes while appending
+        // (These class vars may still be empty if they weren't needed, and will have no effect)
+        $(graphTemplate).appendTo('#graphOutput').attr('id', `nallGraph-${graphIndex}`).addClass(`${containerType}`).addClass(addMarginLeft).addClass(addClear);
+
+        this.container = `#nallGraph-${graphIndex}`;
+        graphIndex++;
+
+      }
+
+      // If usingCache and there is cached data for this year, run a cacheQuery and return
+      if (usingCache) {
+        if (jsonCacheDB[activeYear] != null) {
+          if (cacheOnlyReport) {
+            if (queryVals['report']) {
+              nall.cacheQuery(
+                this.index,
+                this.jsonParams.queryParams,
+                this
+              );
+              return;
+            }
+          } else {
+            nall.cacheQuery(
+              this.index,
+              this.jsonParams.queryParams,
+              this
+            );
+            return;
+          }
+        }
+      }
+
+      // If not using the cache, run an ajaxQuery to the API
+      nall.ajaxQuery(
+        this.index,
+        this.jsonParams.url,
+        this.jsonParams.queryParams,
+        this
+      );
+
+    }
+
+    ProcessError(message) {
+      $(this.container + " h3").text(`Figure ${this.jsonParams.figureNumber}: ${this.jsonParams.graphTitle}`);
+      $(this.container + " .graphContainer").empty().css('background', 'none').css('min-height', 'auto').append(`<p class="graph-error">${message}</p>`);
+    }
+
+    ProcessData(nallData) {
+
+      this.resultData = nallData;
+      //console.log(this.resultData);
+
+      var graph;
+      var width = 570;
+      //if ($(window).width() < 881) {
+      width = $(this.container).width() - 40;
+
+      if (width > 1080) width = 1080;
+      //}
+      var height = 250;
+      height = width / 3;
+      if (height < 250) height = 250;
+
+      // width = 600;
+      // var height = 300;
+
+      // console.log(this.jsonParams);
+      // console.log(nallData);
+      if (this.graphType == "area") {
+
+        graph = new AOPAGraph(nallData, this.jsonParams.layers, width, height, this.padding);
+
+      } else if (this.graphType == "bar") {
+        this.padding = { t: 0, r: 10, b: 40, l: 40 };
+        graph = new AOPAGraphBar(nallData, this.jsonParams.layers, width, height, this.padding);
+
+      } else if (this.graphType == "chart") {
+
+        graph = new AOPAChart(nallData, this.jsonParams.fields, this.jsonParams);
+
+      } else if (this.graphType == "list") {
+
+        graph = new AOPAChartList(nallData, this.jsonParams.fields, this.jsonParams);
+
+      } else if (this.graphType == "parts") {
+
+        // console.log("Chart: Far Parts");
+        // console.log(nallData);
+        // console.log(this.jsonParams);
+
+        graph = new AOPAChartFarParts(nallData, this.jsonParams.fields, this.jsonParams);
+
+      } else if (this.graphType == "summary") {
+
+        graph = new AOPAGraphSummary(nallData, this.jsonParams.layers, width, height, this.padding);
+
+      } else if (this.graphType == "summaryrates") {
+
+        graph = new AOPAGraphSummaryRates(nallData, this.jsonParams.layers, width, height, this.padding);
+
+      } else if (this.graphType == "text") {
+
+        graph = new AOPANallText(nallData, this.jsonParams);
+        this.isTextFigure = true;
+
+      } else {
+
+        console.log("Error: No graphType provided.");
+
+      }
+
+      if (!this.isTextFigure) {
+
+        // Add "preliminary" warning banner before any year in the "prelimYears" array
+        if (prelimYears.includes(activeYear.toString())) {
+          $(this.container + " h3").before(`<p class='label-preliminary'>${activeYear} Preliminary Data</p>`);
+        } else {
+          //console.log(activeYear);
+        }
+
+        // Add graph title/subtitle / hide figure numbers on Overall view
+        // Prepend "Figure " to heading, unless suppressed by "hideFigureNumber" parameter
+        // If hidden, graph will show only graphTitle in the heading
+        var figurePrefix = `Figure ${this.jsonParams.figureNumber}: `;
+        if (this.jsonParams.hideFigureNumber != null) {
+          if (this.jsonParams.hideFigureNumber == true) {
+            figurePrefix = "";
+          }
+        }
+        $(this.container + " h3").text(`${figurePrefix}${this.jsonParams.graphTitle}`);
+        if (this.jsonParams.graphSubtitle) {
+          $(this.container + " h3").append(`<br><span class="graph-subtitle">${activeYear} ${this.jsonParams.graphSubtitle}</span>`);
+        }
+
+        // Remove loading background and add graph to .graphContainer
+        $(this.container + " .graphContainer").empty().css('background', 'none').css('min-height', 'auto').append(graph.outputHTML);
+
+        // Table view: add click handler for table view button
+        $(this.container + ' a.tableview-expand').click(function (e) {
+          var tableView = $(this).closest('.graphContainer').children('.aopa-graph-tableview');
+          $(this).toggleClass('open');
+          if ($(this).hasClass('open')) {
+            $(tableView).slideDown(500);
+          } else {
+            $(tableView).slideUp(500);
+          }
+        });
+
+      } else {
+
+        $(this.container + " .graphContainer").empty().css('background', 'none').css('min-height', 'auto').append(graph.outputHTML);
+
+      }
+
+    }
+
+  }
+
+  // Use html2pdf to generate the downloadable PDF and save it locally
+  function generateNallPdf() {
+
+    html2pdf().set({
+      html2canvas: {
+        onclone: (element) => {
+          const svgElements = Array.from(element.querySelectorAll('svg'));
+          svgElements.forEach(s => {
+            const bBox = s.getBBox();
+            s.setAttribute("x", bBox.x);
+            s.setAttribute("y", bBox.y);
+            s.setAttribute("width", bBox.width);
+            s.setAttribute("height", bBox.height);
+          });
+        }
+      }
+    })
+
+    // Generate the PDF.
+    html2pdf().from($('#graphOutput').html()).set({
+      margin: 0,
+      filename: 'certificate.pdf',
+      html2canvas: { scale: 1 },
+      jsPDF: { orientation: 'portrait', unit: 'in', format: 'letter', compressPDF: true }
+    }).save();
+
+  }
+
+</script>
+</Layout>
+
+
