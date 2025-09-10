@@ -23,7 +23,13 @@ const { section, wrapperClass, magazineTitle = "" } = Astro.props;
 		<link rel="preload" href="/fonts/mercury/Mercury-TextG1Italic.otf" as="font" type="otf" crossorigin="anonymous">
 		<!--END preload fonts to prevent FOUT -->
 
-    
+    {import.meta.env.DEV && (
+      <style is:inline>
+        astro-dev-toolbar,[data-astro-dev-toolbar]{display:none!important}
+      </style>
+    )}
+
+        
     <meta charset="UTF-8" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
