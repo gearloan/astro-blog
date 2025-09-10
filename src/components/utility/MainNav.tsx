@@ -1,5 +1,4 @@
 import ThemeToggle from './ThemeToggle';
-import FontSwitcher from './FontSwitcher';
 import { useState, useRef, useEffect } from 'preact/hooks';
 
 
@@ -66,7 +65,6 @@ export default function Nav({ section, magazineTitle }: Props) {
       </ul>
     </div>
 
-    <FontSwitcher />
 
     <div class="flex">
       <button

@@ -1,0 +1,188 @@
+---
+const PEEK = 20;
+
+// Options (edit labels as you like)
+const editorialOpts = [
+  { id: "", label: "Editorial: Default (Mercury)" },
+  { id: "noe", label: "Editorial: Noe" },
+  { id: "canela", label: "Editorial: Canela" },
+];
+
+const magOpts = [
+  { id: "", label: "Magazine: Default (Gotham)" },
+  { id: "soehne-fat", label: "Magazine: Söhne Extrafett" },
+  { id: "soehne-schmal", label: "Magazine: Söhne Schmal Buch" },
+];
+
+const uiOpts = [
+  { id: "", label: "UI: Default (Gotham)" },
+  { id: "soehne", label: "UI: Söhne" },
+  { id: "system", label: "UI: System" },
+];
+---
+
+<!-- fixed wrapper at bottom -->
+<div class="fixed inset-x-0 bottom-0 z-[9999] pointer-events-none">
+  <!-- centering wrapper -->
+  <div class="absolute bottom-0 left-1/2 -translate-x-1/2 pointer-events-none">
+
+    <!-- tray (dark UI) -->
+    <div
+      id="tuner-tray"
+      class="pointer-events-auto min-w-[280px] max-w-[92vw] rounded-2xl border shadow-2xl
+             bg-gray-900/95 text-gray-100 border-gray-700 backdrop-blur transition-transform duration-200
+             will-change-transform"
+      style={`transform: translateY(calc(100% - ${PEEK}px)); color-scheme: dark;`}>
+
+      <!-- header -->
+      <div class="flex items-center justify-between px-3 py-2 border-b border-gray-700">
+        <div class="flex items-center gap-2">
+          <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-aopa-ltblue text-white text-sm">Aa</span>
+          <span class="text-sm font-medium">Tuner</span>
+        </div>
+        <div class="flex items-center gap-1">
+          <button id="tuner-pin" class="h-8 px-2 rounded-lg text-xs hover:bg-white/10" title="Pin">Pin</button>
+          <button id="tuner-close" class="h-8 w-8 rounded-lg hover:bg-white/10" title="Close">×</button>
+        </div>
+      </div>
+
+      <!-- body -->
+      <div class="p-3 space-y-3">
+        <div class="flex items-center gap-3 text-sm">
+          <!-- Editorial -->
+          <label class="flex items-center gap-2">
+            <span class="uppercase tracking-wide text-xs text-gray-300">Editorial</span>
+            <select id="sel-editorial"
+              class="border border-gray-700 bg-gray-800 text-gray-100 rounded px-2 py-1
+                     focus:outline-none focus:ring-2 focus:ring-white/20">
+              {editorialOpts.map(o => <option value={o.id}>{o.label}</option>)}
+            </select>
+          </label>
+          <!--
+          <label class="flex items-center gap-2">
+            <span class="uppercase tracking-wide text-xs text-gray-300">Magazine</span>
+            <select id="sel-mag"
+              class="border border-gray-700 bg-gray-800 text-gray-100 rounded px-2 py-1
+                     focus:outline-none focus:ring-2 focus:ring-white/20">
+              {magOpts.map(o => <option value={o.id}>{o.label}</option>)}
+            </select>
+          </label>
+
+          <label class="flex items-center gap-2">
+            <span class="uppercase tracking-wide text-xs text-gray-300">UI</span>
+            <select id="sel-ui"
+              class="border border-gray-700 bg-gray-800 text-gray-100 rounded px-2 py-1
+                     focus:outline-none focus:ring-2 focus:ring-white/20">
+              {uiOpts.map(o => <option value={o.id}>{o.label}</option>)}
+            </select>
+          </label>
+           -->
+        </div>
+
+        <div class="text-xs text-gray-400">Color switcher coming soon…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (() => {
+    const tray = document.getElementById('tuner-tray');
+    if (!tray) return;
+
+    const PEEK = {px: 20};
+    const closedTransform = `translateY(calc(100% - ${PEEK.px}px))`;
+
+    // Selects
+    const selEd = document.getElementById('sel-editorial');
+    const selMag = document.getElementById('sel-mag');
+    const selUI = document.getElementById('sel-ui');
+
+    const root = document.documentElement;
+
+    // init values from storage/DOM
+    try {
+      const e0 = localStorage.getItem('fontset:editorial') ?? root.dataset.editorial ?? '';
+      const m0 = localStorage.getItem('fontset:mag') ?? root.dataset.mag ?? '';
+      const u0 = localStorage.getItem('fontset:ui') ?? root.dataset.ui ?? '';
+      if (selEd) selEd.value = e0;
+      if (selMag) selMag.value = m0;
+      if (selUI) selUI.value = u0;
+    } catch {}
+
+    // helpers to apply + persist
+    const applyEditorial = (v) => {
+      if (v) root.setAttribute('data-editorial', v); else root.removeAttribute('data-editorial');
+      try { localStorage.setItem('fontset:editorial', v); } catch {}
+    };
+    const applyMag = (v) => {
+      if (v) root.setAttribute('data-mag', v); else root.removeAttribute('data-mag');
+      try { localStorage.setItem('fontset:mag', v); } catch {}
+    };
+    const applyUI = (v) => {
+      if (v) root.setAttribute('data-ui', v); else root.removeAttribute('data-ui');
+      try { localStorage.setItem('fontset:ui', v); } catch {}
+    };
+
+    // bind change/input (native)
+    selEd?.addEventListener('input', (e) => applyEditorial(e.currentTarget.value));
+    selEd?.addEventListener('change', (e) => applyEditorial(e.currentTarget.value));
+    selMag?.addEventListener('input', (e) => applyMag(e.currentTarget.value));
+    selMag?.addEventListener('change', (e) => applyMag(e.currentTarget.value));
+    selUI?.addEventListener('input', (e) => applyUI(e.currentTarget.value));
+    selUI?.addEventListener('change', (e) => applyUI(e.currentTarget.value));
+
+    // pin / close
+    const btnPin = document.getElementById('tuner-pin');
+    const btnClose = document.getElementById('tuner-close');
+
+    let pinned = false;
+    try { pinned = localStorage.getItem('tuner:pinned') === '1'; } catch {}
+    if (pinned) tray.style.transform = 'translateY(0)';
+
+    const setOpen = (open) => {
+      tray.style.transform = open ? 'translateY(0)' : closedTransform;
+    };
+
+    btnPin?.addEventListener('click', () => {
+      pinned = !pinned;
+      try { localStorage.setItem('tuner:pinned', pinned ? '1' : '0'); } catch {}
+      setOpen(pinned ? true : tray.matches(':hover'));
+      btnPin.textContent = pinned ? 'Pinned' : 'Pin';
+      if (pinned) btnPin.classList.add('bg-white/15'); else btnPin.classList.remove('bg-white/15');
+    });
+
+    btnClose?.addEventListener('click', () => {
+      pinned = false;
+      try { localStorage.setItem('tuner:pinned','0'); } catch {}
+      setOpen(false);
+      btnPin.textContent = 'Pin';
+      btnPin.classList.remove('bg-white/15');
+    });
+
+    // hover / focus behavior (with protection while interacting with selects)
+    let interacting = false;
+    let hideTimer;
+
+    const onEnter = () => { clearTimeout(hideTimer); setOpen(true); };
+    const onLeave = () => {
+      if (pinned || interacting) return;
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => setOpen(false), 200);
+    };
+
+    tray.addEventListener('mouseenter', onEnter, true);
+    tray.addEventListener('mouseleave', onLeave, true);
+    tray.addEventListener('focusin', onEnter);
+    tray.addEventListener('focusout', onLeave);
+
+    // Keep open during native select interaction
+    tray.addEventListener('pointerdown', () => { interacting = true; setOpen(true); }, true);
+    window.addEventListener('pointerup', () => {
+      setTimeout(() => {
+        interacting = false;
+        if (!pinned && !tray.matches(':hover')) setOpen(false);
+      }, 150);
+    }, true);
+  })();
+</script>

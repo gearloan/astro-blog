@@ -1,6 +1,8 @@
 ---
 import "../styles/global.css";
 import MainNav from '../components/utility/MainNav.tsx';
+import Tuner from '../components/utility/Tuner.astro';
+
 const { proseStyle = '' } = Astro.props;
 const isEditorial = proseStyle === 'prose-editorial';
 
@@ -45,6 +47,7 @@ const { section, wrapperClass, magazineTitle = "" } = Astro.props;
     <main class="flex-grow mx-auto w-full px-0 md:px-4">
 			<slot />
 		</main>
+    <Tuner client:load />
 	</body>
 </html>
 
