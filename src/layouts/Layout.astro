@@ -6,8 +6,6 @@ const isEditorial = proseStyle === 'prose-editorial';
 
 const { section, wrapperClass, magazineTitle = "" } = Astro.props;
 
-import FontSwitcher from '../components/utility/FontSwitcher.astro';
-import fontSwitcherUrl from '../scripts/font-switcher.ts?url';
 // e.g., '/editorial/article-slug' → 'editorial'
 ---
 <!doctype html>
@@ -25,7 +23,6 @@ import fontSwitcherUrl from '../scripts/font-switcher.ts?url';
 		<link rel="preload" href="/fonts/mercury/Mercury-TextG1Italic.otf" as="font" type="otf" crossorigin="anonymous">
 		<!--END preload fonts to prevent FOUT -->
 
-    <script type="module" src={fontSwitcherUrl}></script>		
     
     <meta charset="UTF-8" />
 
@@ -38,7 +35,6 @@ import fontSwitcherUrl from '../scripts/font-switcher.ts?url';
     <div class="grow flex flex-col">
       <div class="sticky top-0 z-50">
         <MainNav section={section} magazineTitle={magazineTitle} client:load />
-        <FontSwitcher />
       </div>
     <main class="flex-grow mx-auto w-full px-0 md:px-4">
 			<slot />

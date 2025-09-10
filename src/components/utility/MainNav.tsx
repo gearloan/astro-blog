@@ -1,4 +1,5 @@
 import ThemeToggle from './ThemeToggle';
+import FontSwitcher from './FontSwitcher';
 import { useState, useRef, useEffect } from 'preact/hooks';
 
 
@@ -38,52 +39,52 @@ export default function Nav({ section, magazineTitle }: Props) {
 
   
   return (
-    <div class="relative z-40 group">
-      {/* NAV BAR */}
-      <nav class="relative z-50 h-[75px] bg-aopa-dkblue shadow-md flex justify-between items-stretch">
-        {/* LEFT SIDE NAV LINKS — hover target */}
-        <div class="flex text-white h-full">
-          <ul class="flex h-full font-heading">
-            <li class="relative px-3 md:px-6 pr-6 md:pr-[2.5rem] h-full clip-angle flex items-center bg-aopa-ltblue text-2xl tracking-wide">
-              <a href="/">AOPA</a>
-            </li>
-            {section === 'editorial' && (
-              <li class="px-2 md:px-4 flex items-center h-full  tracking-wide">
-                <a href="#" class="font-body text-lg md:text-2xl md:font-heading">NEWS</a>
-              </li>
-            )}
-            {section === 'magazine' && (
-              <li class="">
-                <a class="px-2 md:px-4 flex items-center h-full text-lg md:text-2xl tracking-wide font-body md:font-heading" href="#">
-                  MAGAZINE
-                  {magazineTitle && <span class="ml-2 text-lg text-teal-300 font-body capitalize hidden md:block"> / {magazineTitle}</span>}
-                </a>
-              </li>
-            )}
-          </ul>
-        </div>
+   <div class="relative z-40 navwrap">
+  {/* NAV BAR */}
+  <nav class="relative z-50 h-[75px] bg-aopa-dkblue shadow-md flex justify-between items-stretch">
+    {/* LEFT SIDE — the ONLY hover trigger */}
+    <div class="flex text-white h-full">
+      <ul class="flex h-full font-heading nav-trigger">
+        <li class="relative px-3 md:px-6 pr-6 md:pr-[2.5rem] h-full clip-angle flex items-center bg-aopa-ltblue text-2xl tracking-wide">
+          <a href="/">AOPA</a>
+        </li>
 
+        {section === 'editorial' && (
+          <li class="px-2 md:px-4 flex items-center h-full tracking-wide">
+            <a href="#" class="font-body text-lg md:text-2xl md:font-heading">NEWS</a>
+          </li>
+        )}
 
-        <div class="flex">
-          <button
-            aria-label="Toggle menu"
-            onClick={toggleMenu}
-            id="hamburger"
-            class={`ml-6 relative w-[75px] h-[75px] bg-aopa-ltblue flex flex-col justify-center items-center z-60 ${
-              isOpen ? 'open' : ''
-            }`}
-          >
-            <span class="bar transition-transform duration-300 absolute w-8 h-1 rounded-lg bg-white top-[28px]"></span>
-            <span class="bar transition-opacity duration-300 absolute w-8 h-1 rounded-lg bg-white top-[36px]"></span>
-            <span class="bar transition-transform duration-300 absolute w-8 h-1 rounded-lg bg-white top-[44px]"></span>
-          </button>
-        </div>
+        {section === 'magazine' && (
+          <li>
+            <a class="px-2 md:px-4 flex items-center h-full text-lg md:text-2xl tracking-wide font-body md:font-heading" href="#">
+              MAGAZINE
+              {magazineTitle && <span class="ml-2 text-lg text-teal-300 font-body capitalize hidden md:block"> / {magazineTitle}</span>}
+            </a>
+          </li>
+        )}
+      </ul>
+    </div>
 
-      </nav>
+    <FontSwitcher />
 
+    <div class="flex">
+      <button
+        aria-label="Toggle menu"
+        onClick={toggleMenu}
+        id="hamburger"
+        class={`ml-6 relative w-[75px] h-[75px] bg-aopa-ltblue flex flex-col justify-center items-center z-60 ${isOpen ? 'open' : ''}`}
+      >
+        <span class="bar transition-transform duration-300 absolute w-8 h-1 rounded-lg bg-white top-[28px]"></span>
+        <span class="bar transition-opacity duration-300 absolute w-8 h-1 rounded-lg bg-white top-[36px]"></span>
+        <span class="bar transition-transform duration-300 absolute w-8 h-1 rounded-lg bg-white top-[44px]"></span>
+      </button>
+    </div>
+  </nav>
 
-      {/* DROPDOWN: now a sibling of nav, not a child */}
-      <div class="hidden md:block leading-none absolute top-full left-0 w-screen bg-aopa-dkblue text-white shadow-md transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-40">
+  {/* DROPDOWN */}
+  <div class="nav-drawer hidden md:block leading-none absolute top-full left-0 w-screen bg-aopa-dkblue text-white shadow-md transform -translate-y-full transition-transform duration-300 ease-out z-40">
+
         <div class="mx-auto md:p-6 grid grid-cols-6 gap-8">
           <div class="border-r-2 border-gray-400">                    
             <img src="/images/ui/logo-small-white.svg" alt="Logo" class="px-10 block dark:hidden mb-4" />
@@ -177,6 +178,11 @@ export default function Nav({ section, magazineTitle }: Props) {
         <li><a class="line-through" href="#">Profile</a></li>
         <li><a class="line-through" href="#">Settings</a></li>
         <li><a class="line-through"  href="#">Logout</a></li>
+      </ul>
+      <h3>Design Things</h3>
+      <ul class="space-y-3">
+        <li>
+        </li>
       </ul>
       <div class="mt-6">
         <ThemeToggle />

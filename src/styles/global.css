@@ -6,5 +6,16 @@
 @tailwind utilities;
 
 body {
-  @apply font-body;
+ /* @apply font-body; */
+}
+
+/* Only open when hovering the left trigger OR the drawer itself */
+.navwrap:has(.nav-trigger:hover) .nav-drawer,
+.navwrap:has(.nav-drawer:hover) .nav-drawer {
+  transform: translateY(0);
+}
+
+/* Optional: if you want pointer to still interact with right-side stuff without opening drawer */
+.navwrap nav > :not(.flex:first-child) * {
+  pointer-events: auto;
 }

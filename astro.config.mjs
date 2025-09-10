@@ -8,5 +8,3 @@ export default defineConfig({
   integrations: [tailwind()], 
   integrations: [preact()],
 });
-
-

@@ -1,0 +1,106 @@
+/** @jsxImportSource preact */
+import { h } from "preact";
+import { useEffect, useState } from "preact/hooks";
+
+type Props = {
+  showEditorial?: boolean;
+  showMag?: boolean;
+  showUI?: boolean;
+};
+
+export default function FontSwitcher({
+  showEditorial = true,
+  showMag = true,
+  showUI = false,
+}: Props) {
+  const [editorial, setEditorial] = useState<string>("");
+  const [mag, setMag] = useState<string>("");
+  const [ui, setUI] = useState<string>("");
+
+  // init from DOM/localStorage
+  useEffect(() => {
+    try {
+      const root = document.documentElement;
+      setEditorial(localStorage.getItem("fontset:editorial") ?? root.dataset.editorial ?? "");
+      setMag(localStorage.getItem("fontset:mag") ?? root.dataset.mag ?? "");
+      setUI(localStorage.getItem("fontset:ui") ?? root.dataset.ui ?? "");
+    } catch {}
+  }, []);
+
+  // apply + persist
+  useEffect(() => {
+    const r = document.documentElement;
+    if (editorial) r.setAttribute("data-editorial", editorial);
+    else r.removeAttribute("data-editorial");
+    try { localStorage.setItem("fontset:editorial", editorial); } catch {}
+  }, [editorial]);
+
+  useEffect(() => {
+    const r = document.documentElement;
+    if (mag) r.setAttribute("data-mag", mag);
+    else r.removeAttribute("data-mag");
+    try { localStorage.setItem("fontset:mag", mag); } catch {}
+  }, [mag]);
+
+  useEffect(() => {
+    const r = document.documentElement;
+    if (ui) r.setAttribute("data-ui", ui);
+    else r.removeAttribute("data-ui");
+    try { localStorage.setItem("fontset:ui", ui); } catch {}
+  }, [ui]);
+
+  const kids: any[] = [];
+
+  if (showEditorial) {
+    kids.push(
+      h("label", { class: "flex items-center gap-2" },
+        h("span", { class: "ui-label" }, "Editorial"),
+        h("select", {
+            class: "border rounded px-2 py-1",
+            value: editorial,
+            onChange: (e: any) => setEditorial((e.currentTarget as HTMLSelectElement).value),
+          },
+          h("option", { value: "" }, "Editorial: Default (Mercury)"),
+          h("option", { value: "noe" }, "Editorial: Noe"),
+          h("option", { value: "canela" }, "Editorial: Canela"),
+        ),
+      )
+    );
+  }
+
+  if (showMag) {
+    kids.push(
+      h("label", { class: "flex items-center gap-2" },
+        h("span", { class: "ui-label" }, "Magazine"),
+        h("select", {
+            class: "border rounded px-2 py-1",
+            value: mag,
+            onChange: (e: any) => setMag((e.currentTarget as HTMLSelectElement).value),
+          },
+          h("option", { value: "" }, "Magazine: Default (Gotham)"),
+          h("option", { value: "soehne-fat" }, "Magazine: Soehne Extrafett"),
+          h("option", { value: "soehne-schmal" }, "Magazine: Soehne Schmal Buch"),
+        ),
+      )
+    );
+  }
+
+  if (showUI) {
+    kids.push(
+      h("label", { class: "flex items-center gap-2" },
+        h("span", { class: "ui-label" }, "UI"),
+        h("select", {
+            class: "border rounded px-2 py-1",
+            value: ui,
+            onChange: (e: any) => setUI((e.currentTarget as HTMLSelectElement).value),
+          },
+          h("option", { value: "" }, "UI: Default (Gotham)"),
+          h("option", { value: "soehne" }, "UI: Soehne"),
+          h("option", { value: "system" }, "UI: System"),
+        ),
+      )
+    );
+  }
+
+  return h("div", { class: "flex items-center gap-3 text-sm" }, ...kids);
+}

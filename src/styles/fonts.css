@@ -1,41 +1,45 @@
-/* src/styles/fonts.css */
-
-/* Defaults */
 :root {
+  /* Core roles (brand defaults) */
   --font-body: "Gotham-Book";
   --font-body-italic: "Gotham-BookItalic";
+
   --font-heading: "Knockout-94";
   --font-subheading: "Knockout-28";
+
+  --font-ui: "Gotham-Bold";
+  --font-ui-label: "Gotham-Bold";
+
+  /* Editorial serif defaults (Mercury) */
   --font-serif: "Mercury-Roman";
   --font-serif-bold: "Mercury-Bold";
   --font-serif-italic: "Mercury-BookItalic";
-  --font-ui: "Gotham-Bold";
-  --font-ui-label: "Gotham-Bold";
 }
 
-/* ——— Editorial axis ——— */
-html[data-editorial="noe"] {
-  --font-serif: "Noe Text";
-  --font-serif-bold: "Noe Text";
-  --font-serif-italic: "Noe Text";
-}
+/* Editorial axis */
 html[data-editorial="canela"] {
-  --font-serif: "Canela";
-  --font-serif-bold: "Canela";
-  --font-serif-italic: "Canela";
+  --font-serif: "Canela-Regular";
+  --font-serif-bold: "Canela-Bold";
+  --font-serif-italic: "Canela-Italic"; /* bold italic will be the same family if you need it */
+}
+html[data-editorial="noe"] {
+  --font-serif: "NoeText-Regular";
+  --font-serif-bold: "NoeText-Bold";
+  --font-serif-italic: "NoeText-Italic";
 }
 
-/* ——— Magazine axis ———
-   Decide which roles you want Söhne to occupy. Typical: body/ui on “magazine” templates. */
+/* Magazine axis */
 html[data-mag="soehne-fat"] {
-  --font-body: "Sohne";
-  --font-body-italic: "Sohne";
-  --font-ui: "Sohne";
-  --font-ui-label: "Sohne";
+  --font-body: "Sohne-Extrafett";
+  --font-body-italic: "Sohne-ExtrafettItalic";
+  --font-ui: "Sohne-Extrafett";
+  --font-ui-label: "Sohne-Extrafett";
+  /* if you want decks/pullquotes in Söhne too: */
+  /* --font-subheading: "Sohne-Extrafett"; */
 }
 html[data-mag="soehne-schmal"] {
-  --font-body: "Sohne Schmal";
-  --font-body-italic: "Sohne Schmal";
-  --font-ui: "Sohne Schmal";
-  --font-ui-label: "Sohne Schmal";
+  --font-body: "SohneSchmal-Buch";
+  --font-body-italic: "SohneSchmal-BuchItalic";
+  --font-ui: "SohneSchmal-Buch";
+  --font-ui-label: "SohneSchmal-Buch";
+  /* --font-subheading: "SohneSchmal-Buch"; */
 }

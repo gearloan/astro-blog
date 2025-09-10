@@ -2,16 +2,8 @@ import typography from '@tailwindcss/typography';
 
 /** @type {import('tailwindcss').Config} */
 export default {
-  // tailwind.config.js
   content: ["./src/**/*.{astro,html,js,jsx,ts,tsx,vue,svelte}"],
-  safelist: [
-    'order-1',
-    'order-2',
-    'order-3',
-    'lg:order-1',
-    'lg:order-2',
-    'lg:order-3',
-  ],
+  safelist: ['order-1','order-2','order-3','lg:order-1','lg:order-2','lg:order-3'],
   darkMode: 'class',
   theme: {
     extend: {
@@ -33,52 +25,34 @@ export default {
         'aopa-dkblue': '#163372',
         'aopa-grey': '#5e5e5e',
         'aopa-dkgrey': '#333333',
-        gray: {
-          350: '#c4c9d1', // whatever hex you need
-        },
+        gray: { 350: '#c4c9d1' },
       },
       typography: ({ theme }) => ({
         DEFAULT: {
           css: {
-            // Handles a inside headings
             'h1 a, h2 a, h3 a, h4 a, h5 a, h6 a': {
               textDecoration: 'none',
               fontWeight: 'inherit',
-              '&:hover': {
-                textDecoration: 'underline',
-              },
+              '&:hover': { textDecoration: 'underline' },
             },
-            // Handles when a wraps the heading
             'a h1, a h2, a h3, a h4, a h5, a h6': {
               textDecoration: 'none',
               fontWeight: 'inherit',
-              '&:hover': {
-                textDecoration: 'underline',
-              },
+              '&:hover': { textDecoration: 'underline' },
             },
-            // Optional: also nuke underline on a generally
-            'a': {
-              textDecoration: 'none',
-              '&:hover': {
-                textDecoration: 'underline',
-              },
-            },
+            a: { textDecoration: 'none', '&:hover': { textDecoration: 'underline' } },
           },
         },
         editorial: {
           css: {
-            fontSize: theme('fontSize.base'), // default font size
+            fontSize: theme('fontSize.base'),
             fontFamily: theme('fontFamily.serif').join(', '),
-            h1: { 
-              fontFamily: theme('fontFamily.serifBold').join(', '),
-              fontSize: theme('fontSize.4xl'),
-
-            },
+            h1: { fontFamily: theme('fontFamily.serifBold').join(', '), fontSize: theme('fontSize.4xl') },
             h2: { fontFamily: theme('fontFamily.serifBold').join(', ') },
-            h3: { 
-              fontFamily: theme('fontFamily.serifBold').join(', ') ,
+            h3: {
+              fontFamily: theme('fontFamily.serifBold').join(', '),
               fontSize: theme('fontSize.lg'),
-              lineHeight: theme('lineHeight.tight'), // ← this is what adds `leading-tight`
+              lineHeight: theme('lineHeight.tight'),
             },
             em: { fontFamily: theme('fontFamily.serifItalic').join(', ') },
             strong: { fontFamily: theme('fontFamily.serifBold').join(', ') },
@@ -111,6 +85,35 @@ export default {
       }),
     },
   },
-  plugins: [typography],
-};
+  // tailwind.config.js (only the plugins section changes)
+  plugins: [
+    typography,
+    function ({ addBase, theme }) {
+      const fam = (path) => {
+        const v = theme(path);
+        return Array.isArray(v) ? v.join(', ') : String(v ?? '');
+      };
 
+      addBase({
+        'html, body': { fontFamily: fam('fontFamily.body') },
+
+        // NEWS display
+        'h1':                 { fontFamily: fam('fontFamily.heading') },
+        'h2, h3, blockquote': { fontFamily: fam('fontFamily.subheading') },
+
+        // Editorial emphasis
+        'em':     { fontFamily: fam('fontFamily.serifItalic') },
+        'strong': { fontFamily: fam('fontFamily.serifBold') },
+
+        // UI chrome
+        '.ui, nav, .btn, .badge': { fontFamily: fam('fontFamily.ui') },
+        '.ui-label': {
+          fontFamily: fam('fontFamily.uiLabel'),
+          textTransform: 'uppercase',
+          letterSpacing: theme('letterSpacing.wide'),
+        },
+      });
+    },
+  ],
+
+};
