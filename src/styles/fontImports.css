@@ -2,7 +2,7 @@
    Separate family per cut so bold/italic “just work” via family swap.
    Prefer .woff2 if you have it; keep paths/names consistent with your files. */
 
-/* ——— Editorial: Noe ———
+   /* ——— Editorial: Noe ———
    You only have Display Bold(BI) trials; we still expose them under NoeText-* for simplicity. */
 @font-face {
   font-family: "NoeText-Regular";
@@ -68,6 +68,16 @@
   font-family: "SohneSchmal-BuchItalic";
   src: url("/fonts/soehne/TestSohneBreit-BuchKursiv.otf") format("opentype");
   font-weight: 400; font-style: italic; font-display: swap;
+}
+@font-face {
+  font-family: "Avenir-Book";
+  src: url("/fonts/avenir/AvenirLTStd-Book.otf") format("opentype");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Avenir-Heavy";
+  src: url("/fonts/avenir/AvenirLTStd-Heavy.otf") format("opentype");
+  font-weight: 400; font-style: normal; font-display: swap;
 }
 
 /* ——— News: Knockout ——— */

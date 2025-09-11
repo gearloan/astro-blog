@@ -17,8 +17,11 @@ const magOpts = [
 const uiOpts = [
   { id: "", label: "UI: Default (Gotham)" },
   { id: "soehne", label: "UI: Söhne" },
+  { id: "avenir", label: "UI: Avenir" },
   { id: "system", label: "UI: System" },
 ];
+
+const { proseStyle = 'prose-none' } = Astro.props;
 ---
 
 <!-- fixed wrapper at bottom -->
@@ -29,6 +32,7 @@ const uiOpts = [
     <!-- tray (dark UI) -->
     <div
       id="tuner-tray"
+      data-prose-style={proseStyle}
       class="pointer-events-auto min-w-[280px] max-w-[92vw] rounded-2xl border shadow-2xl
              bg-gray-900/95 text-gray-100 border-gray-700 backdrop-blur transition-transform duration-200
              will-change-transform"
@@ -58,7 +62,7 @@ const uiOpts = [
               {editorialOpts.map(o => <option value={o.id}>{o.label}</option>)}
             </select>
           </label>
-          <!--
+          
           <label class="flex items-center gap-2">
             <span class="uppercase tracking-wide text-xs text-gray-300">Magazine</span>
             <select id="sel-mag"
@@ -76,7 +80,7 @@ const uiOpts = [
               {uiOpts.map(o => <option value={o.id}>{o.label}</option>)}
             </select>
           </label>
-           -->
+           
         </div>
 
         <div class="text-xs text-gray-400">Color switcher coming soon…</div>
@@ -99,6 +103,32 @@ const uiOpts = [
     const selUI = document.getElementById('sel-ui');
 
     const root = document.documentElement;
+
+    const hideControl = (el) => {
+      if (!el) return;
+
+      // Grab the label wrapper (or any explicit field wrapper if you add one)
+      const wrapper =
+        el.closest('label,[data-tuner-field],.field,.form-row') || el;
+
+      // Hide robustly (class + style), and make it non-interactive
+      wrapper.classList.add('hidden');
+      wrapper.style.display = 'none';          // belt-and-suspenders
+      wrapper.setAttribute('aria-hidden', 'true');
+      wrapper.setAttribute('inert', '');       // prevents focus inside (supported widely enough)
+      
+      // Disable any interactive children just in case
+      wrapper.querySelectorAll('select, input, button, a').forEach(ctrl => {
+        if ('disabled' in ctrl) ctrl.disabled = true;
+        ctrl.tabIndex = -1;
+      });
+    };
+
+
+    const style = tray.dataset.proseStyle || 'prose-none';
+    if (style === 'prose-editorial') hideControl(selMag);
+    else if (style === 'prose-magazine') hideControl(selEd);
+    
 
     // init values from storage/DOM
     try {

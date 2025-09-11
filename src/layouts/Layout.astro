@@ -3,7 +3,7 @@ import "../styles/global.css";
 import MainNav from '../components/utility/MainNav.tsx';
 import Tuner from '../components/utility/Tuner.astro';
 
-const { proseStyle = '' } = Astro.props;
+const { proseStyle = 'prose-none' } = Astro.props;
 const isEditorial = proseStyle === 'prose-editorial';
 
 const { section, wrapperClass, magazineTitle = "" } = Astro.props;
@@ -23,6 +23,7 @@ const { section, wrapperClass, magazineTitle = "" } = Astro.props;
 		<link rel="preload" href="/fonts/mercury/Mercury Display Bold.otf" as="font" type="otf" crossorigin="anonymous">
 		<link rel="preload" href="/fonts/mercury/Mercury-TextG1Roman.otf" as="font" type="otf" crossorigin="anonymous">
 		<link rel="preload" href="/fonts/mercury/Mercury-TextG1Italic.otf" as="font" type="otf" crossorigin="anonymous">
+		<link rel="preload" href="/fonts/sohne/TestSohne-Extrafett.otf" as="font" type="otf" crossorigin="anonymous">
 		<!--END preload fonts to prevent FOUT -->
 
     {import.meta.env.DEV && (
@@ -47,7 +48,7 @@ const { section, wrapperClass, magazineTitle = "" } = Astro.props;
     <main class="flex-grow mx-auto w-full px-0 md:px-4">
 			<slot />
 		</main>
-    <Tuner />
+    <Tuner proseStyle={proseStyle} />
 	</body>
 </html>
 

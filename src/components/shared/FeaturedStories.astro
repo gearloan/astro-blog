@@ -3,9 +3,9 @@ import { fetchPosts } from '../../lib/fetchPosts.js';
 const posts = await fetchPosts({ tag: 'editorial', limit: 5 });
 ---
 
-<aside class="prose prose-editorial">
-  <h3 class="font-body tracking-widest uppercase mb-4 pl-1 dark:text-white text-base">FEATURED STORIES</h3>
-  <ul class="space-y-6 p-0 ">
+<aside class="">
+  <h3 class="ui-label tracking-widest uppercase mb-4 pl-1 dark:text-white text-base">FEATURED STORIES</h3>
+  <ul class="space-y-6 p-0 prose prose-editorial">
     {posts.map((post, index) => (
         <li class="flex items-start gap-3">
             <div>

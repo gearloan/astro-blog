@@ -18,7 +18,7 @@ export default {
         serifItalic: ['var(--font-serif-italic, "Mercury-BookItalic")', 'serif'],
 
         ui:      ['var(--font-ui, "Gotham-Bold")', 'sans-serif'],
-        uiLabel: ['var(--font-ui-label, "Gotham-Bold")', 'sans-serif'],
+        uiLabel: ['var(--font-ui-label, "Gotham-Book")', 'sans-serif'],
       },
       colors: {
         'aopa-ltblue': '#00a3e0',

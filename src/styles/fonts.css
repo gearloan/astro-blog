@@ -4,10 +4,10 @@
   --font-body-italic: "Gotham-BookItalic";
 
   --font-heading: "Knockout-94";
-  --font-subheading: "Knockout-28";
+  --font-subheading: "Mercury-Bold";
 
   --font-ui: "Gotham-Bold";
-  --font-ui-label: "Gotham-Bold";
+  --font-ui-label: "Gotham-Book";
 
   /* Editorial serif defaults (Mercury) */
   --font-serif: "Mercury-Roman";
@@ -31,15 +31,30 @@ html[data-editorial="noe"] {
 html[data-mag="soehne-fat"] {
   --font-body: "Sohne-Extrafett";
   --font-body-italic: "Sohne-ExtrafettItalic";
-  --font-ui: "Sohne-Extrafett";
-  --font-ui-label: "Sohne-Extrafett";
   /* if you want decks/pullquotes in Söhne too: */
   /* --font-subheading: "Sohne-Extrafett"; */
 }
 html[data-mag="soehne-schmal"] {
   --font-body: "SohneSchmal-Buch";
   --font-body-italic: "SohneSchmal-BuchItalic";
-  --font-ui: "SohneSchmal-Buch";
-  --font-ui-label: "SohneSchmal-Buch";
+
   /* --font-subheading: "SohneSchmal-Buch"; */
 }
+/* --- UI choices (affect navigation buttons, labels, etc.) --- */
+html[data-ui="soehne"] {
+  --font-ui: "Sohne-Extrafett";
+  --font-ui-label: "Sohne";
+}
+html[data-ui="avenir"] {
+  --font-ui: "Avenir-Heavy";
+  --font-ui-label: "Avenir-Book";
+}
+html[data-ui="gotham"] {
+  --font-ui: "Gotham-Bold";
+  --font-ui-label: "Gotham-Book";
+}
+html[data-ui="system"] {
+  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, "Noto Sans", sans-serif;
+  --font-ui-label: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, "Noto Sans", sans-serif;
+}
+/* Add more UI families as you add @font-face rules */

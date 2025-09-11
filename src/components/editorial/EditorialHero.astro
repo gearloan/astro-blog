@@ -12,7 +12,7 @@ const { proseStyle = 'prose-editorial' } = Astro.props;
 <section class={`max-w-7xl mx-auto px-4 pt-8 pb-4 border-b border-gray-350 mb-8 grid grid-cols-1 lg:grid-cols-12 gap-6 ${proseStyle}`}>
   <!-- Left Column -->
   <aside class="lg:col-span-2 space-y-8 order-2 lg:order-1">
-    <h4 class="font-body tracking-widest">LATEST STORIES</h4>
+    <h4 class="ui-label tracking-widest">LATEST STORIES</h4>
     {leftStories.map(story => (
       <article class="!mt-2">
         <h3 class="text-xl mb-1 leading-[1.2] hover:underline"><a href={`/blog-post/${story.slug}`}>{story.title}</a></h3>
@@ -30,22 +30,33 @@ const { proseStyle = 'prose-editorial' } = Astro.props;
   </aside>
 
   <!-- Center Column -->
-  <article class="lg:col-span-8 order-1 lg:order-2">
+<article class="lg:col-span-8 order-1 lg:order-2">
+  <div class="relative">
+    <!-- FLAG -->
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 z-10 bg-cyan-300 text-blue-800 px-8 py-4 ui font-bold uppercase rounded-b-md shadow-md">
+    Breaking News
+  </div>
+
+    <!-- IMAGE -->
     <img
       src={leadStory.featuredImage?.node?.sourceUrl}
       alt={leadStory.title}
       class="w-full h-auto mb-1 md:mb-4 object-cover rounded"
     />
-    <h1 class="leading-tight mb-2 hover:underline"><a href={`/blog-post/${leadStory.slug}`}>{leadStory.title}</a></h1>
-    <p class="text-sm font-gothamBold uppercase tracking-wide text-gray-500 mb-4">
-      <!--By {leadStory.author} — {leadStory.date} -->
-    </p>
-    <p class="text-base text-gray-700">{leadStory.blurb}</p>
-  </article>
+  </div>
+  <h1 class="leading-tight mb-2 hover:underline">
+    <a href={`/blog-post/${leadStory.slug}`}>{leadStory.title}</a>
+  </h1>
+  <p class="text-sm font-gothamBold uppercase tracking-wide text-gray-500 mb-4">
+    <!--By {leadStory.author} — {leadStory.date} -->
+  </p>
+  <p class="text-base text-gray-700">{leadStory.blurb}</p>
+</article>
+
 
   <!-- Right Column -->
   <aside class="lg:col-span-2 space-y-8 order-1 lg:order-2 order-3 md:order-3">
-    <h4 class="font-body tracking-widest">ADVOCACY</h4>
+    <h4 class="ui-label font-normal tracking-widest ">ADVOCACY</h4>
     {rightStories.map(story => (
       <article class="!mt-2">
         <h3 class="text-xl mb-1 leading-[1.2] hover:underline"><a href={`/blog-post/${story.slug}`}>{story.title}</a></h3>
