@@ -4,7 +4,7 @@
   --font-body-italic: "Gotham-BookItalic";
 
   --font-heading: "Knockout-94";
-  --font-subheading: "Mercury-Bold";
+  --font-subheading: "Knockout-28";
 
   --font-ui: "Gotham-Bold";
   --font-ui-label: "Gotham-Book";
@@ -28,15 +28,17 @@ html[data-editorial="noe"] {
 }
 
 /* Magazine axis */
-html[data-mag="soehne-fat"] {
-  --font-body: "Sohne-Extrafett";
-  --font-body-italic: "Sohne-ExtrafettItalic";
+html[data-mag="Knockout-94"] {
+  --font-heading: "Knockout-94";
+  --font-subheading: "Knockout-28";
   /* if you want decks/pullquotes in Söhne too: */
   /* --font-subheading: "Sohne-Extrafett"; */
 }
-html[data-mag="soehne-schmal"] {
-  --font-body: "SohneSchmal-Buch";
-  --font-body-italic: "SohneSchmal-BuchItalic";
+html[data-mag="acta"] {
+  --font-heading: "Acta-Black";
+  --font-subheading: "Graphik-Xcon-Medium";
+  
+  --fs-heading: clamp(2rem, 4vw, 3.25rem);
 
   /* --font-subheading: "SohneSchmal-Buch"; */
 }
@@ -58,3 +60,5 @@ html[data-ui="system"] {
   --font-ui-label: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, "Noto Sans", sans-serif;
 }
 /* Add more UI families as you add @font-face rules */
+
+

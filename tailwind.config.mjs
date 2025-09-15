@@ -1,3 +1,4 @@
+// tailwind.config.js
 import typography from '@tailwindcss/typography';
 
 /** @type {import('tailwindcss').Config} */
@@ -27,6 +28,8 @@ export default {
         'aopa-dkgrey': '#333333',
         gray: { 350: '#c4c9d1' },
       },
+
+      // PROSE PRESETS (Option A): read sizes/leading/tracking from CSS variables
       typography: ({ theme }) => ({
         DEFAULT: {
           css: {
@@ -43,77 +46,118 @@ export default {
             a: { textDecoration: 'none', '&:hover': { textDecoration: 'underline' } },
           },
         },
+
         editorial: {
           css: {
-            fontSize: theme('fontSize.base'),
-            fontFamily: theme('fontFamily.serif').join(', '),
-            h1: { fontFamily: theme('fontFamily.serifBold').join(', '), fontSize: theme('fontSize.4xl') },
-            h2: { fontFamily: theme('fontFamily.serifBold').join(', ') },
-            h3: {
-              fontFamily: theme('fontFamily.serifBold').join(', '),
-              fontSize: theme('fontSize.lg'),
-              lineHeight: theme('lineHeight.tight'),
+            // Body inside .prose-editorial
+            fontFamily: theme('fontFamily.serif')[0],
+            fontSize: 'var(--fs-body)',
+            lineHeight: 'var(--lh-body)',
+
+            h1: {
+              fontFamily: theme('fontFamily.serifBold')[0],
+              fontSize: 'var(--fs-heading)',
+              lineHeight: 'var(--lh-heading)',
+              letterSpacing: 'var(--ls-heading)',
             },
-            em: { fontFamily: theme('fontFamily.serifItalic').join(', ') },
-            strong: { fontFamily: theme('fontFamily.serifBold').join(', ') },
+            h2: {
+              fontFamily: theme('fontFamily.serifBold')[0],
+              fontSize: 'var(--fs-subhead)',
+              lineHeight: 'var(--lh-subhead)',
+            },
+            h3: {
+              fontFamily: theme('fontFamily.serifBold')[0],
+              fontSize: 'var(--fs-subhead)',
+              lineHeight: 'var(--lh-subhead)',
+            },
+            em:    { fontFamily: theme('fontFamily.serifItalic')[0] },
+            strong:{ fontFamily: theme('fontFamily.serifBold')[0] },
+
+            // Optional UI roles within editorial prose
+            '.ui': {
+              fontFamily: theme('fontFamily.ui')[0],
+              fontSize: 'var(--fs-ui)',
+              lineHeight: 'var(--lh-ui)',
+            },
+            '.ui-label': {
+              fontFamily: theme('fontFamily.uiLabel')[0],
+              fontSize: 'var(--fs-ui-label)',
+              lineHeight: 'var(--lh-ui-label)',
+              letterSpacing: 'var(--ls-ui-label)',
+              textTransform: 'var(--tt-ui-label)',
+            },
           },
         },
+
         magazine: {
           css: {
-            fontFamily: theme('fontFamily.body').join(', '),
-            h1: { fontFamily: theme('fontFamily.heading').join(', ') },
-            h2: { fontFamily: theme('fontFamily.subheading').join(', ') },
+            // Body inside .prose-magazine
+            fontFamily: theme('fontFamily.body')[0],
+            fontSize: 'var(--fs-body)',
+            //lineHeight: 'var(--lh-body)',
+
+            h1: {
+              fontFamily: theme('fontFamily.heading')[0],
+              fontSize: 'var(--fs-heading)',
+              //lineHeight: 'var(--lh-heading)',
+              //letterSpacing: 'var(--ls-heading)',
+            },
+            h2: {
+              fontFamily: theme('fontFamily.subheading')[0],
+              fontSize: 'var(--fs-subhead)',
+              //lineHeight: 'var(--lh-subhead)',
+            },
+            h3: {
+              fontFamily: theme('fontFamily.subheading')[0],
+              fontSize: 'var(--fs-subhead)',
+              //lineHeight: 'var(--lh-subhead)',
+            },
+
             blockquote: {
-              fontFamily: theme('fontFamily.subheading').join(', '),
+              fontFamily: theme('fontFamily.subheading')[0],
               fontStyle: 'normal',
               fontWeight: 'normal',
             },
-            em: { fontFamily: theme('fontFamily.bodyItalic').join(', ') },
-            strong: { fontFamily: theme('fontFamily.ui').join(', ') },
+            em:    { fontFamily: theme('fontFamily.bodyItalic')[0] },
+            strong:{ fontFamily: theme('fontFamily.ui')[0] },
+
+            // Optional UI roles within magazine prose
+            '.ui': {
+              fontFamily: theme('fontFamily.ui')[0],
+              fontSize: 'var(--fs-ui)',
+              lineHeight: 'var(--lh-ui)',
+            },
+            '.ui-label': {
+              fontFamily: theme('fontFamily.uiLabel')[0],
+              fontSize: 'var(--fs-ui-label)',
+              lineHeight: 'var(--lh-ui-label)',
+              letterSpacing: 'var(--ls-ui-label)',
+              textTransform: 'var(--tt-ui-label)',
+            },
           },
         },
+
         feature: {
           css: {
             h1: {
-              fontFamily: theme('fontFamily.heading').join(', '),
+              fontFamily: theme('fontFamily.heading')[0],
+              // you can also read vars here if you want feature pages to share sizing logic:
+              fontSize: 'var(--fs-heading)',
+              //lineHeight: 'var(--lh-heading)',
+              //letterSpacing: 'var(--ls-heading)',
               textTransform: 'uppercase',
-              letterSpacing: theme('letterSpacing.wide'),
+              //letterSpacing: theme('letterSpacing.wide'),
             },
-            p: { fontFamily: theme('fontFamily.body').join(', ') },
+            p: { fontFamily: theme('fontFamily.body')[0] },
           },
         },
       }),
     },
   },
-  // tailwind.config.js (only the plugins section changes)
+
   plugins: [
     typography,
-    function ({ addBase, theme }) {
-      const fam = (path) => {
-        const v = theme(path);
-        return Array.isArray(v) ? v.join(', ') : String(v ?? '');
-      };
-
-      addBase({
-        'html, body': { fontFamily: fam('fontFamily.body') },
-
-        // NEWS display
-        'h1':                 { fontFamily: fam('fontFamily.heading') },
-        'h2, h3, blockquote': { fontFamily: fam('fontFamily.subheading') },
-
-        // Editorial emphasis
-        'em':     { fontFamily: fam('fontFamily.serifItalic') },
-        'strong': { fontFamily: fam('fontFamily.serifBold') },
-
-        // UI chrome
-        '.ui, nav, .btn, .badge': { fontFamily: fam('fontFamily.ui') },
-        '.ui-label': {
-          fontFamily: fam('fontFamily.uiLabel'),
-          textTransform: 'uppercase',
-          letterSpacing: theme('letterSpacing.wide'),
-        },
-      });
-    },
+    // (Optional) If you truly need global fallbacks, add a tiny addBase later.
+    // I’ve removed your previous addBase to avoid conflicts with prose variants.
   ],
-
 };

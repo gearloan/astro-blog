@@ -48,6 +48,25 @@
   font-weight: 700; font-style: italic; font-display: swap;
 }
 
+/* ——— Magazine: Acta ——— */
+@font-face {
+  font-family: "Acta-Black";
+  src: url("/fonts/acta/acta-display-black.TTF") format("truetype");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Acta-Black-Italic";
+  src: url("/fonts/acta/acta-display-black-italic.TTF") format("truetype");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+
+/* ——— Magazine: Graphik Condensed ——— */
+@font-face {
+  font-family: "Graphik-Xcon-Medium";
+  src: url("/fonts/graphik/GraphikXCondensed-Medium-Trial.otf") format("opentype");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+
 /* ——— Magazine: Söhne ——— */
 @font-face {
   font-family: "Sohne-Extrafett";
