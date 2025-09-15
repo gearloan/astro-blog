@@ -1,20 +1,20 @@
 {
 	"geolocation": {
 		"data": {
-			"city": "Lanham",
+			"city": "Washington",
 			"country": {
 				"code": "US",
 				"name": "United States"
 			},
 			"subdivision": {
-				"code": "MD",
-				"name": "Maryland"
+				"code": "DC",
+				"name": "District of Columbia"
 			},
 			"timezone": "America/New_York",
-			"latitude": 38.9705,
-			"longitude": -76.8388,
-			"postalCode": "20706"
+			"latitude": 38.9522,
+			"longitude": -77.0253,
+			"postalCode": "20011"
 		},
-		"timestamp": 1757512997691
+		"timestamp": 1757962517888
 	}
 }

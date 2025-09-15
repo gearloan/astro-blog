@@ -29,7 +29,7 @@ export default {
         gray: { 350: '#c4c9d1' },
       },
 
-      // PROSE PRESETS (Option A): read sizes/leading/tracking from CSS variables
+      // PROSE PRESETS
       typography: ({ theme }) => ({
         DEFAULT: {
           css: {
@@ -94,23 +94,18 @@ export default {
             // Body inside .prose-magazine
             fontFamily: theme('fontFamily.body')[0],
             fontSize: 'var(--fs-body)',
-            //lineHeight: 'var(--lh-body)',
 
             h1: {
               fontFamily: theme('fontFamily.heading')[0],
               fontSize: 'var(--fs-heading)',
-              //lineHeight: 'var(--lh-heading)',
-              //letterSpacing: 'var(--ls-heading)',
             },
             h2: {
               fontFamily: theme('fontFamily.subheading')[0],
               fontSize: 'var(--fs-subhead)',
-              //lineHeight: 'var(--lh-subhead)',
             },
             h3: {
               fontFamily: theme('fontFamily.subheading')[0],
               fontSize: 'var(--fs-subhead)',
-              //lineHeight: 'var(--lh-subhead)',
             },
 
             blockquote: {
@@ -120,6 +115,20 @@ export default {
             },
             em:    { fontFamily: theme('fontFamily.bodyItalic')[0] },
             strong:{ fontFamily: theme('fontFamily.ui')[0] },
+
+            // --- Drop cap: first letter of the first paragraph only ---
+            // Responsive size via clamp; slight top and right margins to nest in text block.
+            // Uses serif for a classic magazine look; change to heading if you prefer.
+            // inside typography({ theme }) => ({ magazine: { css: { … } } })
+            '& .article-body > p:first-of-type::first-letter': {
+                  float: 'left',
+                  fontFamily: theme('fontFamily.heading')[0],
+                  fontWeight: 'bold',
+                  fontSize: 'clamp(2.75rem, 6vw, 4.5rem)',
+                  lineHeight: '1',
+                  marginRight: theme('spacing.2'),
+                  marginTop: theme('spacing.1'),
+                },
 
             // Optional UI roles within magazine prose
             '.ui': {
@@ -141,12 +150,8 @@ export default {
           css: {
             h1: {
               fontFamily: theme('fontFamily.heading')[0],
-              // you can also read vars here if you want feature pages to share sizing logic:
               fontSize: 'var(--fs-heading)',
-              //lineHeight: 'var(--lh-heading)',
-              //letterSpacing: 'var(--ls-heading)',
               textTransform: 'uppercase',
-              //letterSpacing: theme('letterSpacing.wide'),
             },
             p: { fontFamily: theme('fontFamily.body')[0] },
           },
@@ -157,7 +162,5 @@ export default {
 
   plugins: [
     typography,
-    // (Optional) If you truly need global fallbacks, add a tiny addBase later.
-    // I’ve removed your previous addBase to avoid conflicts with prose variants.
   ],
 };
