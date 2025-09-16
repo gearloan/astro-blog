@@ -109,8 +109,8 @@ export default {
               fontSize: 'var(--fs-subhead)',
             },
             h4: {
-              fontFamily: theme('fontFamily.subheading')[0],
-              fontSize: 'var(--fs-subhead)',
+              fontFamily: theme('fontFamily.headline')[0],
+              fontSize: 'var(--fs-headline)',
             },
 
             blockquote: {
