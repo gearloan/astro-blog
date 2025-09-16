@@ -62,6 +62,14 @@ export default function Nav({ section, magazineTitle }: Props) {
             </a>
           </li>
         )}
+
+        {section === 'instruction' && (
+          <li>
+            <a class="px-2 md:px-4 flex items-center h-full text-lg md:text-2xl tracking-wide font-body md:font-heading" href="#">
+              Instruction
+            </a>
+          </li>
+        )}
       </ul>
     </div>
 
@@ -111,9 +119,9 @@ export default function Nav({ section, magazineTitle }: Props) {
             </ul>
           </div>
           <div>
-            <h3 class="font-bold text-4xl mb-2 font-subheading cursor-not-allowed">Training & Safety</h3>
+            <h3 class="font-bold text-4xl mb-2 font-subheading cursor-not-allowed">Instruction</h3>
             <ul class="space-y-3">
-              <li><span class="text-gray-400 cursor-not-allowed">Learn to Fly</span></li>
+              <li><a href="/instruction/home">Learn to Fly</a></li>
               <li><span class="text-gray-400 cursor-not-allowed">Air Safety Institute</span></li>
               <li><span class="text-gray-400 cursor-not-allowed">CFI Renewel(eFirc)</span></li>
               <li><span class="text-teal-400 cursor-not-allowed">View all</span></li>
