@@ -13,6 +13,7 @@ export default {
         bodyItalic: ['var(--font-body-italic, "Gotham-BookItalic")', 'sans-serif'],
         heading:    ['var(--font-heading, "Knockout-94")', 'sans-serif'],
         subheading: ['var(--font-subheading, "Knockout-28")', 'sans-serif'],
+        headline: ['var(--font-headline, "Knockout-28")', 'sans-serif'],
 
         serif:       ['var(--font-serif, "Mercury-Roman")', 'serif'],
         serifBold:   ['var(--font-serif-bold, "Mercury-Bold")', 'serif'],
@@ -104,6 +105,10 @@ export default {
               fontSize: 'var(--fs-subhead)',
             },
             h3: {
+              fontFamily: theme('fontFamily.subheading')[0],
+              fontSize: 'var(--fs-subhead)',
+            },
+            h4: {
               fontFamily: theme('fontFamily.subheading')[0],
               fontSize: 'var(--fs-subhead)',
             },

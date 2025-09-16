@@ -31,6 +31,8 @@ html[data-editorial="noe"] {
 html[data-mag="Knockout-94"] {
   --font-heading: "Knockout-94";
   --font-subheading: "Knockout-28";
+  --fs-heading: clamp(4.5rem, 4vw, 3.25rem);
+
   /* if you want decks/pullquotes in Söhne too: */
   /* --font-subheading: "Sohne-Extrafett"; */
 }
@@ -38,7 +40,8 @@ html[data-mag="acta"] {
   --font-heading: "Acta-Black";
   --font-subheading: "Graphik-Xcon-Medium";
   
-  --fs-heading: clamp(2rem, 4vw, 3.25rem);
+  --fs-heading: clamp(5rem, 4vw, 3.25rem);
+  --fs-subhead: clamp(2rem, 4vw, 3rem);
 
   /* --font-subheading: "SohneSchmal-Buch"; */
 }

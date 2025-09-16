@@ -59,10 +59,10 @@ const { proseStyle = 'prose-magazine' } = Astro.props;
           <div class="w-full px-4 hidden md:block">
             <span class="opacity-80">
               <span class="text-[#0aa7b7] text-right inline-block leading-[0.75] uppercase mb-20">
-                <h1 class="block text-[4.5rem] font-extrabold tracking-tight p-0 m-0">
+                <h1 class="block font-extrabold tracking-tight p-0 m-0">
                   {line1}
                 </h1>
-                <h2 class="block relative text-[5rem] font-medium tracking-[0.02em]  mt-2 p-0 m-0">
+                <h2 class="block relative font-medium tracking-[0.02em]  mt-2 p-0 m-0">
                   <span class="absolute left-0  w-32 h-1 bg-[#368bc4] p-0 m-0"></span>
                   {line2}
                 </h2>
@@ -71,9 +71,9 @@ const { proseStyle = 'prose-magazine' } = Astro.props;
             <ul class="tracking-wide">
               {teaserStories.map(story => (
                   <li class="text-3xl uppercase mb-3 hover:opacity-75">  
-                    <h3>
+                    <h4>
                       <a href={`/magazine-post/${story.slug}`}>{story.title}</a>
-                    </h3>  
+                    </h4>  
                   </li>
               ))}
             </ul>

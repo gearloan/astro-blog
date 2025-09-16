@@ -32,7 +32,7 @@
 }
 @media (min-width: 1024px) {
   :root {
-    --fs-heading: 3rem;
-    --fs-subhead: 1.75rem;
+    --fs-heading: 4.5rem;
+    --fs-subhead: 5rem;
   }
 }
