@@ -5,13 +5,19 @@ const sections = [
   {
     title: "News",
     routes: [
-      { name: "News Home", route: "/news/home" },
+      { name: "News Home", route: "/news/home", palette: "Grey & Dark Blue", fonts: "Mercury, Gotham" },
     ],
   },
   {
     title: "Magazine",
     routes: [
-      { name: "Magazines", route: "/magazine/home" },
+      { name: "Magazines", route: "/magazine/home", palette: "Variable", fonts: "Knockout 94 & 28" },
+    ],
+  },
+    {
+    title: "Instructional",
+    routes: [
+      { name: "instruction", route: "/instruction/home", palette: "Cyan & Dark Blue", fonts: "Gotham" },
     ],
   },
   
@@ -29,7 +35,7 @@ const sections = [
   <div class="">
     <div class="max-w-sm m-auto">
       {section.routes.map(r => (
-        <SitemapCard name={r.name} route={r.route} />
+        <SitemapCard name={r.name} route={r.route} palette={r.palette} fonts={r.fonts} />
       ))}
     </div>
   </div>
