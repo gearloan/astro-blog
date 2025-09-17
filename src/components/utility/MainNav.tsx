@@ -44,7 +44,19 @@ export default function Nav({ section, magazineTitle }: Props) {
     {/* LEFT SIDE — the ONLY hover trigger */}
     <div class="flex text-white h-full">
       <ul class="flex h-full font-heading nav-trigger">
-        <li class="relative px-3 md:px-6 pr-6 md:pr-[2.5rem] h-full clip-angle flex items-center bg-aopa-ltblue text-2xl tracking-wide">
+        <li   class="
+          relative px-3 md:px-6 pr-6 md:pr-[2.5rem] h-full clip-angle
+          flex items-center text-2xl tracking-wide
+
+          /* default */
+          bg-aopa-ltblue text-white
+
+          /* per-section overrides */
+          
+          data-[section=instruction]:bg-[#16d3c4] data-[section=instruction]:text-[#163372]
+        "
+        data-section={section ?? 'default'}
+        >
           <a href="/">AOPA</a>
         </li>
 
@@ -66,7 +78,8 @@ export default function Nav({ section, magazineTitle }: Props) {
         {section === 'instruction' && (
           <li>
             <a class="px-2 md:px-4 flex items-center h-full text-lg md:text-2xl tracking-wide font-body md:font-heading" href="#">
-              Instruction
+              Instruction &nbsp;
+              <p class="font-body text-sm mt-2">Pick up where you left off: <b class="font-bold">IFR Chapter 3</b></p>
             </a>
           </li>
         )}
@@ -79,7 +92,13 @@ export default function Nav({ section, magazineTitle }: Props) {
         aria-label="Toggle menu"
         onClick={toggleMenu}
         id="hamburger"
-        class={`ml-6 relative w-[75px] h-[75px] bg-aopa-ltblue flex flex-col justify-center items-center z-60 ${isOpen ? 'open' : ''}`}
+        data-section={section ?? 'default'}
+        class={`
+          ml-6 relative w-[75px] h-[75px] bg-aopa-ltblue flex flex-col justify-center items-center z-60 
+
+          data-[section=instruction]:bg-[#16d3c4] data-[section=instruction]:text-[#163372]
+
+          ${isOpen ? 'open' : ''}`}
       >
         <span class="bar transition-transform duration-300 absolute w-8 h-1 rounded-lg bg-white top-[28px]"></span>
         <span class="bar transition-opacity duration-300 absolute w-8 h-1 rounded-lg bg-white top-[36px]"></span>
