@@ -3,66 +3,114 @@ import Layout from "../../layouts/Layout.astro";
 ---
 
 <Layout section="instruction" >
+  <!-- Page wrapper -->
+<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-16 pb-10 lg:pt-24 lg:pb-16">
 
- <!-- Hero -->
-    <section class="relative isolate">
-      <div class="absolute inset-0 -z-10 bg-gradient-to-b from-sky-50 to-white"></div>
-      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-16 pb-10 lg:pt-24 lg:pb-16">
-        <div class="max-w-3xl">
-          <p class="text-sm font-medium text-sky-600">Train with confidence</p>
-          <h1 class="mt-2 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
-            What would you like to learn?
-          </h1>
-          <p class="mt-4 text-lg leading-8 text-slate-600">
-            Search expert‑led aviation courses for pilots of all levels — from PPL to IFR and beyond.
-          </p>
+  <!-- Promo cards -->
+  <section class="grid gap-6 md:grid-cols-2">
+    <!-- Left promo -->
+    <a href="#" class="aspect-[16/9] block rounded-2xl p-6 sm:p-8 text-white shadow-md ring-1 ring-black/5
+                      bg-gradient-to-br from-sky-700 via-sky-800 to-indigo-900">
+      <h1 class="">Freedom to Fly</h1>
+      <h1 class="">Power to Learn</h1>
+    </a>
 
-          <!-- Search -->
-          <form action="/search" method="GET" class="mt-8">
-            <label for="q" class="sr-only">What would you like to learn?</label>
-            <div class="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm focus-within:ring-2 focus-within:ring-sky-500">
-              <svg class="size-5 shrink-0 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-              <input id="q" name="q" type="search" placeholder="What would you like to learn?" class="w-full bg-transparent px-1 py-2 text-base outline-none placeholder:text-slate-400" />
-              <button type="submit" class="rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white hover:bg-sky-700">Search</button>
-            </div>
-          </form>
+    <!-- Right promo -->
+    <a href="#" class="block rounded-2xl p-6 sm:p-8 text-white shadow-md ring-1 ring-black/5
+                      bg-gradient-to-br from-indigo-900 via-sky-900 to-cyan-800">
+      <div class="grid gap-2 sm:max-w-sm">
+        <p class="opacity-90">
+          You've completed 15 course, keep it up lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonummy nibh
+          euismod tincidunt ut laoreet.
+        </p>
+        <div class="ml-auto mt-2 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/90 font-bold text-xl">15</div>
+      </div>
+    </a>
+  </section>
 
-          <!-- Quick categories -->
-          <div class="mt-6 flex flex-wrap gap-2">
-            {['PPL','IFR','Night Flying','Flight Planning','Aerodynamics','Weather','Comms','Cross-country'].map((c) => (
-              <a href={`/search?q=${encodeURIComponent(c)}`} class="group inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm hover:border-sky-300 hover:bg-sky-50">
-                <span class="h-2 w-2 rounded-full bg-sky-500 group-hover:bg-sky-600"></span>
-                <span>{c}</span>
-              </a>
-            ))}
-          </div>
+  <!-- Search block -->
+  <section class="mt-12 sm:mt-16">
+    <h2 class="text-center text-3xl sm:text-4xl font-extrabold tracking-tight">WHAT WOULD YOU LIKE TO LEARN?</h2>
+
+    <form action="/search" method="GET" class="mx-auto mt-6 max-w-3xl">
+      <label for="q" class="sr-only">What would you like to learn?</label>
+
+      <div class="flex items-stretch gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm
+                  focus-within:ring-2 focus-within:ring-sky-400">
+        <div class="flex items-center pl-2 text-slate-400">
+          <!-- magnifying glass -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="m21 21-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z" />
+          </svg>
         </div>
+        <input
+          id="q"
+          name="q"
+          type="text"
+          placeholder="What would you like to learn?"
+          class="w-full rounded-xl border-0 bg-transparent px-3 py-2 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-0"
+        />
+        <button type="submit"
+                class="shrink-0 rounded-xl bg-sky-600 px-4 py-2 font-medium text-white hover:bg-sky-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400">
+          Search
+        </button>
       </div>
-    </section>
 
-    <!-- Topics / Collections -->
-    <section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-12">
-      <h2 class="text-2xl font-semibold text-slate-900">Popular topics</h2>
-      <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {[
-          { t: 'Private Pilot License', c: 'Your first step into aviation', k: 'ppl' },
-          { t: 'Instrument Rating', c: 'Fly confidently in all weather', k: 'ifr' },
-          { t: 'Aerodynamics', c: 'Understand how planes fly', k: 'aero' },
-          { t: 'ATC Communication', c: 'Talk like a pro to Air Traffic Control', k: 'comms' },
-          { t: 'Aviation Weather', c: 'Decode METARs, TAFs, and forecasts', k: 'weather' },
-          { t: 'Flight Planning', c: 'Chart courses, fuel, and performance', k: 'planning' },
-          { t: 'Night Flying', c: 'Skills, prep, and safety after dark', k: 'night' },
-          { t: 'Preflight & Checklists', c: 'Standard procedures and safety culture', k: 'preflight' },
-        ].map((x) => (
-          <a href={`/collections/${x.k}`} class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md">
-            <div class="flex items-start justify-between">
-              <h3 class="text-base font-semibold text-slate-900">{x.t}</h3>
-              <svg class="size-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-            </div>
-            <p class="mt-1 text-sm text-slate-600">{x.c}</p>
-          </a>
-        ))}
-      </div>
-    </section>
-    
+      <p class="mt-3 text-center text-sm text-slate-600">
+        Search expert‑led aviation courses for pilots of all levels from PPL to IFR and beyond.
+      </p>
+    </form>
+  </section>
+</div>
+
+<!-- Popular Courses band -->
+<section class="bg-slate-900 py-14 sm:py-16">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <h2 class="text-center text-3xl sm:text-4xl font-extrabold tracking-tight text-cyan-300">
+      POPULAR COURSES
+    </h2>
+
+    <!-- Cards grid -->
+    <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <!-- Card -->
+      <a href="#" class="rounded-2xl bg-gradient-to-br from-sky-800 to-sky-700 p-5 text-white shadow ring-1 ring-white/10">
+        <h3 class="text-lg font-semibold">Private Pilot License</h3>
+        <p class="mt-1 text-sm opacity-90">Your first step into aviation</p>
+      </a>
+
+      <a href="#" class="rounded-2xl bg-gradient-to-br from-cyan-800 to-cyan-700 p-5 text-white shadow ring-1 ring-white/10">
+        <h3 class="text-lg font-semibold">Instrument Rating</h3>
+        <p class="mt-1 text-sm opacity-90">Fly confidently in all weather</p>
+      </a>
+
+      <a href="#" class="rounded-2xl bg-gradient-to-br from-indigo-800 to-indigo-700 p-5 text-white shadow ring-1 ring-white/10">
+        <h3 class="text-lg font-semibold">Flight Planning</h3>
+        <p class="mt-1 text-sm opacity-90">Chart courses, fuel, and performance</p>
+      </a>
+
+      <a href="#" class="rounded-2xl bg-gradient-to-br from-indigo-800 to-indigo-700 p-5 text-white shadow ring-1 ring-white/10">
+        <h3 class="text-lg font-semibold">Night Flying</h3>
+        <p class="mt-1 text-sm opacity-90">Your first step into aviation</p>
+      </a>
+
+      <a href="#" class="rounded-2xl bg-gradient-to-br from-sky-800 to-sky-700 p-5 text-white shadow ring-1 ring-white/10">
+        <h3 class="text-lg font-semibold">ATC Communication</h3>
+        <p class="mt-1 text-sm opacity-90">Talk like a pro to Air Traffic Control</p>
+      </a>
+
+      <a href="#" class="rounded-2xl bg-gradient-to-br from-cyan-800 to-cyan-700 p-5 text-white shadow ring-1 ring-white/10">
+        <h3 class="text-lg font-semibold">Aviation Weather</h3>
+        <p class="mt-1 text-sm opacity-90">Decode METARs, TAFs, &amp; forecasts</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Optional: another “Popular Courses” section below -->
+<section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+  <h2 class="text-center text-3xl sm:text-4xl font-extrabold tracking-tight uppercase">Lesson Plan</h2>
+  <!-- put your course cards/list here -->
+</section>
+
 </Layout>
