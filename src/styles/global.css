@@ -32,3 +32,6 @@ body {
 }
 
 
+#tuner-tray {
+  display:none;
+}

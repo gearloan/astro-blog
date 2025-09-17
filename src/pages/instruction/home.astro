@@ -4,38 +4,63 @@ import Layout from "../../layouts/Layout.astro";
 
 <Layout section="instruction" >
   <!-- Page wrapper -->
-<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-16 pb-10 lg:pt-24 lg:pb-16">
+<div class="prose-instruction mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-10 lg:pt-12 lg:pb-16">
 
   <!-- Promo cards -->
   <section class="grid gap-6 md:grid-cols-2">
     <!-- Left promo -->
-    <a href="#" class="aspect-[16/9] block rounded-2xl p-6 sm:p-8 text-white shadow-md ring-1 ring-black/5
-                      bg-gradient-to-br from-sky-700 via-sky-800 to-indigo-900">
-      <h1 class="">Freedom to Fly</h1>
-      <h1 class="">Power to Learn</h1>
-      <p>user dashboard for course info & progress</p>
+    <a
+      href="#"
+      style="
+        background-image: url('/images/instruction/edu-card-bg.png');
+        background-color: #07d4cd;
+        background-position: top 5rem center, center;
+        background-size: cover, cover;
+      "
+      class="relative bg-cover aspect-[16/9] bg-no-repeat block rounded-2xl text-white shadow-md ring-1 ring-black/5"
+    >
+      <!-- Top-left heading -->
+      <h1 class="absolute top-10 left-10 font-bold text-indigo-900">
+        Freedom to Fly
+      </h1>
+
+      <!-- Bottom-right heading -->
+      <h1 class="absolute bottom-6 right-6 font-bold" style="color: #07d4cd">
+        Power to Learn
+      </h1>
     </a>
 
+
     <!-- Right promo -->
-    <a href="#" class="block rounded-2xl p-6 sm:p-8 text-white shadow-md ring-1 ring-black/5
-                      bg-gradient-to-br from-indigo-900 via-sky-900 to-cyan-800">
-      <div class="grid gap-2 sm:max-w-sm">
-        <p class="opacity-90">
-          You've completed 15 course, keep it up lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonummy nibh
-          euismod tincidunt ut laoreet.
-        </p>
-        <div class="ml-auto mt-2 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/90 font-bold text-xl">15</div>
-      </div>
+     <a
+      href="#"
+      style="
+        background-image: url('/images/instruction/edu-card-bg-2.png');
+        background-color: #1b1464;
+        background-position: top right, center;
+        background-size: initial;
+      "
+      class="relative bg-cover aspect-[16/9] bg-no-repeat block rounded-2xl text-white shadow-md ring-1 ring-black/5"
+    >
+        <h1 class="ml-auto mt-2 inline-flex h-12 w-12 items-center justify-right rounded-xl  text-8xl absolute top-24 right-24 text-indigo-900">15</h1>
+        <div class="p-10 ">
+          <p class="body-font w-3/5 pr-6">
+            You've completed <span class="text-[#fa2f6e]">15 courses</span>, keep it up lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonummy nibh
+            euismod tincidunt ut laoreet.
+          </p>
+          <button href="" class="mt-6 px-4 py-4 button rounded bg-[#fa2f6e] text-indigo-900 ui">Course Dashboard</button>
+        </div>
     </a>
   </section>
 
   <!-- Search block -->
   <section class="mt-12 sm:mt-16">
-    <h2 class="text-center text-3xl sm:text-4xl font-extrabold tracking-tight">WHAT WOULD YOU LIKE TO LEARN?</h2>
+    <h4 class="text-center tracking-tight text-indigo-900">WHAT WOULD YOU LIKE TO LEARN?</h4>
 
     <form action="/search" method="GET" class="mx-auto mt-6 max-w-3xl">
-      <label for="q" class="sr-only">What would you like to learn?</label>
-
+      
+        <label for="q" class="sr-only">What would you like to learn?</label>
+      
       <div class="flex items-stretch gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm
                   focus-within:ring-2 focus-within:ring-sky-400">
         <div class="flex items-center pl-2 text-slate-400">
@@ -53,7 +78,7 @@ import Layout from "../../layouts/Layout.astro";
           class="w-full rounded-xl border-0 bg-transparent px-3 py-2 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-0"
         />
         <button type="submit"
-                class="shrink-0 rounded-xl bg-sky-600 px-4 py-2 font-medium text-white hover:bg-sky-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400">
+                class="shrink-0 rounded-xl bg-indigo-900 px-4 py-2 font-medium text-[#07d4cd] hover:bg-sky-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400">
           Search
         </button>
       </div>
@@ -68,9 +93,9 @@ import Layout from "../../layouts/Layout.astro";
 <!-- Popular Courses band -->
 <section class="bg-slate-900 py-14 sm:py-16">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <h2 class="text-center text-3xl sm:text-4xl font-extrabold tracking-tight text-cyan-300">
+    <h4 class="text-center text-3xl sm:text-4xl tracking-tight text-cyan-300">
       POPULAR COURSES
-    </h2>
+    </h4>
 
     <!-- Cards grid -->
     <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

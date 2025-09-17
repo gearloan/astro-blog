@@ -150,7 +150,50 @@ export default {
             },
           },
         },
+        instruction: {
+          css: {
+            fontFamily: theme('fontFamily.body')[0],
+            fontSize: 'var(--fs-body)',
+            lineHeight: 'var(--lh-body)',
 
+            h1: {
+              fontFamily: theme('fontFamily.heading')[0],
+              fontSize: '2.5rem',
+              lineHeight: 'var(--lh-heading)',
+            },
+            h2: {
+              fontFamily: theme('fontFamily.serifBold')[0],
+              fontSize: 'var(--fs-subhead)',
+              lineHeight: 'var(--lh-subhead)',
+            },
+            h3: {
+              fontFamily: theme('fontFamily.serifBold')[0],
+              fontSize: 'var(--fs-subhead)',
+              lineHeight: 'var(--lh-subhead)',
+            },
+            h4: {
+              fontFamily: theme('fontFamily.subheading')[0],
+              fontSize: '4rem',
+              lineHeight: 'var(--lh-subhead)',
+            },
+
+            em:    { fontFamily: theme('fontFamily.serifItalic')[0] },
+            strong:{ fontFamily: theme('fontFamily.ui')[0] },
+
+            '.ui': {
+              fontFamily: theme('fontFamily.ui')[0],
+              fontSize: 'var(--fs-ui)',
+              lineHeight: 'var(--lh-ui)',
+            },
+            '.ui-label': {
+              fontFamily: theme('fontFamily.uiLabel')[0],
+              fontSize: 'var(--fs-ui-label)',
+              lineHeight: 'var(--lh-ui-label)',
+              letterSpacing: 'var(--ls-ui-label)',
+              textTransform: 'var(--tt-ui-label)',
+            },
+          },
+        },
         feature: {
           css: {
             h1: {
