@@ -1,20 +1,24 @@
 import { useEffect, useState } from 'preact/hooks';
 
-export default function ThemeToggle() {
+export default function ThemeToggle({ defaultDark = false }) {
   const [isDark, setIsDark] = useState(() =>
-    typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false
+    typeof window !== 'undefined'
+      ? document.documentElement.classList.contains('dark') || defaultDark
+      : defaultDark
   );
-
   useEffect(() => {
     const saved = localStorage.getItem('theme');
-    if (saved === 'dark') {
+
+    if (saved === 'dark' || (!saved && defaultDark)) {
       document.documentElement.classList.add('dark');
       setIsDark(true);
     } else if (saved === 'light') {
       document.documentElement.classList.remove('dark');
       setIsDark(false);
+    } else {
+      setIsDark(document.documentElement.classList.contains('dark'));
     }
-  }, []);
+  }, [defaultDark]);
 
   const toggle = () => {
     const root = document.documentElement;
