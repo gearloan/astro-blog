@@ -15,13 +15,13 @@ import Layout from "../../layouts/Layout.astro";
       style="
         background-image: url('/images/instruction/edu-card-bg.png');
         background-color: #07d4cd;
-        background-position: top 5rem center, center;
+        background-position: top 4rem center, center;
         background-size: cover, cover;
       "
       class="relative bg-cover aspect-[16/9] bg-no-repeat block rounded-2xl text-white shadow-md ring-1 ring-black/5"
     >
       <!-- Top-left heading -->
-      <h1 class="absolute top-10 left-10 font-bold text-indigo-900">
+      <h1 class="absolute top-20 left-14 font-bold text-indigo-900 text-5xl">
         Freedom to Fly
       </h1>
 
@@ -113,6 +113,7 @@ import Layout from "../../layouts/Layout.astro";
 </div>
 
 <!-- Popular Courses band -->
+<!-- Popular Courses band -->
 <section class="bg-slate-800 py-14 sm:py-16">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <h4 class="text-center text-3xl sm:text-4xl tracking-tight text-cyan-300">
@@ -121,39 +122,75 @@ import Layout from "../../layouts/Layout.astro";
 
     <!-- Cards grid -->
     <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <!-- Card -->
-      <a href="#" class="rounded-2xl bg-gradient-to-br from-sky-800 to-sky-700 p-5 text-white shadow ring-1 ring-white/10">
-        <h3 class="text-lg font-semibold">Private Pilot License</h3>
-        <p class="mt-1 text-sm opacity-90">Your first step into aviation</p>
+      <!-- Card 1 -->
+      <a href="#" class="flex justify-between items-center rounded-2xl bg-gradient-to-br from-sky-800 to-sky-700 p-5 text-white shadow ring-1 ring-white/10">
+        <div class="pr-4">
+          <h3 class="text-lg font-semibold">Private Pilot License</h3>
+          <p class="mt-1 text-sm opacity-90">Your first step into aviation</p>
+        </div>
+        <div class="flex items-center pl-4 border-l border-white/20">
+          <span class="ml-4 text-3xl font-bold leading-none">6hrs</span>
+        </div>
       </a>
 
-      <a href="#" class="rounded-2xl bg-gradient-to-br from-cyan-800 to-cyan-700 p-5 text-white shadow ring-1 ring-white/10">
-        <h3 class="text-lg font-semibold">Instrument Rating</h3>
-        <p class="mt-1 text-sm opacity-90">Fly confidently in all weather</p>
+      <!-- Card 2 -->
+      <a href="#" class="flex justify-between items-center rounded-2xl bg-gradient-to-br from-cyan-800 to-cyan-700 p-5 text-white shadow ring-1 ring-white/10">
+        <div class="pr-4">
+          <h3 class="text-lg font-semibold">Instrument Rating</h3>
+          <p class="mt-1 text-sm opacity-90">Fly confidently in all weather</p>
+        </div>
+        <div class="flex items-center pl-4 border-l border-white/20">
+          <span class="ml-4 text-3xl font-bold leading-none">5hrs</span>
+        </div>
       </a>
 
-      <a href="#" class="rounded-2xl bg-gradient-to-br from-indigo-800 to-indigo-700 p-5 text-white shadow ring-1 ring-white/10">
-        <h3 class="text-lg font-semibold">Flight Planning</h3>
-        <p class="mt-1 text-sm opacity-90">Chart courses, fuel, and performance</p>
+      <!-- Card 3 -->
+      <a href="#" class="flex justify-between items-center rounded-2xl bg-gradient-to-br from-indigo-800 to-indigo-700 p-5 text-white shadow ring-1 ring-white/10">
+        <div class="pr-4">
+          <h3 class="text-lg font-semibold">Flight Planning</h3>
+          <p class="mt-1 text-sm opacity-90">Chart courses, fuel, and performance</p>
+        </div>
+        <div class="flex items-center pl-4 border-l border-white/20">
+          <span class="ml-4 text-3xl font-bold leading-none">4hrs</span>
+        </div>
       </a>
 
-      <a href="#" class="rounded-2xl bg-gradient-to-br from-indigo-800 to-indigo-700 p-5 text-white shadow ring-1 ring-white/10">
-        <h3 class="text-lg font-semibold">Night Flying</h3>
-        <p class="mt-1 text-sm opacity-90">Your first step into aviation</p>
+      <!-- Card 4 -->
+      <a href="#" class="flex justify-between items-center rounded-2xl bg-gradient-to-br from-indigo-800 to-indigo-700 p-5 text-white shadow ring-1 ring-white/10">
+        <div class="pr-4">
+          <h3 class="text-lg font-semibold">Night Flying</h3>
+          <p class="mt-1 text-sm opacity-90">Your first step into aviation</p>
+        </div>
+        <div class="flex items-center pl-4 border-l border-white/20">
+          <span class="ml-4 text-3xl font-bold leading-none">3hrs</span>
+        </div>
       </a>
 
-      <a href="#" class="rounded-2xl bg-gradient-to-br from-sky-800 to-sky-700 p-5 text-white shadow ring-1 ring-white/10">
-        <h3 class="text-lg font-semibold">ATC Communication</h3>
-        <p class="mt-1 text-sm opacity-90">Talk like a pro to Air Traffic Control</p>
+      <!-- Card 5 -->
+      <a href="#" class="flex justify-between items-center rounded-2xl bg-gradient-to-br from-sky-800 to-sky-700 p-5 text-white shadow ring-1 ring-white/10">
+        <div class="pr-4">
+          <h3 class="text-lg font-semibold">ATC Communication</h3>
+          <p class="mt-1 text-sm opacity-90">Talk like a pro to Air Traffic Control</p>
+        </div>
+        <div class="flex items-center pl-4 border-l border-white/20">
+          <span class="ml-4 text-3xl font-bold leading-none">4hrs</span>
+        </div>
       </a>
 
-      <a href="#" class="rounded-2xl bg-gradient-to-br from-cyan-800 to-cyan-700 p-5 text-white shadow ring-1 ring-white/10">
-        <h3 class="text-lg font-semibold">Aviation Weather</h3>
-        <p class="mt-1 text-sm opacity-90">Decode METARs, TAFs, &amp; forecasts</p>
+      <!-- Card 6 -->
+      <a href="#" class="flex justify-between items-center rounded-2xl bg-gradient-to-br from-cyan-800 to-cyan-700 p-5 text-white shadow ring-1 ring-white/10">
+        <div class="pr-4">
+          <h3 class="text-lg font-semibold">Aviation Weather</h3>
+          <p class="mt-1 text-sm opacity-90">Decode METARs, TAFs, &amp; forecasts</p>
+        </div>
+        <div class="flex items-center pl-4 border-l border-white/20">
+          <span class="ml-4 text-3xl font-bold leading-none">2hrs</span>
+        </div>
       </a>
     </div>
   </div>
 </section>
+
 
 <!-- Optional: another “Popular Courses” section below -->
 <section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
