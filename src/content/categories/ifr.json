@@ -1,0 +1,8 @@
+{
+  "slug": "ifr",
+  "wpTermId": 123,
+  "label": "IFR",
+  "description": "Instrument flight rules training and proficiency.",
+  "order": 10,
+  "icon": "Compass"
+}

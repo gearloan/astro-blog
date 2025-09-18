@@ -1,5 +1,18 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+
+import { getCollection } from 'astro:content';
+const categories = await getCollection('categories');
+const courses = await getCollection('courses');
+
+// sort/shape for UI
+const byCategory = new Map<string, any[]>();
+for (const c of courses) {
+  const catSlug = c.data.category.id; // reference resolves to "categories/<file>"
+  const arr = byCategory.get(catSlug) ?? [];
+  arr.push(c);
+  byCategory.set(catSlug, arr);
+}
 ---
 
 <Layout section="instruction"  wrapperClass="bg-gray-900 text-amber-50">

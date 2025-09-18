@@ -1,0 +1,70 @@
+---
+import { getCollection } from "astro:content";
+const categories = (await getCollection("categories")).sort(
+  (a, b) => (a.data.order ?? 0) - (b.data.order ?? 0),
+);
+const courses = await getCollection("courses");
+
+const byCategory = new Map<string, typeof courses>();
+for (const c of courses) {
+  const catKey = c.data.category.id; // e.g. "categories/ppl"
+  const arr = byCategory.get(catKey) ?? [];
+  arr.push(c);
+  byCategory.set(catKey, arr);
+}
+---
+
+<section class="bg-slate-50 py-16">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+      Instruction
+    </h1>
+    <p class="mt-3 text-lg text-slate-600">
+      Curated training paths across PPL, IFR, and beyond.
+    </p>
+
+    <div class="mt-10 space-y-12">
+      {
+        categories.map((cat) => {
+          const list = byCategory.get(cat.id) ?? [];
+          return (
+            <div>
+              <h2 class="text-2xl font-semibold text-slate-900">
+                {cat.data.label}
+              </h2>
+              <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {list.map((c) => (
+                  <a
+                    href={`/instruction/course/${c.data.slug}`}
+                    class="relative rounded-2xl bg-white p-5 shadow ring-1 ring-black/5 hover:ring-sky-200 transition"
+                  >
+                    <h3 class="text-lg font-semibold text-slate-900">
+                      {c.data.title}
+                    </h3>
+                    <p class="mt-1 text-sm text-slate-600">
+                      Level: {c.data.level}
+                    </p>
+
+                    {/* right-side time estimate pill per your earlier pattern */}
+                    {c.data.estimatedHours && (
+                      <div class="absolute inset-y-5 right-5 flex w-20 flex-col items-center justify-center">
+                        <div class="h-px w-full bg-slate-200 mb-2" />
+                        <div
+                          class="text-2xl font-bold tabular-nums text-sky-700"
+                          aria-label="Estimated hours"
+                        >
+                          {c.data.estimatedHours}
+                          <span class="text-sm font-medium">hrs</span>
+                        </div>
+                      </div>
+                    )}
+                  </a>
+                ))}
+              </div>
+            </div>
+          );
+        })
+      }
+    </div>
+  </div>
+</section>

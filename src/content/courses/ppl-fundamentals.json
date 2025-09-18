@@ -1,0 +1,14 @@
+{
+  "slug": "ppl-fundamentals",
+  "title": "Private Pilot Fundamentals",
+  "category": "categories/ifr", // reference
+  "wpCourseId": 456, 
+  "estimatedHours": 8,
+  "level": "beginner",
+  "featured": true,
+  "parts": [
+    { "kind": "text", "title": "Preflight Basics", "wpPostId": 9101 },
+    { "kind": "video", "title": "Traffic Patterns", "wpMediaId": 9102, "durationSec": 540 },
+    { "kind": "audio", "title": "Radio Comms Drills", "wpMediaId": 9103, "durationSec": 780 }
+  ]
+}
