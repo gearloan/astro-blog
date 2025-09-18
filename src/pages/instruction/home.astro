@@ -56,14 +56,13 @@ import Layout from "../../layouts/Layout.astro";
 
   <!-- Search block -->
   <section class="mt-12 sm:mt-16">
-    <h4 class="text-center tracking-tight text-indigo-900">WHAT WOULD YOU LIKE TO LEARN?</h4>
+    <h4 class="text-center tracking-tight text-[#07d4cd]">WHAT WOULD YOU LIKE TO LEARN?</h4>
 
     <form action="/search" method="GET" class="mx-auto mt-6 max-w-3xl">
       
         <label for="q" class="sr-only">What would you like to learn?</label>
       
-      <div class="flex items-stretch gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm
-                  focus-within:ring-2 focus-within:ring-sky-400">
+      <div class="flex items-stretch gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm focus-within:ring-2 focus-within:ring-sky-400">
         <div class="flex items-center pl-2 text-slate-400">
           <!-- magnifying glass -->
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -88,6 +87,28 @@ import Layout from "../../layouts/Layout.astro";
         Search expert‑led aviation courses for pilots of all levels from PPL to IFR and beyond.
       </p>
     </form>
+  </section>
+  <section>
+    <div class="flex flex-col sm:flex-row gap-4 text-amber-50 mt-10">
+  <!-- Card 1 -->
+  <div class="flex items-center justify-between border-2 border-indigo-900 rounded-2xl px-6 py-2 pe-2 w-full sm:w-1/3">
+    <h4 class="text-4xl font-semibold">Launch a new career</h4>
+    <img src="/images/instruction/icon-headset.png" alt="" class="h-32 w-32" />
+  </div>
+
+  <!-- Card 2 -->
+  <div class="flex items-center justify-between border-2 border-indigo-900 rounded-2xl px-6 py-2 w-full sm:w-1/3">
+    <h4 class="text-4xl font-semibold">Gain in-demand skills</h4>
+    <img src="/images/instruction/icon-tools.png" alt="" class="h-28 w-28" />
+  </div>
+
+  <!-- Card 3 -->
+  <div class="flex items-center justify-between border-2 border-indigo-900 rounded-2xl px-6 pe-0 w-full sm:w-1/3 relative">
+    <h4 class="text-4xl font-semibold">Earn your License</h4>
+    <img src="/images/instruction/icon-wing.png" alt="" class="h-30 w-64 absolute right-0" />
+  </div>
+</div>
+
   </section>
 </div>
 
@@ -136,7 +157,7 @@ import Layout from "../../layouts/Layout.astro";
 
 <!-- Optional: another “Popular Courses” section below -->
 <section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-  <h2 class="text-center text-3xl sm:text-4xl font-extrabold tracking-tight uppercase">Build Your Lesson Plan</h2>
+  <h2 class="text-center text-3xl sm:text-4xl font-extrabold tracking-tight uppercase text-slate-600">Build Your Lesson Plan</h2>
   <!-- put your course cards/list here -->
 </section>
 </div>
