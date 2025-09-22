@@ -116,30 +116,42 @@ const { proseStyle = 'prose-magazine' } = Astro.props;
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
           <!-- this is ome astro with jsx in it -->
 
-          {featuredStories.map(story => {
+          {featuredStories.map((story) => {
             const sizes = story.featuredImage?.node?.mediaDetails?.sizes;
-
-           
-
-            const thumb = sizes?.find(size => size.name === "medium")?.sourceUrl
-              ?? story.featuredImage?.node?.sourceUrl;
+            const thumb =
+              sizes?.find((s) => s.name === "story-thumb")?.sourceUrl ??
+              sizes?.find((s) => s.name === "medium")?.sourceUrl ??
+              story.featuredImage?.node?.sourceUrl;
 
             return (
               <article>
                 <a href={`/magazine-post/${story.slug}`}>
-                  <img class="w-full" src={story.featuredImage?.node?.mediaDetails?.sizes?.find(size => size.name === "story-thumb")?.sourceUrl ?? story.featuredImage?.node?.sourceUrl
-                  } alt={story.title} class="..." />
+                  {/* Aspect wrapper controls the ratio */}
+                  <div class="relative aspect-video overflow-hidden rounded">
+                    <img
+                      src={thumb}
+                      alt={story.title}
+                      class="absolute inset-0 h-full w-full object-cover"
+                      loading="lazy"
+                      decoding="async"
+                      width="1600" height="1200"
+                      sizes="(min-width:1024px) 33vw, 100vw"
+                    />
+                  </div>
                 </a>
-                <a href={`/magazine-post/${story.slug}`}>                
+
+                <a href={`/magazine-post/${story.slug}`}>
                   <h3 class="mb-2 mt-4 text-3xl uppercase">{story.title}</h3>
                 </a>
+
                 <p class="mb-2">
-                  {story.excerpt.replace(/<[^>]*>/g, '').split(' ').slice(0, 30).join(' ') + '...'}
+                  {story.excerpt.replace(/<[^>]*>/g, '').split(/\s+/).slice(0, 30).join(' ') + '…'}
                 </p>
                 <a class="text-[#14c682]" href={`/magazine-post/${story.slug}`}>Read more</a>
               </article>
             );
           })}
+
         </div>
       </section>
     </section>
