@@ -1,81 +1,70 @@
 ---
 import { fetchPosts } from '../../lib/fetchPosts.js';
 
-const posts = await fetchPosts({ tag: 'editorial' });
-const leadStory = posts[0];
-const leftStories = posts.slice(1, 3);
-const rightStories = posts.slice(3, 5);
+const posts = await fetchPosts({ tag: 'editorial' }) ?? [];
+const [leadStory, ...rest] = posts;
+const leftStories  = rest.slice(0, 2);
+const rightStories = rest.slice(2, 4);
 
 const { proseStyle = 'prose-editorial' } = Astro.props;
-
 const headingSize = '3rem';
+
+const toExcerpt = (html = '', words = 20) =>
+  html.replace(/<[^>]*>/g, '').trim().split(/\s+/).slice(0, words).join(' ') + '…';
 ---
 
-<section 
-  //setting the h1 font size
-  style={`--fs-heading: ${headingSize};`}
-  
-  class={`max-w-7xl mx-auto px-4 pt-8 pb-4 border-b border-gray-350 mb-8 grid grid-cols-1 lg:grid-cols-12 gap-6 ${proseStyle}`}>
-  <!-- Left Column -->
+<section style={`--fs-heading: ${headingSize};`}
+  class={`max-w-7xl mx-auto px-4 pt-8 pb-4 border-b border-gray-300 mb-8 grid grid-cols-1 lg:grid-cols-12 gap-6 ${proseStyle}`}>
+
   <aside class="lg:col-span-2 space-y-8 order-2 lg:order-1">
     <h4 class="ui-label tracking-widest">LATEST STORIES</h4>
-    {leftStories.map(story => (
+    {leftStories.filter(Boolean).map(story => (
       <article class="!mt-2">
-        <h3 class="text-xl mb-1 leading-[1.2] hover:underline"><a href={`/blog-post/${story.slug}`}>{story.title}</a></h3>
+        <h3 class="text-xl mb-1 leading-[1.2] hover:underline">
+          <a href={`/blog-post/${story.slug}`}>{story.title}</a>
+        </h3>
         <p class="text-gray-600 dark:text-gray-400 mb-1 leading-[1.3] text-lg">
-          {(story.excerpt ?? '')
-            .replace(/<[^>]*>/g, '') // strip HTML
-            .split(' ')              // break into words
-            .slice(0, 20)            // grab first [n] words
-            .join(' ') + '...'}
+          {toExcerpt(story.excerpt, 20)}
         </p>
-
-        <a href={`/blog-post/${story.slug}`} class="text-sm text-blue-600 hover:underline">Read more</a> 
-      </article>
-    ))}
-  </aside>
-
-  <!-- Center Column -->
-<article class="lg:col-span-8 order-1 lg:order-2">
-  <div class="relative">
-    <!-- FLAG -->
-  <div class="absolute top-0 left-1/2 -translate-x-1/2 z-10 bg-cyan-300 text-blue-800 px-8 py-4 ui font-bold uppercase rounded-b-md shadow-md">
-    Breaking News
-  </div>
-
-    <!-- IMAGE -->
-    <img
-      src={leadStory.featuredImage?.node?.sourceUrl}
-      alt={leadStory.title}
-      class="w-full h-auto mb-1 md:mb-4 object-cover rounded"
-    />
-  </div>
-  <h1 class="leading-tight mb-2 hover:underline">
-    <a href={`/blog-post/${leadStory.slug}`}>{leadStory.title}</a>
-  </h1>
-  <p class="text-sm font-gothamBold uppercase tracking-wide text-gray-500 mb-4">
-    <!--By {leadStory.author} — {leadStory.date} -->
-  </p>
-  <p class="text-base text-gray-700">{leadStory.blurb}</p>
-</article>
-
-
-  <!-- Right Column -->
-  <aside class="lg:col-span-2 space-y-8 order-1 lg:order-2 order-3 md:order-3">
-    <h4 class="ui-label font-normal tracking-widest ">ADVOCACY</h4>
-    {rightStories.map(story => (
-      <article class="!mt-2">
-        <h3 class="text-xl mb-1 leading-[1.2] hover:underline"><a href={`/blog-post/${story.slug}`}>{story.title}</a></h3>
-        <p class="text-gray-600 dark:text-gray-400 mb-1 leading-[1.3] text-lg">
-          {(story.excerpt ?? '')
-            .replace(/<[^>]*>/g, '') // strip HTML
-            .split(' ')              // break into words
-            .slice(0, 15)            // grab first 30 words
-            .join(' ') + '...'}
-        </p>
-
         <a href={`/blog-post/${story.slug}`} class="text-sm text-blue-600 hover:underline">Read more</a>
       </article>
     ))}
   </aside>
+
+  {leadStory && (
+  <article class="lg:col-span-8 order-1 lg:order-2">
+    <div class="relative">
+      {/* {leadStory.isBreaking && (
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 z-10 bg-cyan-300 text-blue-800 px-8 py-4 ui-label font-bold uppercase rounded-b-md shadow-md">
+          Breaking News
+        </div>
+      )} */}
+      <img
+        src={leadStory.featuredImage?.node?.sourceUrl}
+        alt={leadStory.title ?? 'Article image'}
+        width="1600" height="900" sizes="(min-width:1024px) 66vw, 100vw"
+        class="w-full h-auto mb-1 md:mb-4 object-cover rounded" />
+    </div>
+    <h1 class="leading-tight mb-2 hover:underline" style="font-size: var(--fs-heading)">
+      <a href={`/blog-post/${leadStory.slug}`}>{leadStory.title}</a>
+    </h1>
+    <div class="text-base text-gray-700" set:html={leadStory.blurb}></div>
+  </article>
+  )}
+
+  <aside class="lg:col-span-2 space-y-8 order-3 lg:order-3">
+    <h4 class="ui-label font-normal tracking-widest">ADVOCACY</h4>
+    {rightStories.filter(Boolean).map(story => (
+      <article class="!mt-2">
+        <h3 class="text-xl mb-1 leading-[1.2] hover:underline">
+          <a href={`/blog-post/${story.slug}`}>{story.title}</a>
+        </h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-1 leading-[1.3] text-lg">
+          {toExcerpt(story.excerpt, 15)} {/* comment matches code now */}
+        </p>
+        <a href={`/blog-post/${story.slug}`} class="text-sm text-blue-600 hover:underline">Read more</a>
+      </article>
+    ))}
+  </aside>
+
 </section>
