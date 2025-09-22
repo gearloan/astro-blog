@@ -1,4 +1,5 @@
-const API_URL = 'https://aopa-porkbuns.sbs/graphql';
+import { getApiUrl } from '@/lib/wp';
+const API_URL = getApiUrl();
 
 export async function fetchPosts({ limit = 20, tag = null } = {}) {
   const isEditorial = !tag;
@@ -29,7 +30,7 @@ export async function fetchPosts({ limit = 20, tag = null } = {}) {
             }
           }
           magazinePresentationOptions {
-            presentationslots
+            presentationSlots
             teaserLine1
             teaserLine2
             teaserLine3

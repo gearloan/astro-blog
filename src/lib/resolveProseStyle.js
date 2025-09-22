@@ -1,7 +1,7 @@
 export function resolveProseStyle(post, context = {}) {
   return (
     context.forcedProseStyle ??
-    post.postPresentationSettings?.proseStyle ??
+    post.presentationSettings?.proseStyle ??
     'prose-editorial'
   );
 }

@@ -5,6 +5,15 @@ import preact from '@astrojs/preact';
 
 export default defineConfig({
   adapter: netlify(),
-  integrations: [tailwind()], 
-  integrations: [preact()],
+  integrations: [
+    tailwind(),
+    preact()
+  ],
+  vite: {
+    resolve: {
+      alias: {
+        '@': new URL('./src', import.meta.url).pathname
+      }
+    }
+  }
 });

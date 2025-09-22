@@ -1,142 +1,78 @@
 ---
-// src/pages/news-post/[slug].astro
 import Layout from '../../layouts/Layout.astro';
-import { fetchPosts } from '../../lib/fetchPosts.js';
-import { resolveProseStyle } from '../../lib/resolveProseStyle.js';
 import RightRail from '../../components/utility/RightRail.astro';
 import MostRead from '../../components/shared/MostRead.astro';
 import FeaturedStories from '../../components/shared/FeaturedStories.astro';
+import { wp } from '../../lib/wp';                      // or '@/lib/wp'
+import { resolveProseStyle } from '../../lib/resolveProseStyle.js';
+import { fetchPosts } from '../../lib/fetchPosts.js';    // keep your existing helper
 
+// 1) Build-time paths
 export async function getStaticPaths() {
-  const ENDPOINT =
-    process.env.GRAPHQL_ENDPOINT ||
-    import.meta.env.PUBLIC_GRAPHQL_ENDPOINT ||
-    'https://aopa-porkbuns.sbs/graphql';
-
-  // PROBE (temporary)
+  const QUERY = /* GraphQL */ `
+    query Slugs {
+      posts(first: 100, where: { status: PUBLISH, orderby: { field: DATE, order: DESC } }) {
+        nodes { slug }
+      }
+    }
+  `;
+  let nodes: Array<{ slug: string }> = [];
   try {
-    const probe = await fetch(ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: 'query{__typename}' }),
-      redirect: 'follow'
-    });
-    const ctype = probe.headers.get('content-type') || '';
-    const text = await probe.text();
-    if (ctype.indexOf('application/json') === -1) {
-      console.error('[gql] non-JSON', {
-        status: probe.status,
-        ctype,
-        preview: text.slice(0, 200)
-      });
-      return []; // continue so you can read logs
-    }
+    const data = await wp<{ posts: { nodes: { slug: string }[] } }>(QUERY);
+    nodes = data.posts?.nodes ?? [];
   } catch (e) {
-    console.error('[gql] probe fetch error:', (e && e.message) || String(e));
-    return [];
+    console.error('[getStaticPaths] GraphQL error:', e);
+    nodes = [];
   }
-  // END PROBE
-
-  const res = await fetch(
-    process.env.GRAPHQL_ENDPOINT ||
-      import.meta.env.PUBLIC_GRAPHQL_ENDPOINT ||
-      'https://aopa-porkbuns.sbs/graphql',
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        query:
-          'query { posts(first: 100) { nodes { slug } } }'
-      })
-    }
-  );
-
-  const json = await res.json();
-  const nodes = json && json.data && json.data.posts && json.data.posts.nodes;
-  if (!Array.isArray(nodes)) {
-    console.error('[gql] Invalid GraphQL response for posts:', json);
-    return [];
-  }
-
-  return nodes.map(function (p) {
-    return { params: { slug: p.slug } };
-  });
+  return nodes.map((p) => ({ params: { slug: p.slug } }));
 }
 
-
-
+// 2) Per-page data
 const { slug } = Astro.params;
 
-// Fetch post by slug
-const res = await fetch('https://aopa-porkbuns.sbs/graphql', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    query: `
-      query ($slug: String!) {
-        postBy(slug: $slug) {
-          title
-          content
-          featuredImage {
-            node {
-              mediaDetails {
-                sizes {
-                  name
-                  sourceUrl
-                }
-              }
-            }
-          }
-          postPresentationSettings {
-            proseStyle
-          }
+const POST_QUERY = /* GraphQL */ `
+  query PostBySlug($slug: String!) {
+    postBy(slug: $slug) {
+      title
+      content
+      featuredImage {
+        node {
+          mediaDetails { sizes { name sourceUrl } }
         }
       }
-    `,
-    variables: { slug },
-  }),
-});
+      presentationSettings { proseStyle }
+    }
+  }
+`;
 
-const { data } = await res.json();
-const post = data?.postBy;
+const { postBy: post } = await wp<{ postBy: any }>(POST_QUERY, { slug });
 if (!post) throw new Error(`Post not found for slug: ${slug}`);
 
-// Featured image
-const sizes = post.featuredImage?.node?.mediaDetails?.sizes;
+const sizes = post?.featuredImage?.node?.mediaDetails?.sizes ?? [];
 const featured_image =
-  sizes?.find((s) => s.name === 'large')?.sourceUrl ??
-  sizes?.[0]?.sourceUrl ??
-  null;
+  sizes.find((s: any) => s.name === 'large')?.sourceUrl ?? sizes[0]?.sourceUrl ?? null;
 
 const proseStyle = resolveProseStyle(post);
+
+// if your fetchPosts signature is (filters, limit) as you used:
 const mostRead = await fetchPosts({ tag: 'editorial' }, 5);
-
-
 ---
 
 <Layout proseStyle={proseStyle} section="editorial">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-x-10">
-      
-      <!-- Main article content -->
       <article class={`lg:col-span-8 prose ${proseStyle} max-w-none`}>
         <header class="mb-8">
           <h1 class="dark:text-amber-50" set:html={post.title}></h1>
-          {featured_image && (
-            <img src={featured_image} alt={post.title} class="w-full my-4" />
-          )}
+          {featured_image && (<img src={featured_image} alt={post.title} class="w-full my-4" />)}
         </header>
-
         <div class="text-lg leading-[1.7] dark:text-amber-50" set:html={post.content}></div>
       </article>
-
-      <!-- Right rail -->
       <RightRail>
         <MostRead posts={mostRead} />
         <img src="/images/ad-300x250.jpg" alt="Ad" class="w-full" />
         <FeaturedStories />
       </RightRail>
-
     </div>
   </div>
 </Layout>
