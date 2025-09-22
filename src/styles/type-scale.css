@@ -20,7 +20,7 @@
   --lh-ui: 1.2;
 
   /* UI label */
-  --fs-ui-label: 0.75rem;   /* 12px */
+  --fs-ui-label: .9rem;   /* 12px */
   --lh-ui-label: 1;
   --tt-ui-label: uppercase; /* transform */
   --ls-ui-label: .06em;     /* tracking */
