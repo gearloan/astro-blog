@@ -1,5 +1,4 @@
 ---
-// src/components/magazine/Sidebar.astro
 export interface Props {
   publicationTitle: string;
   issueInfo: string;
@@ -9,6 +8,7 @@ export interface Props {
   percentRead?: number | string;
   bgColor?: string;
   alt?: string;
+  // Optional: progressColor?: string;
 }
 
 const {
@@ -20,49 +20,75 @@ const {
   percentRead = 35,
   bgColor = "#001d3d",
   alt = "Cover",
+  // progressColor = "#00bcd4",
 } = Astro.props;
 
-const width = typeof percentRead === "number" ? `${percentRead}%` : percentRead;
+const normalizePercent = (v: number | string): number => {
+  if (typeof v === 'number') return v;
+  const n = v.trim().endsWith('%') ? parseFloat(v) : parseFloat(v);
+  return Number.isFinite(n) ? n : 0;
+};
+const pct = Math.min(100, Math.max(0, normalizePercent(percentRead)));
+const width = `${pct}%`;
 ---
 
-
 <aside
-  class="text-white text-center
-         p-4 md:p-6
-         flex flex-col md:sticky md:top-[75px] md:self-start
-         md:h-[calc(100vh-75px)] md:items-center"
-  style={`background-color: ${bgColor};`}
+  aria-labelledby="mag-sidebar-title"
+  class="text-white text-center p-4 md:p-6 flex flex-col md:sticky md:top-[75px] md:self-start md:h-[calc(100vh-75px)] md:items-center"
+  style={`background-color:${bgColor}; background-image:linear-gradient(transparent, rgba(0,0,0,.15));`}
 >
+  <span id="mag-sidebar-title" class="sr-only">Issue sidebar</span>
 
   <!-- Mobile condensed layout -->
   <div class="md:hidden flex items-center gap-4">
-    <img src="../../images/ui/logo-small-white.svg" alt="Logo" class="h-10 w-auto" />
+    <img src="/images/ui/logo-small-white.svg" alt="" aria-hidden="true" class="h-10 w-auto" />
     <div class="flex-1 text-left">
       <div class="text-xs uppercase tracking-widest">{publicationTitle}</div>
       <div class="text-xs font-light">{issueInfo}</div>
     </div>
-    <img src={coverImg} alt={alt} class="h-16 w-auto rounded shadow" />
+    {coverImg ? (
+      <img src={coverImg} alt={alt} class="h-16 w-auto rounded shadow" loading="lazy" />
+    ) : (
+      <div class="h-16 aspect-[3/4] rounded shadow bg-white/10" aria-label="Cover image placeholder"></div>
+    )}
   </div>
 
   <!-- Desktop vertical layout -->
   <div class="hidden md:flex md:flex-col md:items-center md:text-center">
-    <img src="../../images/ui/logo-small-white.svg" alt="Logo" class="px-10 block my-6" />
+    <img src="/images/ui/logo-small-white.svg" alt="" aria-hidden="true" class="px-10 block my-6" />
     <div class="text-sm uppercase tracking-widest mb-1">{publicationTitle}</div>
     <div class="text-sm font-light tracking-wide mb-4">{issueInfo}</div>
 
-    <a href={link}>
-      <img src={coverImg} alt={alt} class="rounded shadow-lg mt-8" loading="lazy" />
-    </a>
+    {coverImg ? (
+      <a href={link}>
+        <img
+          src={coverImg}
+          alt={alt}
+          class="rounded shadow-lg mt-8"
+          loading="lazy"
+          width="1200"
+          height="1600"
+          sizes="(min-width: 768px) 280px, 30vw"
+        />
+      </a>
+    ) : (
+      <div class="rounded shadow-lg mt-8 aspect-[3/4] w-[280px] bg-white/10" aria-label="Cover image placeholder"></div>
+    )}
 
     <p class="mt-12">
       {storiesRead}<br />stories read
     </p>
 
     <div class="w-full px-6 my-2">
-      <div class="w-full h-4 bg-gray-300 rounded-full shadow-inner relative overflow-hidden">
+      <div
+        class="w-full h-4 bg-gray-300 rounded-full shadow-inner relative overflow-hidden"
+        role="progressbar"
+        aria-label="Reading progress"
+        aria-valuemin="0" aria-valuemax="100" aria-valuenow={pct}
+      >
         <div
           class="h-full rounded-full shadow-[0_2px_4px_rgba(0,0,0,0.3)] bg-[#00bcd4]"
-          style={`width: ${width};`}
+          style={`width:${width};`}
         ></div>
       </div>
     </div>
