@@ -1,39 +1,65 @@
 ---
-// src/pages/magazine/[slug].astro
+// src/pages/magazine/pilot.astro
 import Layout from '../../layouts/Layout.astro';
 import { fetchPosts } from '../../lib/fetchPosts.js';
 import Sidebar from '../../components/magazine/Sidebar.astro';
 import HeroTitleMobilePilot from '../../components/magazine/HeroTitleMobilePilot.astro';
 
-const posts = await fetchPosts({ tag: 'pilot' });
+const posts = await fetchPosts({ tag: 'pilot' }, 30);
+if (!posts?.length) throw new Error('No posts returned for tag "pilot"');
 
-// Use ACF fields to categorize the stories
-const heroStory = posts.find(
-  post => post.magazinePresentationOptions?.presentationslots?.includes('hero')
-);
+// helpers
+const slots = (p) =>
+  (p?.magazinePresentationOptions?.presentationSlots ?? [])
+    .map((s) => String(s).toLowerCase().trim());
+const hasSlot = (p, name) => slots(p).includes(name);
 
-console.log({
-  title: heroStory.title,
-  line1: heroStory.heroTitleLine1,
-  line2: heroStory.heroTitleLine2
+// hero: prefer 'hero', then 'featured', else first post
+const heroStory =
+  posts.find((p) => hasSlot(p, 'hero')) ??
+  posts.find((p) => hasSlot(p, 'featured')) ??
+  posts[0];
+
+// build unique lists (exclude hero; avoid dupes across buckets)
+const used = new Set([heroStory?.slug].filter(Boolean));
+
+const featuredStories = posts.filter((p) => {
+  if (!p?.slug || used.has(p.slug)) return false;
+  const ok = hasSlot(p, 'featured');
+  if (ok) used.add(p.slug);
+  return ok;
 });
 
-const featuredStories = posts
-  .filter(post => post.magazinePresentationOptions?.presentationslots?.includes('featured'))
-  .reverse();
+let teaserStories = posts.filter((p) => {
+  if (!p?.slug || used.has(p.slug)) return false;
+  const ok = hasSlot(p, 'teaser');
+  if (ok) used.add(p.slug);
+  return ok;
+});
 
-const teaserStories = posts.filter(
-  post => post.magazinePresentationOptions?.presentationslots?.includes('teaser')
-);
+// fallback if no teasers: take next 3 unused posts
+if (teaserStories.length === 0) {
+  for (const p of posts) {
+    if (!p?.slug || used.has(p.slug)) continue;
+    teaserStories.push(p);
+    used.add(p.slug);
+    if (teaserStories.length >= 3) break;
+  }
+}
 
-const line1 = heroStory.magazinePresentationOptions?.heroTitleLine1 ?? story.title;
-const line2 = heroStory.magazinePresentationOptions?.heroTitleLine2 ?? '';
+// hero title lines with sane defaults
+const line1 = heroStory?.magazinePresentationOptions?.heroTitleLine1 ?? heroStory?.title ?? '';
+const line2 = heroStory?.magazinePresentationOptions?.heroTitleLine2 ?? '';
 
-
+console.log('[pilot] hero', {
+  title: heroStory?.title,
+  slots: slots(heroStory),
+  line1, line2
+});
 
 const { proseStyle = 'prose-magazine' } = Astro.props;
-
 ---
+
 <Layout section="magazine">
   <div class={`grid grid-cols-1 md:grid-cols-[250px_1fr] min-h-screen relative ${proseStyle}`}>
     

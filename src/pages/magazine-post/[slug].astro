@@ -1,79 +1,61 @@
 ---
+// src/pages/magazine/[slug].astro
 import Layout from '../../layouts/Layout.astro';
-import { resolveProseStyle } from '../../lib/resolveProseStyle.js';
 import Sidebar from '../../components/magazine/Sidebar.astro';
+import { resolveProseStyle } from '../../lib/resolveProseStyle.js';
+import { wp } from '../../lib/wp'; // or '@/lib/wp' if you set the alias
 
+// 1) Build-time paths
 export async function getStaticPaths() {
-  const res = await fetch('https://aopa-porkbuns.sbs/graphql', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      query: `
-        query {
-          posts(first: 100) {
-            nodes {
-              slug
-            }
-          }
-        }
-      `,
-    }),
-  });
-
-  const { data } = await res.json();
-  if (!data?.posts?.nodes) throw new Error('Invalid GraphQL response');
-
-  return data.posts.nodes.map((post) => ({
-    params: { slug: post.slug },
-  }));
+  const QUERY = /* GraphQL */ `
+    query Slugs {
+      posts(
+        first: 100
+        where: { status: PUBLISH, orderby: { field: DATE, order: DESC } }
+      ) {
+        nodes { slug }
+      }
+    }
+  `;
+  let nodes = [];
+  try {
+    const data = await wp(QUERY);
+    nodes = data?.posts?.nodes ?? [];
+  } catch (e) {
+    console.error('[getStaticPaths] GraphQL error:', e);
+    nodes = [];
+  }
+  return nodes.map((p) => ({ params: { slug: p.slug } }));
 }
 
+// 2) Per-page data
 const { slug } = Astro.params;
 
-const res = await fetch('https://aopa-porkbuns.sbs/graphql', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    query: `
-      query ($slug: String!) {
-        postBy(slug: $slug) {
-          title
-          content
-          presentationSettings {
-            proseStyle
-          }
-          tags {
-            nodes {
-              name
-              slug
-            }
-          }
-          featuredImage {
-            node {
-              mediaDetails {
-                sizes {
-                  name
-                  sourceUrl
-                }
-              }
-            }
-          }
+const POST_QUERY = /* GraphQL */ `
+  query PostBySlug($slug: String!) {
+    postBy(slug: $slug) {
+      title
+      content
+      author { node { name } }
+      presentationSettings { proseStyle }  # <-- use the current field name
+      tags { nodes { name slug } }
+      featuredImage {
+        node {
+          mediaDetails { sizes { name sourceUrl } }
         }
       }
-    `,
-    variables: { slug },
-  }),
-});
+    }
+  }
+`;
 
-const { data } = await res.json();
-const post = data?.postBy;
+const { postBy: post } = await wp(POST_QUERY, { slug });
 if (!post) throw new Error(`Post not found for slug: ${slug}`);
 
-// Featured image
-const sizes = post.featuredImage?.node?.mediaDetails?.sizes;
+// Featured image selection
+const sizes = post?.featuredImage?.node?.mediaDetails?.sizes ?? [];
 const featured_image =
-  sizes?.find((s) => s.name === 'large')?.sourceUrl ??
-  sizes?.[0]?.sourceUrl ??
+  sizes.find((s) => s.name === 'large')?.sourceUrl ??
+  sizes[0]?.sourceUrl ??
   null;
 
 // Typography style
@@ -81,7 +63,7 @@ const proseStyle = resolveProseStyle(post);
 
 // Determine publication based on tag slug
 const tags = post.tags?.nodes ?? [];
-let pub = tags.find(t => ['turbine', 'pilot'].includes(t.slug))?.slug ?? 'pilot';
+const pub = tags.find((t) => ['turbine', 'pilot'].includes(t.slug))?.slug ?? 'pilot';
 
 const publicationMeta = {
   pilot: {
@@ -110,7 +92,7 @@ const sidebarMeta = publicationMeta[pub] ?? publicationMeta['pilot'];
         coverImg={sidebarMeta.coverImg}
         bgColor={sidebarMeta.bgColor}
       />
-      
+
       <!-- Main article content -->
       <article class={`prose ${proseStyle} max-w-none`}>
         <header class="mb-8 relative">
@@ -118,7 +100,7 @@ const sidebarMeta = publicationMeta[pub] ?? publicationMeta['pilot'];
             FEATURE
           </span>
           <h1 class="pl-4 md:pl-10 font-heading uppercase text-[clamp(2rem,10vw,4rem)] break-words leading-none tracking-tight pt-24" set:html={post.title}></h1>
-          <p class="pl-4 md:pl-10 text-sm">By <b>Melissa Calvert</b></p>
+          <p class="pl-4 md:pl-10 text-sm">By {post.author?.node?.name}</p>
           {featured_image && (
             <img src={featured_image} alt={post.title} class="w-full my-4" />
           )}

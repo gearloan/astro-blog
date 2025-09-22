@@ -11,6 +11,9 @@ body {
  /* @apply font-body; */
 }
 
+/* temp hiding some wp bullshit */
+.sharedaddy, .sd-sharing-enabled, .sd-like { display: none !important; }
+
 /* Only open when hovering the left trigger OR the drawer itself */
 .navwrap:has(.nav-trigger:hover) .nav-drawer,
 .navwrap:has(.nav-drawer:hover) .nav-drawer {

@@ -3,7 +3,7 @@ import { fetchPosts } from '../../lib/fetchPosts.js';
 const posts = await fetchPosts({ tag: 'pilot' });
 
 const heroStory = posts.find(
-  post => post.magazinePresentationOptions?.presentationslots?.includes('hero')
+  post => post.magazinePresentationOptions?.presentationSlots?.includes('hero')
 );
 
 console.log({
@@ -13,7 +13,7 @@ console.log({
 });
 
 const teaserStories = posts.filter(
-  post => post.magazinePresentationOptions?.presentationslots?.includes('teaser')
+  post => post.magazinePresentationOptions?.presentationSlots?.includes('teaser')
 );
 
 const line1 = heroStory.magazinePresentationOptions?.heroTitleLine1 ?? heroStory.title;
