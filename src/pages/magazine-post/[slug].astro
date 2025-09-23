@@ -1,91 +1,51 @@
 ---
-// src/pages/magazine/[slug].astro
-import Layout from '../../layouts/Layout.astro';
-import Sidebar from '../../components/magazine/Sidebar.astro';
-import { resolveProseStyle } from '../../lib/resolveProseStyle.js';
-import { wp } from '../../lib/wp'; // or '@/lib/wp' if you set the alias
+import Layout from '@/layouts/Layout.astro';
+import Sidebar from '@/components/magazine/Sidebar.astro';
+import { resolveProseStyle } from '@/lib/resolveProseStyle.js';
+import { gql } from 'graphql-request';
+import { wp } from '@/lib/wp';
+import { getPost } from '@/lib/queries/postBySlug';
+import { pickMediaComponent } from '@/lib/mediaComponent';
 
-// 1) Build-time paths
 export async function getStaticPaths() {
-  const QUERY = /* GraphQL */ `
+  const SLUGS = gql`
     query Slugs {
-      posts(
-        first: 100
-        where: { status: PUBLISH, orderby: { field: DATE, order: DESC } }
-      ) {
+      posts(first: 100, where: { status: PUBLISH, orderby: { field: DATE, order: DESC } }) {
         nodes { slug }
       }
     }
   `;
-  let nodes = [];
-  try {
-    const data = await wp(QUERY);
-    nodes = data?.posts?.nodes ?? [];
-  } catch (e) {
-    console.error('[getStaticPaths] GraphQL error:', e);
-    nodes = [];
-  }
-  return nodes.map((p) => ({ params: { slug: p.slug } }));
+  const data = await wp(SLUGS);
+  return (data?.posts?.nodes ?? []).map((p: any) => ({ params: { slug: p.slug } }));
 }
 
-// 2) Per-page data
 const { slug } = Astro.params;
+const { postBy: post } = await getPost(slug);
+if (!post) throw new Error(`Post not found: ${slug}`);
 
-const POST_QUERY = /* GraphQL */ `
-  query PostBySlug($slug: String!) {
-    postBy(slug: $slug) {
-      title
-      content
-      author { node { name } }
-      presentationSettings { proseStyle }  # <-- use the current field name
-      tags { nodes { name slug } }
-      featuredImage {
-        node {
-          mediaDetails { sizes { name sourceUrl } }
-        }
-      }
-    }
-  }
-`;
+const Media = pickMediaComponent(post.formatSlug ?? 'longform');
+const postForStyle = { ...post, contentGroups: post.contentGroups ?? { nodes: post.categories?.nodes ?? [] } };
+const proseStyle = resolveProseStyle(postForStyle);
 
-const { postBy: post } = await wp(POST_QUERY, { slug });
-if (!post) throw new Error(`Post not found for slug: ${slug}`);
-
-// Featured image selection
-const sizes = post?.featuredImage?.node?.mediaDetails?.sizes ?? [];
-const featured_image =
-  sizes.find((s) => s.name === 'large')?.sourceUrl ??
-  sizes[0]?.sourceUrl ??
-  null;
-
-// Typography style
-const proseStyle = resolveProseStyle(post);
-
-// Determine publication based on tag slug
+// Publication meta from tags (unchanged)
 const tags = post.tags?.nodes ?? [];
-const pub = tags.find((t) => ['turbine', 'pilot'].includes(t.slug))?.slug ?? 'pilot';
-
+const pub = tags.find((t: any) => ['turbine', 'pilot'].includes(t.slug))?.slug ?? 'pilot';
 const publicationMeta = {
-  pilot: {
-    title: 'Pilot Magazine',
-    issueInfo: 'Apr 2025 | No. 178',
-    coverImg: '/images/proxy/pilot-mag.jpg',
-    bgColor: '#003440',
-  },
-  turbine: {
-    title: 'Pilot Turbine Magazine',
-    issueInfo: 'Apr 2025 | No. 89',
-    coverImg: '/images/proxy/turbine-mag.jpg',
-    bgColor: '#00478c',
-  },
+  pilot:   { title: 'Pilot Magazine',         issueInfo: 'Apr 2025 | No. 178', coverImg: '/images/proxy/pilot-mag.jpg',   bgColor: '#003440' },
+  turbine: { title: 'Pilot Turbine Magazine', issueInfo: 'Apr 2025 | No. 89',  coverImg: '/images/proxy/turbine-mag.jpg', bgColor: '#00478c' },
 };
+const sidebarMeta = publicationMeta[pub] ?? publicationMeta.pilot;
 
-const sidebarMeta = publicationMeta[pub] ?? publicationMeta['pilot'];
+// Best featured image convenience field for media components
+const sizes = post?.featuredImage?.node?.mediaDetails?.sizes ?? [];
+post.featuredImageUrl =
+  sizes.find((s: any) => s.name === 'large')?.sourceUrl ??
+  post?.featuredImage?.node?.sourceUrl ??
+  null;
 ---
 <Layout section="magazine" wrapperClass="bg-gray-900 text-amber-50" magazineTitle={post.title}>
   <div class="mx-auto px-0 md:px-8">
-    <div class="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-0 min-h-screen items-start bg-white">
-      <!-- Magazine sidebar -->
+    <div class="grid min-h-screen grid-cols-1 items-start gap-0 bg-white md:grid-cols-[250px_1fr]">
       <Sidebar
         publicationTitle={sidebarMeta.title}
         issueInfo={sidebarMeta.issueInfo}
@@ -93,20 +53,27 @@ const sidebarMeta = publicationMeta[pub] ?? publicationMeta['pilot'];
         bgColor={sidebarMeta.bgColor}
       />
 
-      <!-- Main article content -->
-      <article class={`prose ${proseStyle} max-w-none`}>
-        <header class="mb-8 relative">
+      <article class={`prose max-w-none ${proseStyle}`}>
+        <!-- Page-owned header -->
+        <header class="mb-8">
           <span class="pb-0 pr-0 pl-4 md:pl-10 font-subheading text-2xl text-aopa-ltblue relative left-0 top-8 tracking-widest border-b-4 border-aopa-ltblue">
             FEATURE
           </span>
-          <h1 class="pl-4 md:pl-10 font-heading uppercase text-[clamp(2rem,10vw,4rem)] break-words leading-none tracking-tight pt-24" set:html={post.title}></h1>
-          <p class="pl-4 md:pl-10 text-sm">By {post.author?.node?.name}</p>
-          {featured_image && (
-            <img src={featured_image} alt={post.title} class="w-full my-4" />
-          )}
+          <h1 class="pl-4 md:pl-10 font-heading uppercase text-[clamp(2rem,10vw,4rem)] break-words leading-none tracking-tight pt-24">
+            {post.title}
+          </h1>
+          <p class="text-sm tpl-4 md:pl-10 text-sm text-slate-600">
+            By {post.author?.node?.name} · {new Date(post.date).toLocaleDateString()}
+          </p>
         </header>
 
-        <div class="article-body dropcap px-4 md:px-10 lg:pr-56" set:html={post.content}></div>
+        <!-- Type-specific media slot -->
+        <section class="mb-8">
+          <Media post={post} />
+        </section>
+
+        <!-- Page-owned body -->
+        <div class="article-body dropcap px-4 md:px-10 lg:pr-56" set:html={post.content} />
       </article>
     </div>
   </div>
