@@ -1,5 +1,5 @@
 ---
-import AudioPlayer from '../../../components/AudioPlayer.astro';
+//import AudioPlayer from '../../../components/AudioPlayer.astro';
 
 
 export async function getStaticPaths() {
@@ -68,7 +68,6 @@ hydrated.push(p);
 
 {part.kind === 'audio' && part.media && (
 <div class="mt-4">
-<AudioPlayer src={part.media.sourceUrl} />
 </div>
 )}
 </li>
