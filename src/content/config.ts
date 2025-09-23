@@ -1,28 +1,20 @@
----
-import { getCollection } from 'astro:content';
-import { wp, COURSE_QUERY, MEDIA_QUERY } from '../../../lib/wp';
+// src/content/config.ts
+import { defineCollection, z } from 'astro:content';
 
-export async function getStaticPaths() {
-  const courses = await getCollection('courses');
-  return courses.map((c) => ({ params: { slug: c.data.slug }, props: { course: c } }));
-}
+const courses = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    // NOTE: entry.slug is derived from the file path; you usually don't need a slug field.
+    parts: z.array(z.object({
+      kind: z.enum(['text','video','audio','external']).optional(),
+      wpPostId: z.number().optional(),
+      wpMediaId: z.number().optional(),
+      externalId: z.string().optional(),
+    })).default([]),
+  }),
+});
 
-const { course } = Astro.props;
-const parts = [];
-for (const part of course.data.parts) {
-  if (part.wpPostId) {
-    const data = await wp(`
-      query($id:ID!){ post(id:$id,idType:DATABASE_ID){ title content databaseId } }
-    `, { id: part.wpPostId });
-    parts.push({ ...part, content: data.post?.content ?? '' });
-  } else if (part.wpMediaId) {
-    const data = await wp(MEDIA_QUERY, { id: part.wpMediaId });
-    parts.push({ ...part, media: data.mediaItem });
-  } else {
-    parts.push(part); // externalId, etc.
-  }
-}
----
-<!-- Render title, estimated hours, category, then iterate parts:
-     - kind==="text": render `content` (sanitize or use a safe HTML component)
-     - kind==="video"/"audio": use `media.sourceUrl` or external player by `externalId` -->
+export const collections = {
+  courses,
+};
