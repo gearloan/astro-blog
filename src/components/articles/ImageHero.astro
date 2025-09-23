@@ -1,0 +1,9 @@
+---
+// src/components/articles/media/ImageHero.astro
+const { post } = Astro.props as { post: any };
+const src =
+  post?.featuredImage?.node?.mediaDetails?.sizes?.find((s:any)=>s.name==='large')?.sourceUrl
+  ?? post?.featuredImage?.node?.sourceUrl;
+const alt = post?.featuredImage?.node?.altText || post?.title || '';
+---
+{src && <img class="w-full" src={src} alt={alt} loading="lazy" />}
