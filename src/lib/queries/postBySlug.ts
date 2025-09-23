@@ -17,6 +17,9 @@ export const POST_BY_SLUG = gql`
           mediaDetails { sizes { name sourceUrl } }
         }
       }
+      magazinePresentationOptions {
+        presentationSlots        # => e.g. ["hero","featured","teaser"]
+      }
       author { node { name } }
       tags { nodes { slug name } }
 

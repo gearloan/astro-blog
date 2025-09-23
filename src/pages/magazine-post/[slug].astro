@@ -23,6 +23,10 @@ const { slug } = Astro.params;
 const { postBy: post } = await getPost(slug);
 if (!post) throw new Error(`Post not found: ${slug}`);
 
+const slots = post?.magazinePresentationOptions?.presentationSlots ?? [];
+const isFeatured = Array.isArray(slots) && slots.some(s => String(s).toLowerCase() === 'featured');
+
+
 const Media = pickMediaComponent(post.formatSlug ?? 'longform');
 const postForStyle = { ...post, contentGroups: post.contentGroups ?? { nodes: post.categories?.nodes ?? [] } };
 const proseStyle = resolveProseStyle(postForStyle);
@@ -56,9 +60,11 @@ post.featuredImageUrl =
       <article class={`prose max-w-none ${proseStyle}`}>
         <!-- Page-owned header -->
         <header class="mb-8">
-          <span class="pb-0 pr-0 pl-4 md:pl-10 font-subheading text-2xl text-aopa-ltblue relative left-0 top-8 tracking-widest border-b-4 border-aopa-ltblue">
-            FEATURE
-          </span>
+          {isFeatured && (
+            <span class="pb-0 pr-0 pl-4 md:pl-10 font-subheading text-2xl text-aopa-ltblue relative left-0 top-8 tracking-widest border-b-4 border-aopa-ltblue">
+              FEATURED
+            </span>
+          )}
           <h1 class="pl-4 md:pl-10 font-heading uppercase text-[clamp(2rem,10vw,4rem)] break-words leading-none tracking-tight pt-24">
             {post.title}
           </h1>
@@ -73,7 +79,7 @@ post.featuredImageUrl =
         </section>
 
         <!-- Page-owned body -->
-        <div class="article-body dropcap px-4 md:px-10 lg:pr-56" set:html={post.content} />
+        <div class="article-body dropcap px-4 md:px-10 pb-12 lg:pr-56" set:html={post.content} />
       </article>
     </div>
   </div>
