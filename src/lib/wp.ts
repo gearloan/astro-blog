@@ -1,45 +1,48 @@
 // src/lib/wp.ts
+type Vars = Record<string, any>;
+type GraphQLResponse<T> = { data?: T; errors?: Array<{ message: string }> };
 
-/** Resolve the endpoint from .env at runtime (safe for dev/SSR/build) */
 export function getApiUrl(): string {
   const url = import.meta.env.PUBLIC_WP_GRAPHQL_ENDPOINT;
   if (!url) throw new Error('Missing PUBLIC_WP_GRAPHQL_ENDPOINT in .env');
   return url;
 }
 
-/** Naive in‑memory cache (good for build time). */
-const cache = new Map<string, any>();
-
-/** Stable key: query + sorted variables */
-function key(q: string, v?: Record<string, any>) {
-  const stable = v
-    ? JSON.stringify(v, Object.keys(v).sort())
-    : '';
-  return `${q}::${stable}`;
+/** Deep, stable stringify for cache keys (sorts all object keys recursively). */
+function stableStringify(input: any): string {
+  if (input === null || typeof input !== 'object') return JSON.stringify(input);
+  if (Array.isArray(input)) return `[${input.map(stableStringify).join(',')}]`;
+  const keys = Object.keys(input).sort();
+  return `{${keys.map(k => JSON.stringify(k) + ':' + stableStringify(input[k])).join(',')}}`;
 }
 
-/** Optional: clear cache (handy in dev) */
+/** Normalize a query to a string (supports plain strings or GraphQL DocumentNodes). */
+function normalizeQuery(q: any): string {
+  if (typeof q === 'string') return q;
+  // graphql-tag / codegen doc nodes often carry .loc.source.body
+  const body = q?.loc?.source?.body;
+  if (typeof body === 'string') return body;
+  throw new Error('wp(): query must be a string or a DocumentNode with loc.source.body');
+}
+
+/** Naive in-memory cache (process-local; good for build/SSR). */
+const cache = new Map<string, any>();
+function key(q: any, v?: Vars) {
+  return `${normalizeQuery(q)}::${v ? stableStringify(v) : ''}`;
+}
+
 export function clearWpCache() {
   cache.clear();
 }
 
-type GraphQLResponse<T> = { data?: T; errors?: Array<{ message: string }> };
-
 type WpOptions = {
-  /** Extra headers (e.g., Authorization) */
   headers?: Record<string, string>;
-  /** Bypass in‑memory cache when true */
   noCache?: boolean;
 };
 
-/**
- * Main GraphQL helper.
- * - Caches by (query, variables) unless `noCache` is true
- * - Throws helpful errors (HTTP status + first GraphQL error)
- */
 export async function wp<T = any>(
-  query: string,
-  variables?: Record<string, any>,
+  query: any,
+  variables?: Vars,
   options: WpOptions = {}
 ): Promise<T> {
   const k = key(query, variables);
@@ -54,25 +57,20 @@ export async function wp<T = any>(
       'Content-Type': 'application/json',
       ...(options.headers ?? {}),
     },
-    body: JSON.stringify({ query, variables }),
+    body: JSON.stringify({ query: normalizeQuery(query), variables }),
   });
 
   if (!res.ok) {
     const text = await res.text().catch(() => '');
-    // include a short preview of body to aid debugging
     throw new Error(`WPGraphQL HTTP ${res.status}: ${text.slice(0, 300)}`);
   }
 
   const json = (await res.json()) as GraphQLResponse<T>;
 
   if (json.errors?.length) {
-    // surface only the first error succinctly
     throw new Error(`WPGraphQL: ${json.errors[0].message}`);
   }
-
-  if (!json.data) {
-    throw new Error('WPGraphQL: empty data');
-  }
+  if (!json.data) throw new Error('WPGraphQL: empty data');
 
   if (!options.noCache) cache.set(k, json.data);
   return json.data;
