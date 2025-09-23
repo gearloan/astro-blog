@@ -1,7 +1,5 @@
-import { request, gql } from 'graphql-request';
-
-import { getApiUrl } from '@/lib/wp';
-const API_URL = getApiUrl();
+import { gql } from 'graphql-request';
+import { wp } from '@/lib/wp';
 
 export const POST_BY_SLUG = gql`
   query PostBySlug($slug: String!) {
@@ -16,20 +14,23 @@ export const POST_BY_SLUG = gql`
         node {
           altText
           sourceUrl
-          mediaDetails {
-            sizes {
-              name
-              sourceUrl
-            }
-          }
+          mediaDetails { sizes { name sourceUrl } }
         }
       }
       author { node { name } }
       tags { nodes { slug name } }
+
+      # Fallback for prose style resolution
+      categories { nodes { slug name } }
+
+      # Keep this if it exists in your schema; remove if it errors
+      presentationSettings { proseStyle }
     }
   }
 `;
 
-export async function getPost(slug: string) {
-  return request(API_URL, POST_BY_SLUG, { slug });
+type PostBySlug = { postBy: any | null };
+
+export async function getPost(slug: string): Promise<PostBySlug> {
+  return wp<PostBySlug>(POST_BY_SLUG, { slug });
 }
