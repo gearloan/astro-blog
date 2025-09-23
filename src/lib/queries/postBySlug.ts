@@ -7,7 +7,7 @@ export const POST_BY_SLUG = gql`
       id
       title
       date
-      content
+      content(format: RENDERED)
       formatSlug
       videoUrl
       featuredImage {
