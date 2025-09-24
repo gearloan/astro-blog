@@ -38,3 +38,28 @@ body {
 #tuner-tray {
   display:none;
 }
+
+@layer components {
+  .mag-hero { position: relative; }
+
+  /* Apply per-issue offsets via CSS vars */
+  .mag-hero .headline-block {
+    text-align: var(--hero-align, right);
+    max-width: var(--hero-max-w, 36ch);
+    transform: translate(var(--hero-x, 0), var(--hero-y, 0));
+  }
+
+  /* Optional: underline accent under H2 */
+  .mag-hero .accent-line { position: relative; }
+  .mag-hero .accent-line::before {
+    content: "";
+    position: absolute; left: 0; bottom: -0.6rem;
+    width: var(--accent-w, 8rem); height: 4px;
+    background: var(--accent-color, #368bc4);
+  }
+
+  /* Optional: place a magazine badge/lockup if you add one */
+  .mag-hero .pub-badge {
+    transform: translate(var(--badge-x, 0), var(--badge-y, 0));
+  }
+}
