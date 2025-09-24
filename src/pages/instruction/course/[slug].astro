@@ -1,77 +1,91 @@
 ---
-//import AudioPlayer from '../../../components/AudioPlayer.astro';
+import { getCollection } from 'astro:content';
+// import VideoPlayer from '@/components/VideoPlayer.astro'; // if you have it
 
+import { getPostById } from '@/lib/queries/postById';
+import { getMediaById } from '@/lib/queries/mediaById';
 
+// Build-time paths (prefer entry.slug; fall back to frontmatter slug if you used one)
 export async function getStaticPaths() {
-const courses = await getCollection('courses');
-return courses.map((c) => ({ params: { slug: c.data.slug }, props: { course: c } }));
+  const courses = await getCollection('courses');
+  return courses.map((c) => ({
+    params: { slug: c.slug ?? (c as any).data?.slug },
+    props: { course: c },
+  }));
 }
-
 
 const { course } = Astro.props as { course: Awaited<ReturnType<typeof getCollection>>[number] };
 
-
-// Hydrate parts from WP
-const hydrated = [] as Array<any>;
+// Hydrate parts from WP (posts/media by DATABASE_ID)
+const hydrated: Array<any> = [];
 for (const p of course.data.parts) {
-if (p.wpPostId) {
-const data = await wp<{ post: { title: string; content: string } | null }>(POST_BY_ID, { id: p.wpPostId });
-hydrated.push({ ...p, content: data.post?.content ?? '' });
-} else if (p.wpMediaId) {
-const data = await wp<{ mediaItem: { sourceUrl: string; mimeType: string } | null }>(MEDIA_BY_ID, { id: p.wpMediaId });
-hydrated.push({ ...p, media: data.mediaItem });
-} else {
-hydrated.push(p);
-}
+  if (p.wpPostId) {
+    const { post } = await getPostById(Number(p.wpPostId));
+    hydrated.push({ ...p, content: post?.content ?? '' });
+  } else if (p.wpMediaId) {
+    const { mediaItem } = await getMediaById(Number(p.wpMediaId));
+    hydrated.push({ ...p, media: mediaItem ?? null });
+  } else {
+    hydrated.push(p); // externalId, plain text, etc.
+  }
 }
 ---
 <article class="bg-white">
-<header class="border-b border-slate-200 bg-gradient-to-b from-slate-50 to-white">
-<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
-<div class="flex items-end justify-between gap-6">
-<div>
-<p class="text-sm text-sky-700">Category: {course.data.category.id.split('/').pop()}</p>
-<h1 class="mt-2 text-3xl sm:text-4xl font-bold text-slate-900">{course.data.title}</h1>
-<p class="mt-1 text-slate-600">Level: {course.data.level}</p>
-</div>
-{course.data.estimatedHours && (
-<div class="flex flex-col items-center justify-center w-24">
-<div class="h-px w-full bg-slate-200 mb-2" />
-<div class="text-3xl font-bold tabular-nums text-sky-700">{course.data.estimatedHours}<span class="text-base font-medium">hrs</span></div>
-</div>
-)}
-</div>
-</div>
-</header>
+  <header class="border-b border-slate-200 bg-gradient-to-b from-slate-50 to-white">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
+      <div class="flex items-end justify-between gap-6">
+        <div>
+          <p class="text-sm text-sky-700">
+            Category: {course.data.category.id.split('/').pop()}
+          </p>
+          <h1 class="mt-2 text-3xl sm:text-4xl font-bold text-slate-900">
+            {course.data.title}
+          </h1>
+          <p class="mt-1 text-slate-600">Level: {course.data.level}</p>
+        </div>
+        {course.data.estimatedHours && (
+          <div class="flex flex-col items-center justify-center w-24">
+            <div class="h-px w-full bg-slate-200 mb-2" />
+            <div class="text-3xl font-bold tabular-nums text-sky-700">
+              {course.data.estimatedHours}<span class="text-base font-medium">hrs</span>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  </header>
 
+  <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-10">
+    <ol class="space-y-10">
+      {hydrated.map((part, idx) => (
+        <li class="rounded-2xl border border-slate-200 p-6 shadow-sm">
+          <div class="mb-3 text-sm font-medium text-slate-500">
+            Part {idx + 1} · {part.kind}
+          </div>
+          <h2 class="text-xl font-semibold text-slate-900">{part.title}</h2>
 
-<div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-10">
-<ol class="space-y-10">
-{hydrated.map((part, idx) => (
-<li class="rounded-2xl border border-slate-200 p-6 shadow-sm">
-<div class="mb-3 text-sm font-medium text-slate-500">Part {idx + 1} · {part.kind}</div>
-<h2 class="text-xl font-semibold text-slate-900">{part.title}</h2>
+          {part.kind === 'text' && (
+            // NOTE: content is already RENDERED HTML from WP
+            <div class="prose prose-slate max-w-none mt-4" set:html={part.content ?? ''} />
+          )}
 
+          {part.kind === 'video' && part.media && (
+            <div class="mt-4">
+              <!-- If you have a VideoPlayer component, use it; otherwise simple video tag -->
+              <!-- <VideoPlayer src={part.media.sourceUrl} /> -->
+              <video class="w-full h-auto" controls preload="metadata">
+                <source src={part.media.sourceUrl} type={part.media.mimeType || 'video/mp4'} />
+              </video>
+            </div>
+          )}
 
-{part.kind === 'text' && (
-// NOTE: sanitize on the server or ensure WP outputs clean markup
-<div class="prose prose-slate max-w-none mt-4" set:html={part.content} />
-)}
-
-
-{part.kind === 'video' && part.media && (
-<div class="mt-4">
-<VideoPlayer src={part.media.sourceUrl} />
-</div>
-)}
-
-
-{part.kind === 'audio' && part.media && (
-<div class="mt-4">
-</div>
-)}
-</li>
-))}
-</ol>
-</div>
+          {part.kind === 'audio' && part.media && (
+            <div class="mt-4">
+              <audio class="w-full" controls preload="metadata" src={part.media.sourceUrl}></audio>
+            </div>
+          )}
+        </li>
+      ))}
+    </ol>
+  </div>
 </article>

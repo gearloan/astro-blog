@@ -25,6 +25,9 @@ pnpm-debug.log*
 
 # Local Netlify folder
 .netlify
+<<<<<<< Updated upstream
 .aider*
 
 .netlify/state.json
+=======
+>>>>>>> Stashed changes
