@@ -95,10 +95,16 @@ if (!publicationMeta[pub]) console.warn(`[PublicationIndex] Unknown pub "${rawPu
 
 // bg image + per-issue/per-slug CSS vars
 const heroBg = heroStory?.featuredImage?.node?.sourceUrl ?? '';
-const { headline: heroVars } = getHeroStyles(pub, {
+const { headline: heroVars, badge: badgeVars } = getHeroStyles(pub, {
   slug: heroStory?.slug ?? null,
   issueKey: currentIssueKey,
 });
+
+const styleTokens = [
+  heroBg ? `background-image:url('${heroBg}')` : '',
+  heroVars,
+  badgeVars
+].filter(Boolean).join(';');
 
 // DEBUG (optional):
 // console.log(`[${pub}] issue=${currentIssueKey} hero=${heroStory?.slug}`);
@@ -117,7 +123,7 @@ const { headline: heroVars } = getHeroStyles(pub, {
       {heroStory && (
         <section
           class="mag-hero relative flex items-center bg-size-[var_201%] lg:bg-size-[var_101%] bg-center text-white rounded shadow-lg p-6 min-h-[540px]"
-          style={heroBg ? `background-image: url('${heroBg}');` : undefined}
+          style={styleTokens}
         >
           <HeroTitleMobilePilot />
 
