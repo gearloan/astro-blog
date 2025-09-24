@@ -1,32 +1,36 @@
+// src/lib/fetchPosts.js
 import { getApiUrl } from '@/lib/wp';
 const API_URL = getApiUrl();
 
-export async function fetchPosts({ limit = 20, tag = null } = {}) {
-  const isEditorial = !tag;
+/**
+ * @param {{limit?: number, tag?: string|null, includeFuture?: boolean}} [opts]
+ * @returns {Promise<any[]>}
+ */
+export async function fetchPosts(opts = {}) {
+  const { limit = 20, tag = null, includeFuture = false } = opts;
 
-  const query = `
-    query {
-      posts(first: 100${tag ? `, where: { tagSlugIn: ["${tag}"] }` : ''}) {
+  const QUERY = /* GraphQL */ `
+    query Posts($first: Int!, $tagSlugs: [String], $status: PostStatusEnum, $stati: [PostStatusEnum]) {
+      posts(
+        first: $first
+        where: {
+          orderby: { field: DATE, order: DESC }
+          tagSlugIn: $tagSlugs
+          status: $status      # single status
+          stati:  $stati       # multiple statuses (WPGraphQL uses "stati")
+        }
+      ) {
         nodes {
           id
           slug
           title
           excerpt
           date
-          author {
-            node {
-              name
-            }
-          }
+          author { node { name } }
           featuredImage {
             node {
               sourceUrl
-              mediaDetails {
-                sizes {
-                  name
-                  sourceUrl
-                }
-              }
+              mediaDetails { sizes { name sourceUrl } }
             }
           }
           magazinePresentationOptions {
@@ -42,27 +46,42 @@ export async function fetchPosts({ limit = 20, tag = null } = {}) {
     }
   `;
 
+  // Use `status` for single, `stati` for multiple. Nulls are ignored by WPGraphQL.
+  const variables = {
+    first: limit,
+    tagSlugs: tag ? [String(tag)] : null,
+    status: includeFuture ? null : 'PUBLISH',
+    stati: includeFuture ? ['PUBLISH', 'FUTURE'] : null,
+  };
+
   const res = await fetch(API_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query }),
+    body: JSON.stringify({ query: QUERY, variables }),
   });
 
+  if (!res.ok) {
+    const preview = await res.text().catch(() => '');
+    throw new Error(`WPGraphQL HTTP ${res.status}: ${preview.slice(0, 300)}`);
+  }
+
   const json = await res.json();
-
-  if (!json.data || !json.data.posts) {
-    throw new Error('Invalid GraphQL response: ' + JSON.stringify(json));
+  if (json?.errors?.length) {
+    throw new Error(`WPGraphQL: ${json.errors[0].message}`);
   }
 
-  const allPosts = json.data.posts.nodes;
+  const allPosts = json?.data?.posts?.nodes ?? [];
 
-  if (isEditorial) {
-    // Editorial = posts with no magazine presentation options
-    return allPosts
-      .filter(post => !post.magazinePresentationOptions?.presentationslots)
-      .slice(0, limit);
+  // Editorial bucket = posts without magazine presentation slots
+  if (!tag) {
+    const editorial = allPosts.filter(
+      (p) =>
+        !Array.isArray(p?.magazinePresentationOptions?.presentationSlots) ||
+        p.magazinePresentationOptions.presentationSlots.length === 0
+    );
+    return editorial.slice(0, limit);
   }
 
-  // Magazine = return posts with the given tag (e.g., "pilot", "turbine")
-  return allPosts.slice(0, limit);
+  // Magazine pages (pilot/turbine): already filtered/limited server-side
+  return allPosts;
 }

@@ -1,0 +1,30 @@
+---
+import PublicationIndex from '@/components/sections/PublicationIndex.astro';
+import { fetchPosts } from '@/lib/fetchPosts.js';
+import { issueKeyFromDate } from '@/data/heroLayouts';
+
+export async function getStaticPaths() {
+  const pubs = ['pilot', 'turbine'] as const;
+  const paths: Array<{ params: { pub: string; issue: string } }> = [];
+
+  for (const pub of pubs) {
+    const posts = await fetchPosts({ tag: pub }, 200); // larger window
+    // IMPORTANT: your fetchPosts must return `date` for each post
+    const months = Array.from(
+      new Set(
+        posts
+          .map((p: any) => issueKeyFromDate(p?.date))
+          .filter((k: any): k is string => Boolean(k))
+      )
+    );
+    for (const issue of months) {
+      paths.push({ params: { pub, issue } });
+    }
+  }
+
+  return paths;
+}
+
+const { pub, issue } = Astro.params as { pub: 'pilot' | 'turbine'; issue: string };
+---
+<PublicationIndex pub={pub} issueKey={issue} />

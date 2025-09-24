@@ -10,9 +10,12 @@ import { getHeroStyles, issueKeyFromDate } from '@/data/heroLayouts';
 const rawPub = ((Astro.props as any)?.pub ?? (Astro.params as any)?.pub ?? 'pilot') as string;
 const pub = rawPub.toLowerCase() as 'pilot' | 'turbine';
 
+// NEW: optional forced issue from props (e.g. /pilot/2024-07 route)
+const forcedIssueKey = ((Astro.props as any)?.issueKey ?? null) as string | null;
+
 const { proseStyle = 'prose-magazine' } = (Astro.props as any);
 
-const posts = await fetchPosts({ tag: pub }, 30);
+const posts = await fetchPosts({ tag: pub }, 60); // make sure fetchPosts includes `date`
 if (!posts?.length) throw new Error(`No posts returned for tag "${pub}"`);
 
 // helpers
@@ -21,32 +24,56 @@ const slots = (p: any) =>
     .map((s: any) => String(s).toLowerCase().trim());
 const hasSlot = (p: any, name: string) => slots(p).includes(name);
 
-// hero: prefer 'hero', then 'featured', else first post
-const heroStory =
-  posts.find((p: any) => hasSlot(p, 'hero')) ??
-  posts.find((p: any) => hasSlot(p, 'featured')) ??
-  posts[0];
+// ---- Issue selection (by month) ----
+const monthOf = (p: any) => issueKeyFromDate(p?.date);
+const months = Array.from(new Set(posts.map(monthOf).filter(Boolean as any))).sort().reverse();
 
-// build unique lists (exclude hero; avoid dupes across buckets)
+// choose current issue
+let currentIssueKey: string | null = null;
+
+if (forcedIssueKey) {
+  currentIssueKey = forcedIssueKey;
+} else if (months.length > 0) {
+  currentIssueKey =
+    months.find((m) => posts.some((p: any) => monthOf(p) === m && hasSlot(p, 'hero'))) ??
+    months[0];
+}
+
+// limit to current issue (or all posts if we somehow have no dates)
+const issuePosts = currentIssueKey
+  ? posts.filter((p: any) => monthOf(p) === currentIssueKey)
+  : posts;
+
+// If a forced issue has no posts, bail clearly (404)
+if (forcedIssueKey && issuePosts.length === 0) {
+  throw new Error(`No posts found for issue ${forcedIssueKey} (${pub})`);
+}
+
+// ---- Hero + lists (scoped to the issue) ----
+const heroStory =
+  issuePosts.find((p: any) => hasSlot(p, 'hero')) ??
+  issuePosts.find((p: any) => hasSlot(p, 'featured')) ??
+  issuePosts[0];
+
 const used = new Set([heroStory?.slug].filter(Boolean));
 
-const featuredStories = posts.filter((p: any) => {
+const featuredStories = issuePosts.filter((p: any) => {
   if (!p?.slug || used.has(p.slug)) return false;
   const ok = hasSlot(p, 'featured');
   if (ok) used.add(p.slug);
   return ok;
 });
 
-let teaserStories = posts.filter((p: any) => {
+let teaserStories = issuePosts.filter((p: any) => {
   if (!p?.slug || used.has(p.slug)) return false;
   const ok = hasSlot(p, 'teaser');
   if (ok) used.add(p.slug);
   return ok;
 });
 
-// fallback if no teasers: take next 3 unused posts
+// fallback if no teasers: take next 3 unused within the issue
 if (teaserStories.length === 0) {
-  for (const p of posts as any[]) {
+  for (const p of issuePosts as any[]) {
     if (!p?.slug || used.has(p.slug)) continue;
     teaserStories.push(p);
     used.add(p.slug);
@@ -55,35 +82,26 @@ if (teaserStories.length === 0) {
 }
 
 // hero title lines with sane defaults
-const line1 =
-  heroStory?.magazinePresentationOptions?.heroTitleLine1 ?? heroStory?.title ?? '';
+const line1 = heroStory?.magazinePresentationOptions?.heroTitleLine1 ?? heroStory?.title ?? '';
 const line2 = heroStory?.magazinePresentationOptions?.heroTitleLine2 ?? '';
 
 // pub-specific sidebar meta (with fallback)
 const publicationMeta = {
-  pilot: {
-    publicationTitle: 'Pilot Magazine',
-    issueInfo: 'Feb 2025 | No. 178',
-    coverImg: '/images/proxy/pilot-mag.jpg',
-    bgColor: '#003440',
-  },
-  turbine: {
-    publicationTitle: 'Pilot Turbine Magazine',
-    issueInfo: 'Feb 2025 | No. 89',
-    coverImg: '/images/proxy/turbine-mag.jpg',
-    bgColor: '#00478c',
-  },
+  pilot:   { publicationTitle: 'Pilot Magazine',         issueInfo: 'Feb 2025 | No. 178', coverImg: '/images/proxy/pilot-mag.jpg',   bgColor: '#003440' },
+  turbine: { publicationTitle: 'Pilot Turbine Magazine', issueInfo: 'Feb 2025 | No. 89',  coverImg: '/images/proxy/turbine-mag.jpg', bgColor: '#00478c' },
 } as const;
 const meta = publicationMeta[pub] ?? publicationMeta.pilot;
-if (!publicationMeta[pub]) {
-  console.warn(`[PublicationIndex] Unknown pub "${rawPub}", defaulting to "pilot"`);
-}
+if (!publicationMeta[pub]) console.warn(`[PublicationIndex] Unknown pub "${rawPub}", defaulting to "pilot"`);
 
 // bg image + per-issue/per-slug CSS vars
 const heroBg = heroStory?.featuredImage?.node?.sourceUrl ?? '';
-const issueKey = issueKeyFromDate(heroStory?.date);
-const { headline: heroVars /*, badge: badgeVars*/ } =
-  getHeroStyles(pub, { slug: heroStory?.slug, issueKey });
+const { headline: heroVars } = getHeroStyles(pub, {
+  slug: heroStory?.slug ?? null,
+  issueKey: currentIssueKey,
+});
+
+// DEBUG (optional):
+// console.log(`[${pub}] issue=${currentIssueKey} hero=${heroStory?.slug}`);
 ---
 
 <Layout section="magazine">
