@@ -1,0 +1,11 @@
+---
+// src/pages/[pub].astro
+import PublicationIndex from '@/components/sections/PublicationIndex.astro';
+
+export async function getStaticPaths() {
+  return [{ params: { pub: 'pilot' } }, { params: { pub: 'turbine' } }];
+}
+
+const { pub } = Astro.params as { pub: 'pilot' | 'turbine' };
+---
+<PublicationIndex pub={pub} />
