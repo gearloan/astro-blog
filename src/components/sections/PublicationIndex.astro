@@ -4,12 +4,13 @@ import Layout from '@/layouts/Layout.astro';
 import Sidebar from '@/components/magazine/Sidebar.astro';
 import HeroTitleMobilePilot from '@/components/magazine/HeroTitleMobilePilot.astro';
 import { fetchPosts } from '@/lib/fetchPosts.js';
+import { getHeroStyles, issueKeyFromDate } from '@/data/heroLayouts';
 
-const { pub, proseStyle = 'prose-magazine' } = Astro.props as {
-  pub: 'pilot' | 'turbine';
-  proseStyle?: string;
-};
-if (!['pilot', 'turbine'].includes(pub)) throw new Error(`Unsupported pub: ${pub}`);
+// normalize pub from props or params; default to "pilot"
+const rawPub = ((Astro.props as any)?.pub ?? (Astro.params as any)?.pub ?? 'pilot') as string;
+const pub = rawPub.toLowerCase() as 'pilot' | 'turbine';
+
+const { proseStyle = 'prose-magazine' } = (Astro.props as any);
 
 const posts = await fetchPosts({ tag: pub }, 30);
 if (!posts?.length) throw new Error(`No posts returned for tag "${pub}"`);
@@ -58,7 +59,7 @@ const line1 =
   heroStory?.magazinePresentationOptions?.heroTitleLine1 ?? heroStory?.title ?? '';
 const line2 = heroStory?.magazinePresentationOptions?.heroTitleLine2 ?? '';
 
-// pub-specific sidebar meta
+// pub-specific sidebar meta (with fallback)
 const publicationMeta = {
   pilot: {
     publicationTitle: 'Pilot Magazine',
@@ -73,10 +74,16 @@ const publicationMeta = {
     bgColor: '#00478c',
   },
 } as const;
-const meta = publicationMeta[pub];
+const meta = publicationMeta[pub] ?? publicationMeta.pilot;
+if (!publicationMeta[pub]) {
+  console.warn(`[PublicationIndex] Unknown pub "${rawPub}", defaulting to "pilot"`);
+}
 
-// bg image for hero
+// bg image + per-issue/per-slug CSS vars
 const heroBg = heroStory?.featuredImage?.node?.sourceUrl ?? '';
+const issueKey = issueKeyFromDate(heroStory?.date);
+const { headline: heroVars /*, badge: badgeVars*/ } =
+  getHeroStyles(pub, { slug: heroStory?.slug, issueKey });
 ---
 
 <Layout section="magazine">
@@ -89,23 +96,20 @@ const heroBg = heroStory?.featuredImage?.node?.sourceUrl ?? '';
     />
 
     <section class="bg-black text-white">
-      <!-- Hero -->
       {heroStory && (
         <section
-          class="relative flex items-center bg-size-[var_201%] lg:bg-size-[var_101%] bg-center text-white rounded shadow-lg p-6 min-h-[540px]"
+          class="mag-hero relative flex items-center bg-size-[var_201%] lg:bg-size-[var_101%] bg-center text-white rounded shadow-lg p-6 min-h-[540px]"
           style={heroBg ? `background-image: url('${heroBg}');` : undefined}
         >
           <HeroTitleMobilePilot />
 
-          <!-- Headline block -->
-          <div class="w-full px-4 hidden md:block">
+          <!-- Headline block with per-issue vars -->
+          <div class="headline-block w-full px-4 hidden md:block" style={heroVars}>
             <span class="opacity-80">
               <span class="text-[#0aa7b7] text-right inline-block leading-[0.75] uppercase mb-20">
-                <h1 class="block font-extrabold tracking-tight p-0 m-0">
-                  {line1}
-                </h1>
-                <h2 class="block relative font-medium tracking-[0.02em]  mt-2 p-0 m-0">
-                  <span class="absolute left-0  w-32 h-1 bg-[#368bc4] p-0 m-0"></span>
+                <h1 class="block font-extrabold tracking-tight p-0 m-0">{line1}</h1>
+                <h2 class="block relative font-medium tracking-[0.02em] mt-2 p-0 m-0">
+                  <span class="absolute left-0 w-32 h-1 bg-[#368bc4] p-0 m-0"></span>
                   {line2}
                 </h2>
               </span>
@@ -113,9 +117,7 @@ const heroBg = heroStory?.featuredImage?.node?.sourceUrl ?? '';
             <ul class="tracking-wide">
               {teaserStories.map((story: any) => (
                 <li class="text-3xl uppercase mb-3 hover:opacity-75">
-                  <h4>
-                    <a href={`/magazine-post/${story.slug}`}>{story.title}</a>
-                  </h4>
+                  <h4><a href={`/magazine-post/${story.slug}`}>{story.title}</a></h4>
                 </li>
               ))}
             </ul>
@@ -139,7 +141,6 @@ const heroBg = heroStory?.featuredImage?.node?.sourceUrl ?? '';
             return (
               <article>
                 <a href={`/magazine-post/${story.slug}`}>
-                  {/* Aspect wrapper controls the ratio */}
                   <div class="relative aspect-video overflow-hidden rounded">
                     <img
                       src={thumb}
