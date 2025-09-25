@@ -1,4 +1,8 @@
 ---
+/* =========================================
+   IMPORTS
+   ========================================= */
+// EXISTING
 import Layout from '@/layouts/Layout.astro';
 import Sidebar from '@/components/magazine/Sidebar.astro';
 import { resolveProseStyle } from '@/lib/resolveProseStyle.js';
@@ -7,6 +11,18 @@ import { wp } from '@/lib/wp';
 import { getPost } from '@/lib/queries/postBySlug';
 import { pickMediaComponent } from '@/lib/mediaComponent';
 
+// NEW (for dynamic issue theming + cover overrides)
+import {
+  issueKeyFromDate,
+  labelFromIssueKey,
+  getIssueTheme,
+  getIssueOverrides,
+} from '@/data/heroLayouts';
+
+/* =========================================
+   BUILD-TIME PATHS
+   ========================================= */
+// EXISTING
 export async function getStaticPaths() {
   const SLUGS = gql`
     query Slugs {
@@ -19,46 +35,86 @@ export async function getStaticPaths() {
   return (data?.posts?.nodes ?? []).map((p: any) => ({ params: { slug: p.slug } }));
 }
 
+/* =========================================
+   PER-PAGE DATA
+   ========================================= */
+// EXISTING
 const { slug } = Astro.params;
 const { postBy: post } = await getPost(slug);
 if (!post) throw new Error(`Post not found: ${slug}`);
 
+// EXISTING
 const slots = post?.magazinePresentationOptions?.presentationSlots ?? [];
 const isFeatured = Array.isArray(slots) && slots.some(s => String(s).toLowerCase() === 'featured');
 
-
+// EXISTING
 const Media = pickMediaComponent(post.formatSlug ?? 'longform');
+
+// EXISTING (preserve your contentGroups fallback for prose resolution)
 const postForStyle = { ...post, contentGroups: post.contentGroups ?? { nodes: post.categories?.nodes ?? [] } };
 const proseStyle = resolveProseStyle(postForStyle);
 
-// Publication meta from tags (unchanged)
+/* =========================================
+   PUBLICATION / ISSUE CONTEXT (dynamic)
+   ========================================= */
+// CHANGED: derive pub from tags (same logic as your index page)
 const tags = post.tags?.nodes ?? [];
-const pub = tags.find((t: any) => ['turbine', 'pilot'].includes(t.slug))?.slug ?? 'pilot';
-const publicationMeta = {
-  pilot:   { title: 'Pilot Magazine',         issueInfo: 'Apr 2025 | No. 178', coverImg: '/images/proxy/pilot-mag.jpg',   bgColor: '#003440' },
-  turbine: { title: 'Pilot Turbine Magazine', issueInfo: 'Apr 2025 | No. 89',  coverImg: '/images/proxy/turbine-mag.jpg', bgColor: '#00478c' },
-};
-const sidebarMeta = publicationMeta[pub] ?? publicationMeta.pilot;
+const pub = (tags.find((t: any) => ['turbine', 'pilot'].includes(t.slug))?.slug ?? 'pilot') as 'pilot'|'turbine';
 
-// Best featured image convenience field for media components
+// NEW: compute issue key/label from the post date (UTC-safe)
+const issueKey = issueKeyFromDate(post.date);
+const issueLabel = labelFromIssueKey(issueKey);
+
+// NEW: per-issue theme tokens (primary/accent/bg/title/badge) + CSS vars
+const theme = getIssueTheme(pub, { slug: post.slug ?? null, issueKey });
+
+// NEW: issue landing link (e.g. /pilot/2025-10)
+const issueLink = issueKey ? `/${pub}/${issueKey}` : `/${pub}`;
+
+/* =========================================
+   COVER IMAGE (robust, with registry override)
+   ========================================= */
+// CHANGED: best image from featured sizes, with sensible fallbacks
 const sizes = post?.featuredImage?.node?.mediaDetails?.sizes ?? [];
+const pickFromSizes = (names: string[]) =>
+  sizes.find((s: any) => names.includes(s.name))?.sourceUrl ?? null;
+
+const postCover =
+  pickFromSizes(['mag-cover', 'cover']) ??
+  pickFromSizes(['story-thumb', 'large', 'medium_large', 'medium']) ??
+  post?.featuredImage?.node?.sourceUrl ??
+  null;
+
+// NEW: registry override (per slug/issue) wins if present
+const { coverImg: coverOverride } = getIssueOverrides(pub, { slug: post.slug ?? null, issueKey });
+
+// NEW: main/fallback sources passed to Sidebar (Sidebar handles onerror swap)
+const coverPrimary  = (coverOverride && coverOverride.trim() !== '') ? coverOverride : (postCover ?? null);
+const coverFallback = postCover;
+
+// EXISTING (keep convenience field for downstream components if you use it)
 post.featuredImageUrl =
   sizes.find((s: any) => s.name === 'large')?.sourceUrl ??
   post?.featuredImage?.node?.sourceUrl ??
   null;
 ---
 <Layout section="magazine" wrapperClass="bg-gray-900 text-amber-50" magazineTitle={post.title}>
-  <div class="mx-auto px-0 md:px-8">
+  <!-- NEW: expose theme vars to everything inside (sidebar + article area) -->
+  <div class="mx-auto px-0 md:px-8" style={theme.vars}>
     <div class="grid min-h-screen grid-cols-1 items-start gap-0 bg-white md:grid-cols-[250px_1fr]">
+      <!-- CHANGED: Sidebar now uses dynamic props instead of static meta -->
       <Sidebar
-        publicationTitle={sidebarMeta.title}
-        issueInfo={sidebarMeta.issueInfo}
-        coverImg={sidebarMeta.coverImg}
-        bgColor={sidebarMeta.bgColor}
+        pub={pub}
+        issueInfo={issueLabel}
+        coverImg={coverPrimary}
+        coverFallback={coverFallback}
+        bgColor={theme.bg}
+        link={issueLink}
       />
 
+      <!-- EXISTING: Article content -->
       <article class={`prose max-w-none ${proseStyle}`}>
-        <!-- Page-owned header -->
+        <!-- EXISTING: Page-owned header -->
         <header class="mb-8">
           {isFeatured && (
             <span class="pb-0 pr-0 pl-4 md:pl-10 font-subheading text-2xl text-aopa-ltblue relative left-0 top-8 tracking-widest border-b-4 border-aopa-ltblue">
@@ -68,17 +124,17 @@ post.featuredImageUrl =
           <h1 class="pl-4 md:pl-10 font-heading uppercase text-[clamp(2rem,10vw,4rem)] break-words leading-none tracking-tight pt-24">
             {post.title}
           </h1>
-          <p class="text-sm tpl-4 md:pl-10 text-sm text-slate-600">
+          <p class="pl-4 md:pl-10 text-sm text-slate-600">
             By {post.author?.node?.name} · {new Date(post.date).toLocaleDateString()}
           </p>
         </header>
 
-        <!-- Type-specific media slot -->
+        <!-- EXISTING: Type-specific media slot -->
         <section class="mb-8">
           <Media post={post} />
         </section>
 
-        <!-- Page-owned body -->
+        <!-- EXISTING: Page-owned body -->
         <div class="article-body dropcap px-4 md:px-10 pb-12 lg:pr-56" set:html={post.content} />
       </article>
     </div>
