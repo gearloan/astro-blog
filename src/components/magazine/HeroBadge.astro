@@ -1,0 +1,15 @@
+---
+/** Generic magazine badge that adapts to pub. */
+const { pub = 'pilot' } = Astro.props as { pub?: 'pilot' | 'turbine' };
+
+const wordmark = pub === 'turbine' ? 'Pilot Turbine' : 'Pilot';
+---
+
+<span class="pub-badge opacity-70">
+  <!-- top line: wordmark -->
+  <h1 class="relative left-0 text-4xl md:text-5xl uppercase leading-none">
+    {wordmark}
+  </h1>
+  <!-- second line: constant “MAGAZINE” -->
+  <h2 class="font-body text-xl uppercase tracking-widest leading-none">MAGAZINE</h2>
+</span>
