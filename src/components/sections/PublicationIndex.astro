@@ -61,7 +61,7 @@ const used = new Set([heroStory?.slug].filter(Boolean));
 const issueKey = currentIssueKey ?? issueKeyFromDate(heroStory?.date);
 const issueLabel = labelFromIssueKey(issueKey) || 'Latest Issue';
 
-const theme = getIssueTheme(pub, { slug: heroStory?.slug ?? null, issueKey });
+//const theme = getIssueTheme(pub, { slug: heroStory?.slug ?? null, issueKey });
 
 const featuredStories = issuePosts.filter((p: any) => {
   if (!p?.slug || used.has(p.slug)) return false;
@@ -138,11 +138,12 @@ const { headline: heroVars, badge: badgeVars } = getHeroStyles(pub, {
   issueKey: currentIssueKey,
 });
 
-const styleTokens = [
+const theme = getIssueTheme(pub, { slug: heroStory?.slug ?? null, issueKey });
+
+const heroStyle = [
   heroBg ? `background-image:url('${heroBg}')` : '',
-  heroVars,
-  badgeVars,
-  theme.vars,                   // ← inject CSS vars
+  heroVars,          // --hero-align, --hero-x, --hero-y, --hero-max-w, --accent-*
+  badgeVars          // --badge-x, --badge-y
 ].filter(Boolean).join(';');
 
 
@@ -152,7 +153,7 @@ const styleTokens = [
 ---
 
 <Layout section="magazine">
-  <div class={`grid grid-cols-1 md:grid-cols-[250px_1fr] min-h-screen relative ${proseStyle}`}>
+  <div class={`grid grid-cols-1 md:grid-cols-[250px_1fr] min-h-screen relative ${proseStyle}`} style={theme.vars}>
     <Sidebar
       pub={pub}
       issueInfo={issueLabel}
@@ -163,9 +164,9 @@ const styleTokens = [
 
     <section class="bg-black text-white">
       {heroStory && (
-        <section
-          class="mag-hero relative flex items-center bg-size-[var_201%] lg:bg-size-[var_101%] bg-center text-white rounded shadow-lg p-6 min-h-[540px]"
-          style={styleTokens}
+        <section 
+          class="mag-hero relative flex items-center bg-size-[var_201%] lg:bg-size-[var_101%] bg-center text-white rounded shadow-lg p-6 min-h-[540px]" 
+          style={heroStyle}
         >
           <HeroTitleMobile />
           <HeroBadge pub={pub} />
@@ -194,8 +195,11 @@ const styleTokens = [
 
       <!-- Featured Stories -->
       <section class="bg-gray-800 p-10 ">
-        <h2 class="inline-block uppercase pb-0 pr-0 pl-10 font-subheading text-2xl text-aopa-ltblue -ml-10 mb-4 mt-4 tracking-widest border-b-4 border-aopa-ltblue">
-          FEATURES
+        <h2 class="inline-block uppercase pb-0 pr-0 pl-10 font-subheading text-2xl
+                  text-[var(--issue-primary)]
+                  -ml-10 mb-4 mt-4 tracking-widest border-b-4
+                  border-b-[var(--issue-primary)]">
+          FEATURED
         </h2>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
           {featuredStories.map((story: any) => {
