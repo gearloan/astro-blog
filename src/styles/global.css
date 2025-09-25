@@ -39,60 +39,51 @@ body {
   display:none;
 }
 
-/* src/styles/global.css */
 @layer components {
+  /* HERO container */
   .mag-hero { position: relative; }
 
-  /* HEADLINE can keep translate if you like, or also switch to top/left */
+  /* Headline block */
   .mag-hero .headline-block {
     text-align: var(--hero-align, right);
     max-width: var(--hero-max-w, 36ch);
-    transform: translate(var(--hero-x, 0), var(--hero-y, 0)); /* ok to keep */
+    transform: translate(var(--hero-x, 0), var(--hero-y, 0));
+    /* CHOOSE ONE of the next two lines (see notes below) */
+    /* color: var(--issue-title, #ffffff); */   /* readable contrast on bg */
+    color: var(--issue-primary, #ffffff); 
   }
 
-  /* BADGE: use top/left so % is relative to the hero container */
+  /* Badge position + color */
   .mag-hero .pub-badge {
     position: absolute;
-    left: var(--badge-x, 0);   /* e.g. 30%, 12rem, etc. */
-    top:  var(--badge-y, 0);   /* e.g. 70%, 8vh, etc. */
-    transform: translate(0, 0); /* ensure no extra translate */
-  }
-  /* If we prefer the badge centered on that point, use this instead:
-  .mag-hero .pub-badge { position:absolute; left:var(--badge-x,0); top:var(--badge-y,0); transform:translate(-50%,-50%); }
-  */
-
-  /* src/styles/global.css */
-  @layer components {
-    .mag-sidebar .cover-img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-    .mag-sidebar .logo {
-      height: 2.5rem;     /* adjust to taste */
-      width: auto;
-      max-width: none;    /* defeat any global max-width:100% */
-      display: inline-block;
-    }
-    /* Optional belt-and-suspenders so random rules don't leak */
-    .mag-sidebar img {
-      height: auto;
-      max-width: 100%;
-    }
+    left: var(--badge-x, 0);
+    top:  var(--badge-y, 0);
+    transform: translate(0, 0);
+    color: var(--badge-color, #ffffff);
   }
 
+  /* Accent underline, etc. */
+  .mag-hero .accent-line { background: var(--issue-accent, currentColor); }
 
-}
-
-
-@layer components {
+  /* SIDEBAR scope */
   .mag-sidebar {
     background-color: var(--issue-bg, #001d3d);
     color: var(--issue-title, #fff);
   }
-  .mag-sidebar .logo { color: var(--issue-title, #fff); }
-  .mag-hero .pub-badge { color: var(--badge-color, #0aa7b7); }
-  .mag-hero .accent-line { background: var(--issue-accent, currentColor); }
-  /* If you want hero headlines to use the title color: */
-  .mag-hero .headline-block { color: var(--issue-title, #fff); }
+  .mag-sidebar .cover-img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .mag-sidebar .logo {
+    height: 2.5rem;
+    width: auto;
+    max-width: none;
+    display: inline-block;
+  }
+  .mag-sidebar img {
+    height: auto;
+    max-width: 100%;
+  }
 }
+

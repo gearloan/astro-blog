@@ -41,7 +41,7 @@ export const HERO_LAYOUTS: Record<Key, HeroLayout> = {
   // Optional pub defaults:
   // 'pilot:__default':   { primary: '#003440', accent: '#14c682' },
   // 'turbine:__default': { primary: '#00478c', accent: '#0aa7b7' },
-  'pilot:2025-07': { primary: '#6b0745ff', accent: '#18c07a', align: 'left', x: '0rem', y: '0%', maxW: '45ch', badgeX: '80%', badgeY: '80%', coverImg: '/images/covers/pilot-2025-07.jpg' }, //bottom right
+  'pilot:2025-07': { primary: '#1b9098ff', accent: '#9318c0ff', align: 'left', x: '0rem', y: '0%', maxW: '45ch', badgeX: '80%', badgeY: '80%', coverImg: '/images/covers/pilot-2025-07.jpg' }, //bottom right
   'turbine:2025-07': { primary: '#0e559cff', accent: '#b70a0aff', align: 'right', x: '100%', y: '90%', maxW: '45ch', badgeX: '1rem', badgeY: '1rem' }, // top left
 };
 
