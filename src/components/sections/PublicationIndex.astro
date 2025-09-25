@@ -4,7 +4,7 @@ import Layout from '@/layouts/Layout.astro';
 import Sidebar from '@/components/magazine/Sidebar.astro';
 import HeroTitleMobilePilot from '@/components/magazine/HeroTitleMobilePilot.astro';
 import { fetchPosts } from '@/lib/fetchPosts.js';
-import { getHeroStyles, issueKeyFromDate, labelFromIssueKey, getIssueOverrides } from '@/data/heroLayouts';
+import { getIssueTheme, getHeroStyles, issueKeyFromDate, labelFromIssueKey, getIssueOverrides } from '@/data/heroLayouts';
 
 // normalize pub from props or params; default to "pilot"
 const rawPub = ((Astro.props as any)?.pub ?? (Astro.params as any)?.pub ?? 'pilot') as string;
@@ -59,6 +59,8 @@ const used = new Set([heroStory?.slug].filter(Boolean));
 
 const issueKey = currentIssueKey ?? issueKeyFromDate(heroStory?.date);
 const issueLabel = labelFromIssueKey(issueKey) || 'Latest Issue';
+
+const theme = getIssueTheme(pub, { slug: heroStory?.slug ?? null, issueKey });
 
 const featuredStories = issuePosts.filter((p: any) => {
   if (!p?.slug || used.has(p.slug)) return false;
@@ -138,7 +140,8 @@ const { headline: heroVars, badge: badgeVars } = getHeroStyles(pub, {
 const styleTokens = [
   heroBg ? `background-image:url('${heroBg}')` : '',
   heroVars,
-  badgeVars
+  badgeVars,
+  theme.vars,                   // ← inject CSS vars
 ].filter(Boolean).join(';');
 
 
@@ -154,7 +157,7 @@ const styleTokens = [
       issueInfo={issueLabel}
       coverImg={coverPrimary}
       coverFallback={coverFallback}          
-      bgColor={meta.bgColor}
+      bgColor={theme.bg} 
     />
 
     <section class="bg-black text-white">

@@ -85,3 +85,14 @@ body {
 }
 
 
+@layer components {
+  .mag-sidebar {
+    background-color: var(--issue-bg, #001d3d);
+    color: var(--issue-title, #fff);
+  }
+  .mag-sidebar .logo { color: var(--issue-title, #fff); }
+  .mag-hero .pub-badge { color: var(--badge-color, #0aa7b7); }
+  .mag-hero .accent-line { background: var(--issue-accent, currentColor); }
+  /* If you want hero headlines to use the title color: */
+  .mag-hero .headline-block { color: var(--issue-title, #fff); }
+}
