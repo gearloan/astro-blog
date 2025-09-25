@@ -16,7 +16,7 @@ const {
   publicationTitle,
   issueInfo = 'Latest Issue',
   coverImg,
-  link = "/magazine/issue",
+  link = "",
   storiesRead = "12/18",
   percentRead = 35,
   bgColor = "#001d3d",
@@ -36,9 +36,7 @@ const computedIssue =
 const computedCover =
   (typeof coverImg === 'string' && coverImg.trim() !== '')
     ? coverImg.trim()
-    : (pub === 'turbine'
-        ? '/images/proxy/turbine-mag.jpg'
-        : '/images/proxy/pilot-mag.jpg');
+    : null;
 
 const computedCoverFallback =
   (typeof coverFallback === 'string' && coverFallback.trim() !== '')
@@ -70,18 +68,33 @@ const width = `${pct}%`;
     </div>
 
     {(computedCover || computedCoverFallback) ? (
-      <img
-        src={computedCover ?? computedCoverFallback}
-        data-fallback={computedCoverFallback}
-        onerror="this.onerror=null; this.src=this.dataset.fallback"
-        alt={alt}
-        class="cover-img h-16 w-auto rounded shadow"
-        loading="lazy"
-        decoding="async"
-      />
+      link ? (
+        <a href={link} aria-label={`Open ${issueInfo}`}>
+          <img
+            src={computedCover ?? computedCoverFallback}
+            data-fallback={computedCoverFallback}
+            onerror="this.onerror=null; this.src=this.dataset.fallback"
+            alt={alt}
+            class="cover-img h-16 w-auto rounded shadow"
+            loading="lazy"
+            decoding="async"
+          />
+        </a>
+      ) : (
+        <img
+          src={computedCover ?? computedCoverFallback}
+          data-fallback={computedCoverFallback}
+          onerror="this.onerror=null; this.src=this.dataset.fallback"
+          alt={alt}
+          class="cover-img h-16 w-auto rounded shadow"
+          loading="lazy"
+          decoding="async"
+        />
+      )
     ) : (
       <div class="h-16 aspect-[3/4] rounded shadow bg-white/10" aria-label="Cover image placeholder"></div>
     )}
+
   </div>
 
   <!-- Desktop vertical layout -->
@@ -91,7 +104,22 @@ const width = `${pct}%`;
     <div class="text-sm font-light tracking-wide mb-4">{issueInfo}</div>
 
     {(computedCover || computedCoverFallback) ? (
-      <a href={link}>
+      link ? (
+        <a href={link}>
+          <img
+            src={computedCover ?? computedCoverFallback}
+            data-fallback={computedCoverFallback}
+            onerror="this.onerror=null; this.src=this.dataset.fallback"
+            alt={alt}
+            class="cover-img rounded shadow-lg mt-8"
+            loading="lazy"
+            decoding="async"
+            width="1200"
+            height="1600"
+            sizes="(min-width: 768px) 280px, 30vw"
+          />
+        </a>
+      ) : (
         <img
           src={computedCover ?? computedCoverFallback}
           data-fallback={computedCoverFallback}
@@ -104,10 +132,11 @@ const width = `${pct}%`;
           height="1600"
           sizes="(min-width: 768px) 280px, 30vw"
         />
-      </a>
+      )
     ) : (
       <div class="rounded shadow-lg mt-8 aspect-[3/4] w-[280px] bg-white/10" aria-label="Cover image placeholder"></div>
     )}
+
 
     <p class="mt-12">
       {storiesRead}<br />stories read

@@ -60,7 +60,7 @@ const used = new Set([heroStory?.slug].filter(Boolean));
 const issueKey   = issueKeyFromDate(heroStory?.date);   // just 'YYYY-MM' by slicing
 const issueLabel = labelFromIssueKey(issueKey);         // uses Date.UTC internally
 
-//const theme = getIssueTheme(pub, { slug: heroStory?.slug ?? null, issueKey });
+const issueLink = issueKey ? `/${pub}/${issueKey}` : `/${pub}`;
 
 const featuredStories = issuePosts.filter((p: any) => {
   if (!p?.slug || used.has(p.slug)) return false;
@@ -159,6 +159,7 @@ const heroStyle = [
       coverImg={coverPrimary}
       coverFallback={coverFallback}          
       bgColor={theme.bg} 
+      link={issueLink}           
     />
 
     <section class="bg-black text-white">
