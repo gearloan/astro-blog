@@ -116,8 +116,17 @@ const { coverImg: coverOverride } = getIssueOverrides(pub, {
   issueKey,
 });
 
-const coverImg = coverOverride ?? fallbackCover;
+const coverImg =
+  [coverOverride, fallbackCover, meta.coverImg]
+    .find((v) => typeof v === 'string' && v.trim() !== '') ?? null;
 
+const coverPrimary =
+  (typeof coverOverride === 'string' && coverOverride.trim() !== '')
+    ? coverOverride.trim()
+    : (fallbackCover ?? meta.coverImg ?? null);
+
+const coverFallback =
+  (fallbackCover ?? meta.coverImg ?? null);
 
 // bg image + per-issue/per-slug CSS vars
 const heroBg = heroStory?.featuredImage?.node?.sourceUrl ?? '';
@@ -143,7 +152,8 @@ const styleTokens = [
     <Sidebar
       pub={pub}
       issueInfo={issueLabel}
-      coverImg={meta.coverImg}
+      coverImg={coverPrimary}
+      coverFallback={coverFallback}          
       bgColor={meta.bgColor}
     />
 

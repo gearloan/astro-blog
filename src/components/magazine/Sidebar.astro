@@ -12,8 +12,8 @@ export interface Props {
 }
 
 const {
-  pub = 'pilot',                 // safe default
-  publicationTitle,              // optional override
+  pub = 'pilot',
+  publicationTitle,
   issueInfo,
   coverImg,
   link = "/magazine/issue",
@@ -23,12 +23,27 @@ const {
   alt = "Cover",
 } = Astro.props;
 
-// Treat empty strings as “no override”, then fall back by pub.
 const computedTitle =
-  (typeof publicationTitle === 'string' && publicationTitle.trim() !== ''
+  (typeof publicationTitle === 'string' && publicationTitle.trim() !== '')
     ? publicationTitle.trim()
-    : (pub === 'turbine' ? 'Pilot Turbine Magazine' : 'Pilot Magazine'));
+    : (pub === 'turbine' ? 'Pilot Turbine Magazine' : 'Pilot Magazine');
 
+const computedIssue =
+  (typeof issueInfo === 'string' && issueInfo.trim() !== '')
+    ? issueInfo.trim()
+    : 'Latest Issue';
+
+const computedCover =
+  (typeof coverImg === 'string' && coverImg.trim() !== '')
+    ? coverImg.trim()
+    : (pub === 'turbine'
+        ? '/images/proxy/turbine-mag.jpg'
+        : '/images/proxy/pilot-mag.jpg');
+
+const computedCoverFallback =
+  (typeof coverFallback === 'string' && coverFallback.trim() !== '')
+    ? coverFallback.trim()
+    : (pub === 'turbine' ? '/images/proxy/turbine-mag.jpg' : '/images/proxy/pilot-mag.jpg');
 
 const normalizePercent = (v: number | string): number => {
   if (typeof v === 'number') return v;
@@ -41,20 +56,29 @@ const width = `${pct}%`;
 
 <aside
   aria-labelledby="mag-sidebar-title"
-  class="text-white text-center p-4 md:p-6 flex flex-col md:sticky md:top-[75px] md:self-start md:h-[calc(100vh-75px)] md:items-center"
+  class="mag-sidebar text-white text-center p-4 md:p-6 flex flex-col md:sticky md:top-[75px] md:self-start md:h-[calc(100vh-75px)] md:items-center"
   style={`background-color:${bgColor}; background-image:linear-gradient(transparent, rgba(0,0,0,.15));`}
 >
   <span id="mag-sidebar-title" class="sr-only">Issue sidebar</span>
 
   <!-- Mobile condensed layout -->
   <div class="md:hidden flex items-center gap-4">
-    <img src="/images/ui/logo-small-white.svg" alt="" aria-hidden="true" class="h-10 w-auto" />
+    <img src="/images/ui/logo-small-white.svg" alt="" aria-hidden="true" class="logo h-10 w-auto md:h-12" />
     <div class="flex-1 text-left">
       <div class="text-xs uppercase tracking-widest">{computedTitle}</div>
-      <div class="text-xs font-light">{issueInfo}</div>
+      <div class="text-xs font-light">{computedIssue}</div>
     </div>
-    {coverImg ? (
-      <img src={coverImg} alt={alt} class="h-16 w-auto rounded shadow" loading="lazy" />
+
+    {(computedCover || computedCoverFallback) ? (
+      <img
+        src={computedCover ?? computedCoverFallback}
+        data-fallback={computedCoverFallback}
+        onerror="this.onerror=null; this.src=this.dataset.fallback"
+        alt={alt}
+        class="cover-img h-16 w-auto rounded shadow"
+        loading="lazy"
+        decoding="async"
+      />
     ) : (
       <div class="h-16 aspect-[3/4] rounded shadow bg-white/10" aria-label="Cover image placeholder"></div>
     )}
@@ -62,17 +86,20 @@ const width = `${pct}%`;
 
   <!-- Desktop vertical layout -->
   <div class="hidden md:flex md:flex-col md:items-center md:text-center">
-    <img src="/images/ui/logo-small-white.svg" alt="" aria-hidden="true" class="px-10 block my-6" />
+    <img src="/images/ui/logo-small-white.svg" alt="" aria-hidden="true" class="logo px-10 block my-6 h-12 w-auto" />
     <div class="text-sm uppercase tracking-widest mb-1">{computedTitle}</div>
-    <div class="text-sm font-light tracking-wide mb-4">{issueInfo}</div>
+    <div class="text-sm font-light tracking-wide mb-4">{computedIssue}</div>
 
-    {coverImg ? (
+    {(computedCover || computedCoverFallback) ? (
       <a href={link}>
         <img
-          src={coverImg}
+          src={computedCover ?? computedCoverFallback}
+          data-fallback={computedCoverFallback}
+          onerror="this.onerror=null; this.src=this.dataset.fallback"
           alt={alt}
-          class="rounded shadow-lg mt-8"
+          class="cover-img rounded shadow-lg mt-8"
           loading="lazy"
+          decoding="async"
           width="1200"
           height="1600"
           sizes="(min-width: 768px) 280px, 30vw"

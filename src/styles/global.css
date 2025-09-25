@@ -57,10 +57,31 @@ body {
     top:  var(--badge-y, 0);   /* e.g. 70%, 8vh, etc. */
     transform: translate(0, 0); /* ensure no extra translate */
   }
-
   /* If we prefer the badge centered on that point, use this instead:
   .mag-hero .pub-badge { position:absolute; left:var(--badge-x,0); top:var(--badge-y,0); transform:translate(-50%,-50%); }
   */
+
+  /* src/styles/global.css */
+  @layer components {
+    .mag-sidebar .cover-img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .mag-sidebar .logo {
+      height: 2.5rem;     /* adjust to taste */
+      width: auto;
+      max-width: none;    /* defeat any global max-width:100% */
+      display: inline-block;
+    }
+    /* Optional belt-and-suspenders so random rules don't leak */
+    .mag-sidebar img {
+      height: auto;
+      max-width: 100%;
+    }
+  }
+
+
 }
 
 
