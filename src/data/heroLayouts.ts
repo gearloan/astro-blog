@@ -119,13 +119,17 @@ export function issueKeyFromDate(date?: string | null) {
 }
 
 export function labelFromIssueKey(key?: string | null) {
-  if (!key || !ISSUE_KEY_RE.test(key)) return '';
+  if (!key || !/^\d{4}-\d{2}$/.test(key)) return '';
   const [y, m] = key.split('-').map(Number);
-  return new Date(Date.UTC(y, m - 1, 1)).toLocaleString('en-US', {
+  // Use a UTC date AND format in UTC
+  const d = new Date(Date.UTC(y, m - 1, 1));
+  return d.toLocaleString('en-US', {
     month: 'long',
     year: 'numeric',
+    timeZone: 'UTC',          // <— force UTC output
   });
 }
+
 
 export function getHeroStyles(
   pub: Pub,

@@ -6,7 +6,6 @@ import HeroTitleMobile from '@/components/magazine/HeroTitleMobile.astro';
 import HeroBadge from '@/components/magazine/HeroBadge.astro';
 import { fetchPosts } from '@/lib/fetchPosts.js';
 import { getIssueTheme, getHeroStyles, issueKeyFromDate, labelFromIssueKey, getIssueOverrides } from '@/data/heroLayouts';
-
 // normalize pub from props or params; default to "pilot"
 const rawPub = ((Astro.props as any)?.pub ?? (Astro.params as any)?.pub ?? 'pilot') as string;
 const pub = rawPub.toLowerCase() as 'pilot' | 'turbine';
@@ -58,8 +57,8 @@ const heroStory =
 
 const used = new Set([heroStory?.slug].filter(Boolean));
 
-const issueKey = currentIssueKey ?? issueKeyFromDate(heroStory?.date);
-const issueLabel = labelFromIssueKey(issueKey) || 'Latest Issue';
+const issueKey   = issueKeyFromDate(heroStory?.date);   // just 'YYYY-MM' by slicing
+const issueLabel = labelFromIssueKey(issueKey);         // uses Date.UTC internally
 
 //const theme = getIssueTheme(pub, { slug: heroStory?.slug ?? null, issueKey });
 
@@ -165,7 +164,7 @@ const heroStyle = [
     <section class="bg-black text-white">
       {heroStory && (
         <section 
-          class="mag-hero relative flex items-center bg-size-[var_201%] lg:bg-size-[var_101%] bg-center text-white rounded shadow-lg p-6 min-h-[540px]" 
+          class="mag-hero relative flex items-center bg-size-[var_201%] lg:bg-size-[var_101%] bg-center text-white rounded shadow-lg p-6 min-h-[580px]" 
           style={heroStyle}
         >
           <HeroTitleMobile />
@@ -177,7 +176,7 @@ const heroStyle = [
               <span class="text-right inline-block leading-[0.75] uppercase mb-20">
                 <h1 class="block font-extrabold tracking-tight p-0 m-0">{line1}</h1>
                 <h2 class="block relative font-medium tracking-[0.02em] mt-2 p-0 m-0">
-                  <span class="accent-line absolute left-0 w-32 h-1 p-0 m-0"></span>
+                  <span class="accent-line absolute left-0 w-20 h-1 p-0 m-0"></span>
                   {line2}
                 </h2>
               </span>

@@ -14,7 +14,7 @@ export interface Props {
 const {
   pub = 'pilot',
   publicationTitle,
-  issueInfo,
+  issueInfo = 'Latest Issue',
   coverImg,
   link = "/magazine/issue",
   storiesRead = "12/18",
@@ -88,7 +88,7 @@ const width = `${pct}%`;
   <div class="hidden md:flex md:flex-col md:items-center md:text-center">
     <img src="/images/ui/logo-small-white.svg" alt="" aria-hidden="true" class="logo px-10 block my-6 h-12 w-auto" />
     <div class="text-sm uppercase tracking-widest mb-1">{computedTitle}</div>
-    <div class="text-sm font-light tracking-wide mb-4">{computedIssue}</div>
+    <div class="text-sm font-light tracking-wide mb-4">{issueInfo}</div>
 
     {(computedCover || computedCoverFallback) ? (
       <a href={link}>

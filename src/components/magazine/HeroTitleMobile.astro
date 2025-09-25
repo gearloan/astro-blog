@@ -19,7 +19,9 @@ const teaserStories = posts.filter(
 const line1 = heroStory.magazinePresentationOptions?.heroTitleLine1 ?? heroStory.title;
 const line2 = heroStory.magazinePresentationOptions?.heroTitleLine2 ?? '';
 
-
+const date = new Date(heroStory?.date ?? '');
+const badgeMonth = date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase(); // → "OCT"
+const badgeYear = date.getUTCFullYear(); // → 2025
 
 ---
 
@@ -28,8 +30,8 @@ const line2 = heroStory.magazinePresentationOptions?.heroTitleLine2 ?? '';
   <!-- Date badge in top right -->
   <div class="flex absolute top-2 md:top-6 right-2 md:right-6 text-white scale-[.75] md:scale-[1]">
     <div class="text-right">
-        <span class="text-sm block -mb-2">2025</span>
-        <span class="text-6xl font-subheading opacity-75">OCT</span>
+        <span class="text-sm block -mb-2">{badgeYear}</span>
+        <span class="text-6xl font-subheading opacity-75">{badgeMonth}</span>
     </div>
 
     <div class="flex items-start gap-2">
