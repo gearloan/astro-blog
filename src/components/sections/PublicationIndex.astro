@@ -5,6 +5,7 @@ import Sidebar from '@/components/magazine/Sidebar.astro';
 import HeroTitleMobilePilot from '@/components/magazine/HeroTitleMobilePilot.astro';
 import { fetchPosts } from '@/lib/fetchPosts.js';
 import { getHeroStyles, issueKeyFromDate } from '@/data/heroLayouts';
+import { getHeroStyles, issueKeyFromDate, labelFromIssueKey } from '@/data/heroLayouts';
 
 // normalize pub from props or params; default to "pilot"
 const rawPub = ((Astro.props as any)?.pub ?? (Astro.params as any)?.pub ?? 'pilot') as string;
@@ -56,6 +57,9 @@ const heroStory =
   issuePosts[0];
 
 const used = new Set([heroStory?.slug].filter(Boolean));
+
+const issueKey = currentIssueKey ?? issueKeyFromDate(heroStory?.date);
+const issueLabel = labelFromIssueKey(issueKey) || 'Latest Issue';
 
 const featuredStories = issuePosts.filter((p: any) => {
   if (!p?.slug || used.has(p.slug)) return false;
@@ -114,7 +118,7 @@ const styleTokens = [
   <div class={`grid grid-cols-1 md:grid-cols-[250px_1fr] min-h-screen relative ${proseStyle}`}>
     <Sidebar
       pub={pub}
-      issueInfo={meta.issueInfo}
+      issueInfo={issueLabel}
       coverImg={meta.coverImg}
       bgColor={meta.bgColor}
     />

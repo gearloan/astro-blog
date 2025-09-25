@@ -59,7 +59,7 @@ export function issueKeyFromDate(date?: string | null) {
 export function labelFromIssueKey(key?: string | null) {
   if (!key || !ISSUE_KEY_RE.test(key)) return '';
   const [y, m] = key.split('-').map(Number);
-  return new Date(Date.UTC(y, m - 1, 1)).toLocaleString('en-US', { month: 'short', year: 'numeric' });
+  return new Date(Date.UTC(y, m - 1, 1)).toLocaleString('en-US', { month: 'long', year: 'numeric' });
 }
 
 /** Resolve CSS vars with priority: per-slug > per-month > per-pub default (optional). */
