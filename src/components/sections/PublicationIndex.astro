@@ -4,8 +4,7 @@ import Layout from '@/layouts/Layout.astro';
 import Sidebar from '@/components/magazine/Sidebar.astro';
 import HeroTitleMobilePilot from '@/components/magazine/HeroTitleMobilePilot.astro';
 import { fetchPosts } from '@/lib/fetchPosts.js';
-import { getHeroStyles, issueKeyFromDate } from '@/data/heroLayouts';
-import { getHeroStyles, issueKeyFromDate, labelFromIssueKey } from '@/data/heroLayouts';
+import { getHeroStyles, issueKeyFromDate, labelFromIssueKey, getIssueOverrides } from '@/data/heroLayouts';
 
 // normalize pub from props or params; default to "pilot"
 const rawPub = ((Astro.props as any)?.pub ?? (Astro.params as any)?.pub ?? 'pilot') as string;
@@ -97,6 +96,29 @@ const publicationMeta = {
 const meta = publicationMeta[pub] ?? publicationMeta.pilot;
 if (!publicationMeta[pub]) console.warn(`[PublicationIndex] Unknown pub "${rawPub}", defaulting to "pilot"`);
 
+
+// ---- COVER IMAGE (fallback from hero, then registry override) ----
+const heroSizes = heroStory?.featuredImage?.node?.mediaDetails?.sizes ?? [];
+function pick(...names: string[]) {
+  const hit = heroSizes.find((s: any) => names.includes(s.name));
+  return hit?.sourceUrl ?? null;
+}
+// Try a few likely size names before falling back to the original sourceUrl
+const fallbackCover =
+  pick('mag-cover', 'cover') ??
+  pick('story-thumb', 'large', 'medium_large', 'medium') ??
+  heroStory?.featuredImage?.node?.sourceUrl ??
+  null;
+
+// Optional override from registry (per-slug > per-issue)
+const { coverImg: coverOverride } = getIssueOverrides(pub, {
+  slug: heroStory?.slug ?? null,
+  issueKey,
+});
+
+const coverImg = coverOverride ?? fallbackCover;
+
+
 // bg image + per-issue/per-slug CSS vars
 const heroBg = heroStory?.featuredImage?.node?.sourceUrl ?? '';
 const { headline: heroVars, badge: badgeVars } = getHeroStyles(pub, {
@@ -109,6 +131,8 @@ const styleTokens = [
   heroVars,
   badgeVars
 ].filter(Boolean).join(';');
+
+
 
 // DEBUG (optional):
 // console.log(`[${pub}] issue=${currentIssueKey} hero=${heroStory?.slug}`);

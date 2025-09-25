@@ -8,6 +8,9 @@ export type HeroLayout = {
   badgeY?: string;
   accentColor?: string;
   accentW?: string;
+  
+  coverImg?: string;  // explicit cover for this issue/slug
+  bgColor?: string;   // issue master color (used in step 4)
 };
 
 export type Pub = 'pilot' | 'turbine';
@@ -21,7 +24,7 @@ const ISSUE_KEY_RE = /^\d{4}-\d{2}$/; // "YYYY-MM"
 export const HERO_LAYOUTS: Record<Key, HeroLayout> = {
   // Examples — replace with real slugs/months:
   // 'pilot:around-the-world-in-a-cub': { align: 'right', x: '1.5rem', y: '-0.5rem', maxW: '38ch' },
-  'pilot:2025-07': { align: 'left', x: '0rem', y: '0%', maxW: '45ch', badgeX: '80%', badgeY: '80%' }, //bottom right
+  'pilot:2025-07': { align: 'left', x: '0rem', y: '0%', maxW: '45ch', badgeX: '80%', badgeY: '80%', coverImg: '/images/covers/pilot-2025-07.jpg' }, //bottom right
   'turbine:2025-07': { align: 'right', x: '100%', y: '90%', maxW: '45ch', badgeX: '1rem', badgeY: '1rem' }, // top left
 
   // Optional per-pub fallbacks:
@@ -72,4 +75,19 @@ export function getHeroStyles(
   const byMonth = issueKey  ? HERO_LAYOUTS[`${pub}:${issueKey}` as Key]  : undefined;
   const byPub   =            HERO_LAYOUTS[`${pub}:__default` as Key]; // optional fallback
   return styleFrom(bySlug ?? byMonth ?? byPub);
+}
+
+/** Return overrides (coverImg, bgColor) with priority: slug > month. */
+export function getIssueOverrides(
+  pub: Pub,
+  opts: { slug?: string | null; issueKey?: string | null }
+) {
+  const { slug, issueKey } = opts;
+  const bySlug  = slug     ? HERO_LAYOUTS[`${pub}:${slug}` as Key]     : undefined;
+  const byMonth = issueKey ? HERO_LAYOUTS[`${pub}:${issueKey}` as Key] : undefined;
+  const picked = bySlug ?? byMonth;
+  return {
+    coverImg: picked?.coverImg ?? null,
+    bgColor:  picked?.bgColor  ?? null,
+  };
 }
