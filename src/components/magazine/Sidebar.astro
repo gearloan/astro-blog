@@ -12,7 +12,8 @@ export interface Props {
 }
 
 const {
-  publicationTitle,
+  pub = 'pilot',                 // safe default
+  publicationTitle,              // optional override
   issueInfo,
   coverImg,
   link = "/magazine/issue",
@@ -20,8 +21,14 @@ const {
   percentRead = 35,
   bgColor = "#001d3d",
   alt = "Cover",
-  // progressColor = "#00bcd4",
 } = Astro.props;
+
+// Treat empty strings as “no override”, then fall back by pub.
+const computedTitle =
+  (typeof publicationTitle === 'string' && publicationTitle.trim() !== ''
+    ? publicationTitle.trim()
+    : (pub === 'turbine' ? 'Pilot Turbine Magazine' : 'Pilot Magazine'));
+
 
 const normalizePercent = (v: number | string): number => {
   if (typeof v === 'number') return v;
@@ -43,7 +50,7 @@ const width = `${pct}%`;
   <div class="md:hidden flex items-center gap-4">
     <img src="/images/ui/logo-small-white.svg" alt="" aria-hidden="true" class="h-10 w-auto" />
     <div class="flex-1 text-left">
-      <div class="text-xs uppercase tracking-widest">{publicationTitle}</div>
+      <div class="text-xs uppercase tracking-widest">{computedTitle}</div>
       <div class="text-xs font-light">{issueInfo}</div>
     </div>
     {coverImg ? (
@@ -56,7 +63,7 @@ const width = `${pct}%`;
   <!-- Desktop vertical layout -->
   <div class="hidden md:flex md:flex-col md:items-center md:text-center">
     <img src="/images/ui/logo-small-white.svg" alt="" aria-hidden="true" class="px-10 block my-6" />
-    <div class="text-sm uppercase tracking-widest mb-1">{publicationTitle}</div>
+    <div class="text-sm uppercase tracking-widest mb-1">{computedTitle}</div>
     <div class="text-sm font-light tracking-wide mb-4">{issueInfo}</div>
 
     {coverImg ? (
