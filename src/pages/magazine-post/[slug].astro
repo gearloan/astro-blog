@@ -10,6 +10,7 @@ import { gql } from 'graphql-request';
 import { wp } from '@/lib/wp';
 import { getPost } from '@/lib/queries/postBySlug';
 import { pickMediaComponent } from '@/lib/mediaComponent';
+import { fetchPosts } from '@/lib/fetchPosts.js';
 
 // NEW (for dynamic issue theming + cover overrides)
 import {
@@ -71,6 +72,16 @@ const theme = getIssueTheme(pub, { slug: post.slug ?? null, issueKey });
 // NEW: issue landing link (e.g. /pilot/2025-10)
 const issueLink = issueKey ? `/${pub}/${issueKey}` : `/${pub}`;
 
+// Build ToC list: all posts in the same issue, earliest→latest
+const allPubPosts = await fetchPosts({ tag: pub }, 100);
+
+const allPosts = await fetchPosts({ tag: pub }, 60); // `pub` already defined from tags
+
+// Filter to just the posts in that issue
+const issuePosts = allPosts.filter(p => issueKeyFromDate(p?.date) === issueKey);
+
+
+
 /* =========================================
    COVER IMAGE (robust, with registry override)
    ========================================= */
@@ -110,6 +121,8 @@ post.featuredImageUrl =
         coverFallback={coverFallback}
         bgColor={theme.bg}
         link={issueLink}
+        tocPosts={issuePosts}         
+        currentSlug={post.slug}
       />
 
       <!-- EXISTING: Article content -->
