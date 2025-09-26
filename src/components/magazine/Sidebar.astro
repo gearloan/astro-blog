@@ -96,7 +96,17 @@ const width = `${pct}%`;
     ) : (
       <div class="h-16 aspect-[3/4] rounded shadow bg-white/10" aria-label="Cover image placeholder"></div>
     )}
-
+          <!-- NEW: Mobile ToC trigger -->
+      <button
+        type="button"
+        data-toc-open
+        class="self-start inline-flex items-center gap-2 rounded-md px-3 py-2 text-xs font-medium
+              bg-white/10 hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
+        aria-controls="toc-drawer"
+        aria-expanded="false"
+      >
+        View Table of Contents
+      </button>
   </div>
 
   <!-- Desktop vertical layout -->
@@ -158,15 +168,16 @@ const width = `${pct}%`;
       </div>
     </div>
         <!--  ToC trigger -->
-    <button
-      id="toc-open"
-      type="button"
-      class="mt-4 inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium
-             bg-white/10 hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
-      aria-controls="toc-drawer"
-      aria-expanded="false"
-    >
-      View Table of Contents
+        <button
+          data-toc-open
+          type="button"
+          class="mt-4 inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium
+                bg-white/10 hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
+          aria-controls="toc-drawer"
+          aria-expanded="false"
+        >
+          View Table of Contents
+        </button>
     </button>
   </div>
   <!-- NEW: Drawer + overlay (portal stays within Sidebar for simplicity) -->
@@ -227,74 +238,75 @@ const width = `${pct}%`;
 <span id="toc-data" data-current={currentSlug ?? ''} hidden></span>
 
   <!-- Drawer wiring -->
-  <script is:inline>
-    (() => {
-      const drawer  = document.getElementById('toc-drawer');
-      const overlay = document.getElementById('toc-overlay');
-      const openBtn = document.getElementById('toc-open');
-      const closeBtn= document.getElementById('toc-close');
+<script is:inline>
+  (() => {
+    const drawer  = document.getElementById('toc-drawer');
+    const overlay = document.getElementById('toc-overlay');
+    const openBtns = Array.from(document.querySelectorAll('[data-toc-open]'));
+    const closeBtn = document.getElementById('toc-close');
 
-      if (!drawer || !overlay || !openBtn || !closeBtn) return;
+    if (!drawer || !overlay || openBtns.length === 0 || !closeBtn) return;
 
-      const html = document.documentElement;
+    const html = document.documentElement;
 
-      function open() {
-        drawer.style.transform = 'translateX(0)';
-        overlay.style.opacity = '1';
-        overlay.style.pointerEvents = 'auto';
-        openBtn.setAttribute('aria-expanded', 'true');
-        drawer.focus();
-        html.style.overflow = 'hidden';
-      }
-      function close() {
-        drawer.style.transform = 'translateX(-100%)';
-        overlay.style.opacity = '0';
-        overlay.style.pointerEvents = 'none';
-        openBtn.setAttribute('aria-expanded', 'false');
-        openBtn.focus();
-        html.style.overflow = '';
-      }
+    function setExpanded(el, value) {
+      try { el.setAttribute('aria-expanded', value ? 'true' : 'false'); } catch (_) {}
+    }
 
-      openBtn.addEventListener('click', open);
-      closeBtn.addEventListener('click', close);
-      overlay.addEventListener('click', close);
-      window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') close();
-      });
+    function open() {
+      drawer.style.transform = 'translateX(0)';
+      overlay.style.opacity = '1';
+      overlay.style.pointerEvents = 'auto';
+      openBtns.forEach(btn => setExpanded(btn, true));
+      drawer.focus();
+      html.style.overflow = 'hidden';
+    }
+    function close() {
+      drawer.style.transform = 'translateX(-100%)';
+      overlay.style.opacity = '0';
+      overlay.style.pointerEvents = 'none';
+      openBtns.forEach(btn => setExpanded(btn, false));
+      // return focus to the last clicked opener, if any
+      lastOpener?.focus?.();
+      html.style.overflow = '';
+    }
 
-      // --- Read-state: mark current slug as read, decorate list ---
-  // --- Read-state: mark current slug as read, decorate list ---
-  try {
-    const KEY = 'aopa.read';
-    const dataEl = document.getElementById('toc-data');
-    const current = dataEl?.getAttribute('data-current') || '';
-    const saved = JSON.parse(localStorage.getItem(KEY) || '{"slugs":[]}');
-    const set = new Set(Array.isArray(saved.slugs) ? saved.slugs : []);
-
-    if (current) set.add(current);
-    localStorage.setItem(KEY, JSON.stringify({ slugs: Array.from(set) }));
-
-    // decorate links
-    document.querySelectorAll('#toc-drawer a[data-slug]').forEach((a) => {
-      const slug = a.getAttribute('data-slug');
-      const dot  = a.querySelector('.read-dot');
-      if (slug && set.has(slug) && dot) {
-        dot.classList.remove('bg-white/30');
-        dot.classList.add('bg-[var(--issue-accent,#14c682)]');
-      }
-      // when user clicks, mark as read
-      a.addEventListener('click', () => {
-        if (slug) {
-          const s = JSON.parse(localStorage.getItem(KEY) || '{"slugs":[]}');
-          const ss = new Set(Array.isArray(s.slugs) ? s.slugs : []);
-          ss.add(slug);
-          localStorage.setItem(KEY, JSON.stringify({ slugs: Array.from(ss) }));
-        }
-      });
+    let lastOpener = null;
+    openBtns.forEach(btn => {
+      btn.addEventListener('click', () => { lastOpener = btn; open(); });
     });
-  } catch(_) {}
+    closeBtn.addEventListener('click', close);
+    overlay.addEventListener('click', close);
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
 
+    // --- Read-state block (unchanged) ---
+    try {
+      const KEY = 'aopa.read';
+      const dataEl = document.getElementById('toc-data');
+      const current = dataEl?.getAttribute('data-current') || '';
+      const saved = JSON.parse(localStorage.getItem(KEY) || '{"slugs":[]}');
+      const set = new Set(Array.isArray(saved.slugs) ? saved.slugs : []);
+      if (current) set.add(current);
+      localStorage.setItem(KEY, JSON.stringify({ slugs: Array.from(set) }));
 
-    })();
-  </script>
+      document.querySelectorAll('#toc-drawer a[data-slug]').forEach((a) => {
+        const slug = a.getAttribute('data-slug');
+        const dot  = a.querySelector('.read-dot');
+        if (slug && set.has(slug) && dot) {
+          dot.classList.remove('bg-white/30');
+          dot.classList.add('bg-[var(--issue-accent,#14c682)]');
+        }
+        a.addEventListener('click', () => {
+          if (slug) {
+            const s = JSON.parse(localStorage.getItem(KEY) || '{"slugs":[]}');
+            const ss = new Set(Array.isArray(s.slugs) ? s.slugs : []);
+            ss.add(slug);
+            localStorage.setItem(KEY, JSON.stringify({ slugs: Array.from(ss) }));
+          }
+        });
+      });
+    } catch(_) {}
+  })();
+</script>
+
 </aside>
