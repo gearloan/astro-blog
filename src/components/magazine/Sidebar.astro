@@ -21,6 +21,8 @@ const {
   percentRead = 35,
   bgColor = "#001d3d",
   alt = "Cover",
+  tocPosts = [],                // [{ slug, title, date }, …] chronological
+  currentSlug = null,           // highlight if on article page
 } = Astro.props;
 
 const computedTitle =
@@ -54,7 +56,7 @@ const width = `${pct}%`;
 
 <aside
   aria-labelledby="mag-sidebar-title"
-  class="mag-sidebar text-white text-center p-4 md:p-6 flex flex-col md:sticky md:top-[75px] md:self-start md:h-[calc(100vh-75px)] md:items-center"
+  class="z-[3] mag-sidebar text-white text-center p-4 md:p-6 flex flex-col md:sticky md:top-[75px] md:self-start md:h-[calc(100vh-75px)] md:items-center"
   style={`background-color:${bgColor}; background-image:linear-gradient(transparent, rgba(0,0,0,.15));`}
 >
   <span id="mag-sidebar-title" class="sr-only">Issue sidebar</span>
@@ -94,7 +96,17 @@ const width = `${pct}%`;
     ) : (
       <div class="h-16 aspect-[3/4] rounded shadow bg-white/10" aria-label="Cover image placeholder"></div>
     )}
-
+          <!-- NEW: Mobile ToC trigger -->
+      <button
+        type="button"
+        data-toc-open
+        class="self-start inline-flex items-center gap-2 rounded-md px-3 py-2 text-xs font-medium
+              bg-white/10 hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
+        aria-controls="toc-drawer"
+        aria-expanded="false"
+      >
+        View Table of Contents
+      </button>
   </div>
 
   <!-- Desktop vertical layout -->
@@ -138,22 +150,215 @@ const width = `${pct}%`;
     )}
 
 
-    <p class="mt-12">
-      {storiesRead}<br />stories read
-    </p>
+        <p class="mt-12">
+          <span id="stories-read">0</span>/<span id="stories-total">0</span><br />stories read
+        </p>
 
-    <div class="w-full px-6 my-2">
-      <div
-        class="w-full h-4 bg-gray-300 rounded-full shadow-inner relative overflow-hidden"
-        role="progressbar"
-        aria-label="Reading progress"
-        aria-valuemin="0" aria-valuemax="100" aria-valuenow={pct}
-      >
-        <div
-          class="h-full rounded-full shadow-[0_2px_4px_rgba(0,0,0,0.3)] bg-[#00bcd4]"
-          style={`width:${width};`}
-        ></div>
-      </div>
-    </div>
+        <div class="w-full px-6 my-2">
+          <div
+            id="progress-bar"
+            class="w-full h-4 bg-gray-300 rounded-full shadow-inner relative overflow-hidden"
+            role="progressbar"
+            aria-label="Reading progress"
+            aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"
+          >
+            <div
+              id="progress-fill"
+              class="h-full rounded-full shadow-[0_2px_4px_rgba(0,0,0,0.3)] bg-[var(--issue-accent,#00bcd4)]"
+              style="width:0%;"
+            ></div>
+          </div>
+        </div>
+
+        <!--  ToC trigger -->
+        <button
+          data-toc-open
+          type="button"
+          class="mt-4 inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium
+                bg-white/10 hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
+          aria-controls="toc-drawer"
+          aria-expanded="false"
+        >
+          View Table of Contents
+        </button>
+    </button>
   </div>
+  <!-- NEW: Drawer + overlay (portal stays within Sidebar for simplicity) -->
+  <div
+    id="toc-overlay"
+    class="fixed inset-0 bg-black/40 opacity-0 pointer-events-none transition-opacity duration-200"
+    aria-hidden="true"
+  ></div>
+
+  <aside
+    id="toc-drawer"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="toc-title"
+    class="fixed left-0 top-0 pt-40 h-full w-80 max-w-[85vw] translate-x-[-100%]
+           bg-slate-900 text-white shadow-xl transition-transform duration-200
+           flex flex-col"
+    tabindex="-1"
+  >
+    <div class="flex items-center justify-between px-4 py-3 border-b border-white/10">
+      <h2 id="toc-title" class="text-sm tracking-widest uppercase">Table of Contents</h2>
+      <button id="toc-close" type="button" class="p-2 hover:bg-white/10 rounded" aria-label="Close ToC">
+        ✕
+      </button>
+    </div>
+
+    <!-- Issue label -->
+    <div class="px-4 py-3 text-xs text-white/70 border-b border-white/10">
+      {issueInfo}
+    </div>
+
+    <!-- List -->
+    <nav class="flex-1 overflow-y-auto">
+      <ol class="py-2">
+        {tocPosts.map((p:any) => {
+          const isCurrent = currentSlug && p.slug === currentSlug;
+          return (
+            <li>
+              <a
+                href={`/magazine-post/${p.slug}`}
+                class={`block px-4 py-2 text-sm transition
+                        ${isCurrent ? 'bg-white/15' : 'hover:bg-white/10'}`}
+                data-slug={p.slug}
+              >
+                <span class="inline-flex items-center gap-2">
+                  <span class="read-dot inline-block h-2 w-2 rounded-full bg-white/30" aria-hidden="true"></span>
+                  <span class="line-clamp-2 text-left">{p.title}</span>
+                </span>
+              </a>
+            </li>
+          );
+        })}
+      </ol>
+    </nav>
+  </aside>
+
+  <!-- data node for current slug (so script can read it without string templating) -->
+<span id="toc-data" data-current={currentSlug ?? ''} hidden></span>
+
+  <!-- Drawer wiring -->
+  <script is:inline>
+    (() => {
+      const drawer  = document.getElementById('toc-drawer');
+      const overlay = document.getElementById('toc-overlay');
+      const openBtns = Array.from(document.querySelectorAll('[data-toc-open]'));
+      const closeBtn = document.getElementById('toc-close');
+
+      if (!drawer || !overlay || openBtns.length === 0 || !closeBtn) return;
+
+      const html = document.documentElement;
+
+      function setExpanded(el, value) {
+        try { el.setAttribute('aria-expanded', value ? 'true' : 'false'); } catch (_) {}
+      }
+
+      function open() {
+        drawer.style.transform = 'translateX(0)';
+        overlay.style.opacity = '1';
+        overlay.style.pointerEvents = 'auto';
+        openBtns.forEach(btn => setExpanded(btn, true));
+        drawer.focus();
+        html.style.overflow = 'hidden';
+      }
+      function close() {
+        drawer.style.transform = 'translateX(-100%)';
+        overlay.style.opacity = '0';
+        overlay.style.pointerEvents = 'none';
+        openBtns.forEach(btn => setExpanded(btn, false));
+        // return focus to the last clicked opener, if any
+        lastOpener?.focus?.();
+        html.style.overflow = '';
+      }
+
+      let lastOpener = null;
+      openBtns.forEach(btn => {
+        btn.addEventListener('click', () => { lastOpener = btn; open(); });
+      });
+      closeBtn.addEventListener('click', close);
+      overlay.addEventListener('click', close);
+      window.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+
+      // --- Read-state block (unchanged logic; pure JS) ---
+      try {
+        const KEY = 'aopa.read';
+        const dataEl = document.getElementById('toc-data');
+        const current = dataEl?.getAttribute('data-current') || '';
+        const saved = JSON.parse(localStorage.getItem(KEY) || '{"slugs":[]}');
+        const set = new Set(Array.isArray(saved.slugs) ? saved.slugs : []);
+        if (current) set.add(current);
+        localStorage.setItem(KEY, JSON.stringify({ slugs: Array.from(set) }));
+
+        document.querySelectorAll('#toc-drawer a[data-slug]').forEach((a) => {
+          const slug = a.getAttribute('data-slug');
+          const dot  = a.querySelector('.read-dot');
+          if (slug && set.has(slug) && dot) {
+            dot.classList.remove('bg-white/30');
+            dot.classList.add('bg-[var(--issue-accent,#14c682)]');
+          }
+          a.addEventListener('click', () => {
+            if (slug) {
+              const s = JSON.parse(localStorage.getItem(KEY) || '{"slugs":[]}');
+              const ss = new Set(Array.isArray(s.slugs) ? s.slugs : []);
+              ss.add(slug);
+              localStorage.setItem(KEY, JSON.stringify({ slugs: Array.from(ss) }));
+            }
+          });
+        });
+      } catch(_) {}
+
+      // --- REAL COUNTER / PROGRESS ---
+      function computeAndRenderProgress() {
+        const totalEl   = document.getElementById('stories-total');
+        const readEl    = document.getElementById('stories-read');
+        const barEl     = document.getElementById('progress-bar');
+        const fillEl    = document.getElementById('progress-fill');
+
+        if (!totalEl || !readEl || !barEl || !fillEl) return;
+
+        // Collect slugs for THIS issue from the ToC links
+        const slugsInIssue = Array.from(document.querySelectorAll('#toc-drawer a[data-slug]'))
+          .map(a => a.getAttribute('data-slug'))
+          .filter(Boolean);
+
+        const total = slugsInIssue.length;
+
+        // Read set from localStorage (pure JS Set)
+        let readSet = new Set();
+        try {
+          const saved = JSON.parse(localStorage.getItem('aopa.read') || '{"slugs":[]}');
+          if (Array.isArray(saved.slugs)) readSet = new Set(saved.slugs);
+        } catch (_) {}
+
+        // Count how many of THIS issue's slugs are read
+        const readCount = slugsInIssue.reduce((acc, slug) => acc + (readSet.has(slug) ? 1 : 0), 0);
+
+        // Render
+        totalEl.textContent = String(total);
+        readEl.textContent  = String(readCount);
+
+        const pct = total > 0 ? Math.round((readCount / total) * 100) : 0;
+        barEl.setAttribute('aria-valuenow', String(pct));
+        fillEl.style.width = pct + '%';
+      }
+
+      // Initial paint
+      computeAndRenderProgress();
+
+      // Recompute after marking read
+      document.querySelectorAll('#toc-drawer a[data-slug]').forEach((a) => {
+        a.addEventListener('click', () => setTimeout(computeAndRenderProgress, 0));
+      });
+
+      // Cross-tab updates
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'aopa.read') computeAndRenderProgress();
+      });
+    })();
+  </script>
+
+
 </aside>
