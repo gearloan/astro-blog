@@ -1,8 +1,5 @@
 ---
-/* =========================================
-   IMPORTS
-   ========================================= */
-// EXISTING
+/* IMPORTS (as you had) */
 import Layout from '@/layouts/Layout.astro';
 import Sidebar from '@/components/magazine/Sidebar.astro';
 import { resolveProseStyle } from '@/lib/resolveProseStyle.js';
@@ -12,7 +9,6 @@ import { getPost } from '@/lib/queries/postBySlug';
 import { pickMediaComponent } from '@/lib/mediaComponent';
 import { fetchPosts } from '@/lib/fetchPosts.js';
 
-// NEW (for dynamic issue theming + cover overrides)
 import {
   issueKeyFromDate,
   labelFromIssueKey,
@@ -20,10 +16,7 @@ import {
   getIssueOverrides,
 } from '@/data/heroLayouts';
 
-/* =========================================
-   BUILD-TIME PATHS
-   ========================================= */
-// EXISTING
+/* BUILD-TIME PATHS (unchanged) */
 export async function getStaticPaths() {
   const SLUGS = gql`
     query Slugs {
@@ -36,56 +29,44 @@ export async function getStaticPaths() {
   return (data?.posts?.nodes ?? []).map((p: any) => ({ params: { slug: p.slug } }));
 }
 
-/* =========================================
-   PER-PAGE DATA
-   ========================================= */
-// EXISTING
+/* PER-PAGE DATA */
 const { slug } = Astro.params;
 const { postBy: post } = await getPost(slug);
 if (!post) throw new Error(`Post not found: ${slug}`);
 
-// EXISTING
 const slots = post?.magazinePresentationOptions?.presentationSlots ?? [];
 const isFeatured = Array.isArray(slots) && slots.some(s => String(s).toLowerCase() === 'featured');
 
-// EXISTING
 const Media = pickMediaComponent(post.formatSlug ?? 'longform');
 
-// EXISTING (preserve your contentGroups fallback for prose resolution)
-const postForStyle = { ...post, contentGroups: post.contentGroups ?? { nodes: post.categories?.nodes ?? [] } };
+// keep your contentGroups fallback for prose
+const postForStyle = {
+  ...post,
+  contentGroups: post.contentGroups ?? { nodes: post.categories?.nodes ?? [] },
+};
 const proseStyle = resolveProseStyle(postForStyle);
 
-/* =========================================
-   PUBLICATION / ISSUE CONTEXT (dynamic)
-   ========================================= */
-// CHANGED: derive pub from tags (same logic as your index page)
+/* PUBLICATION / ISSUE CONTEXT */
 const tags = post.tags?.nodes ?? [];
-const pub = (tags.find((t: any) => ['turbine', 'pilot'].includes(t.slug))?.slug ?? 'pilot') as 'pilot'|'turbine';
+const pub = (tags.find((t: any) => ['turbine', 'pilot'].includes(t.slug))?.slug ?? 'pilot') as
+  'pilot' | 'turbine';
 
-// NEW: compute issue key/label from the post date (UTC-safe)
-const issueKey = issueKeyFromDate(post.date);
+const issueKey   = issueKeyFromDate(post.date);
 const issueLabel = labelFromIssueKey(issueKey);
 
-// NEW: per-issue theme tokens (primary/accent/bg/title/badge) + CSS vars
+// optional theme tokens (only matters if you apply them to style)
 const theme = getIssueTheme(pub, { slug: post.slug ?? null, issueKey });
 
-// NEW: issue landing link (e.g. /pilot/2025-10)
+// link back to issue landing
 const issueLink = issueKey ? `/${pub}/${issueKey}` : `/${pub}`;
 
-// Build ToC list: all posts in the same issue, earliest→latest
-const allPubPosts = await fetchPosts({ tag: pub }, 100);
+/* Issue posts for pager / ToC */
+const allPosts = await fetchPosts({ tag: pub }, 200);
+const issuePosts = allPosts
+  .filter((p: any) => issueKeyFromDate(p?.date) === issueKey)
+  .sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-const allPosts = await fetchPosts({ tag: pub }, 60); // `pub` already defined from tags
-
-// Filter to just the posts in that issue
-const issuePosts = allPosts.filter(p => issueKeyFromDate(p?.date) === issueKey);
-
-
-
-/* =========================================
-   COVER IMAGE (robust, with registry override)
-   ========================================= */
-// CHANGED: best image from featured sizes, with sensible fallbacks
+/* COVER IMAGE (with registry override) */
 const sizes = post?.featuredImage?.node?.mediaDetails?.sizes ?? [];
 const pickFromSizes = (names: string[]) =>
   sizes.find((s: any) => names.includes(s.name))?.sourceUrl ?? null;
@@ -96,19 +77,16 @@ const postCover =
   post?.featuredImage?.node?.sourceUrl ??
   null;
 
-// NEW: registry override (per slug/issue) wins if present
 const { coverImg: coverOverride } = getIssueOverrides(pub, { slug: post.slug ?? null, issueKey });
-
-// NEW: main/fallback sources passed to Sidebar (Sidebar handles onerror swap)
 const coverPrimary  = (coverOverride && coverOverride.trim() !== '') ? coverOverride : (postCover ?? null);
 const coverFallback = postCover;
 
-// EXISTING (keep convenience field for downstream components if you use it)
 post.featuredImageUrl =
   sizes.find((s: any) => s.name === 'large')?.sourceUrl ??
   post?.featuredImage?.node?.sourceUrl ??
   null;
 ---
+
 <Layout section="magazine" wrapperClass="bg-gray-900 text-amber-50" magazineTitle={post.title}>
   <!-- NEW: expose theme vars to everything inside (sidebar + article area) -->
   <div class="mx-auto px-0 md:px-8" style={theme.vars}>
@@ -149,6 +127,7 @@ post.featuredImageUrl =
 
         <!-- EXISTING: Page-owned body -->
         <div class="article-body dropcap px-4 md:px-10 pb-12 lg:max-w-[840px] lg:m-auto" set:html={post.content} />
+
       </article>
     </div>
   </div>
