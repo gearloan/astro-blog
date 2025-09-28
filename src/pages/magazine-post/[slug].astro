@@ -103,9 +103,9 @@ post.featuredImageUrl =
         currentSlug={post.slug}
       />
 
-      <!-- EXISTING: Article content -->
+      <!--  Article content -->
       <article class={`prose max-w-none ${proseStyle}`}>
-        <!-- EXISTING: Page-owned header -->
+        <!--  Page-owned header -->
         <header class="mb-8">
           {isFeatured && (
             <span class="pb-0 pr-0 pl-4 md:pl-10 font-subheading text-2xl text-aopa-ltblue relative left-0 top-8 tracking-widest border-b-4 border-aopa-ltblue">
@@ -120,12 +120,12 @@ post.featuredImageUrl =
           </p>
         </header>
 
-        <!-- EXISTING: Type-specific media slot -->
+        <!--  Type-specific media slot -->
         <section class="mb-8">
           <Media post={post} />
         </section>
 
-        <!-- EXISTING: Page-owned body -->
+        <!--  Page-owned body -->
         <div class="article-body dropcap px-4 md:px-10 pb-12 lg:max-w-[840px] lg:m-auto" set:html={post.content} />
 
       </article>
