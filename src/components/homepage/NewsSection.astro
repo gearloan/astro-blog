@@ -1,0 +1,115 @@
+---
+/**
+ * NewsSection.astro
+ *
+ * Props:
+ *  - title: string
+ *  - lead: { href?: string; img: string; alt?: string; headline: string }
+ *  - side: Array<{ href?: string; img: string; alt?: string; headline: string }>
+ *          // expect 2; extras are ignored
+ *  - category: { label: string; items: Array<{ href?: string; headline: string }> }
+ */
+const {
+  title = "AVIATION NEWS",
+  lead = {
+    img: "/images/news/lead.jpg",
+    alt: "Lead image",
+    headline: "GA Safety Trends: 2022–2025",
+    href: "#",
+  },
+  side = [
+    {
+      img: "/images/news/side-1.jpg",
+      alt: "Story",
+      headline: "Solo Flight Checklist Revisited",
+      href: "#",
+    },
+    {
+      img: "/images/news/side-2.jpg",
+      alt: "Story",
+      headline: "Lessons from Near‑Miss Incidents",
+      href: "#",
+    },
+  ],
+  category = {
+    label: "ADVOCACY",
+    items: [
+      { headline: "Lessons from Near‑Miss Incidents", href: "#" },
+      { headline: "Lessons from Near‑Miss Incidents", href: "#" },
+      { headline: "Lessons from Near‑Miss Incidents", href: "#" },
+      { headline: "Lessons from Near‑Miss Incidents", href: "#" },
+    ],
+  },
+} = Astro.props;
+---
+
+<section class="bg-slate-100">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+    <!-- Section title -->
+    <h2 class="text-center font-heading text-3xl sm:text-4xl font-extrabold tracking-wide text-[#0e4b5f] uppercase">
+      {title}
+    </h2>
+
+    <!-- Grid: lead + sidebar -->
+    <div class="mt-6 grid gap-6 md:grid-cols-3">
+      <!-- Lead story -->
+      <article class="md:col-span-2">
+        <a href={lead.href ?? "#"} class="group block">
+          <div class="aspect-[16/9] w-full overflow-hidden rounded-md bg-slate-200">
+            <img
+              src={lead.img}
+              alt={lead.alt ?? lead.headline}
+              class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+              loading="lazy"
+            />
+          </div>
+          <h3 class="mt-4 font-serif text-3xl font-extrabold leading-tight text-slate-900">
+            {lead.headline}
+          </h3>
+        </a>
+      </article>
+
+      <!-- Side list (two stacked) -->
+      <div class="space-y-6">
+        {side.slice(0,2).map((s) => (
+          <article>
+            <a href={s.href ?? "#"} class="group block">
+              <div class="aspect-[16/9] w-full overflow-hidden rounded-md bg-slate-200">
+                <img
+                  src={s.img}
+                  alt={s.alt ?? s.headline}
+                  class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                  loading="lazy"
+                />
+              </div>
+              <h4 class="mt-2 font-serif text-xl font-extrabold leading-snug text-slate-900">
+                {s.headline}
+              </h4>
+            </a>
+          </article>
+        ))}
+      </div>
+    </div>
+
+    <!-- Category strip -->
+    <div class="mt-8">
+      <div class="flex items-end justify-between">
+        <div class="text-sm font-semibold tracking-widest text-[#0e4b5f]">
+          {category.label}
+        </div>
+      </div>
+      <div class="mt-2 border-t-2 border-sky-200"></div>
+
+      <div class="mt-4 grid gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-4">
+        {category.items.slice(0,4).map((it) => (
+          <a
+            href={it.href ?? "#"}
+            class="block font-serif text-lg font-extrabold leading-snug text-slate-900 hover:underline"
+          >
+            {it.headline}
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

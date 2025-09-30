@@ -4,6 +4,9 @@ import HomeHero from "../components/homepage/HomeHero.astro";
 import WhyChoose from "../components/homepage/WhyChoose.astro";
 import JoinCtaBand from "../components/homepage/JoinCtaBand.astro";
 import EverythingYouNeed from "../components/homepage/EverythingYouNeed.astro";
+import NewsSection from "../components/homepage/NewsSection.astro";
+import PublicationsGrid from "../components/homepage/PublicationsGrid.astro";
+
 
 const stats = [
   { kpi: "85+", label: "Years of advocacy" },
@@ -20,10 +23,10 @@ const stats = [
     image={{
       alt: "High‑wing trainer flying over countryside at golden hour",
       mobile: {
-        jpg:  "/images/hero-cessna-mobile.jpg"
+        jpg:  "/images/home/hero-cessna-mobile.jpg"
       },
       desktop: {
-        jpg:  "/images/hero-cessna-desktop.jpg"
+        jpg:  "/images/home/hero-cessna-desktop.jpg"
       }
     }}
     primary={{ label: "Become a Member" }}
@@ -85,4 +88,49 @@ const stats = [
     ]}
   />
 
+  <NewsSection
+    title="AVIATION NEWS"
+    lead={{
+      img: "/images/news/lead-ga-safety.jpg",
+      alt: "Pilot at preflight",
+      headline: "GA Safety Trends: 2022–2025",
+      href: "#"
+    }}
+    side={[
+      { img: "/images/news/solo-checklist.jpg", alt: "Ramp scene", headline: "Solo Flight Checklist Revisited", href: "#" },
+      { img: "/images/news/storms.jpg", alt: "Towering cumulus", headline: "Lessons from Near‑Miss Incidents", href: "#" }
+    ]}
+    category={{
+      label: "ADVOCACY",
+      items: [
+        { headline: "Lessons from Near‑Miss Incidents", href: "#" },
+        { headline: "Lessons from Near‑Miss Incidents", href: "#" },
+        { headline: "Lessons from Near‑Miss Incidents", href: "#" },
+        { headline: "Lessons from Near‑Miss Incidents", href: "#" }
+      ]
+    }}
+  />
+  <PublicationsGrid
+    title="AOPA PUBLICATIONS"
+    items={[
+      {
+        name: "PILOT MAGAZINE",
+        color: "text-sky-400",
+        img: "/images/covers/pilot.jpg",
+        href: "/pilot"
+      },
+      {
+        name: "PILOT TURBINE MAGAZINE",
+        color: "text-yellow-200",
+        img: "/images/covers/turbine.jpg",
+        href: "/turbine"
+      },
+      {
+        name: "FLIGHT TRAINING MAGAZINE",
+        color: "text-fuchsia-300",
+        img: "/images/covers/flight-training.jpg",
+        href: "/flight-training"
+      },
+    ]}
+  />
 </Layout>

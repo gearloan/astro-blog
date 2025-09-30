@@ -1,22 +1,4 @@
 ---
-/**
- * HomeHero.astro
- * Responsive, image‑backed hero with overlay, headline, subhead, and CTAs.
- *
- * Props:
- *  - title: string
- *  - sub: string
- *  - image: {
- *      alt: string
- *      // Mobile (≤ md) crop
- *      mobile: { avif?: string; webp?: string; jpg: string }
- *      // Desktop (≥ lg) crop
- *      desktop: { avif?: string; webp?: string; jpg: string }
- *    }
- *  - heightClass?: string  // override default height
- *  - primary?: { label: string; href?: string }
- *  - secondary?: { label: string; href?: string }
- */
 interface ImgSet { jpg: string }
 interface Props {
   title: string
@@ -30,13 +12,13 @@ const {
   title,
   sub = "",
   image,
-  heightClass = "h-[52vh] min-h-[420px] sm:h-[60vh] lg:h-[72vh]",
+  heightClass = "h-[64vh] min-h-[420px] sm:h-[60vh] lg:h-[72vh]",
   primary,
   secondary,
 } = Astro.props as Props;
 ---
 
-<section class="relative isolate">
+<section class="relative isolate mt-4">
   <!-- Media -->
   <div class={`relative w-full overflow-hidden ${heightClass}`}>
     <picture>
@@ -63,18 +45,15 @@ const {
       />
     </picture>
 
-    <!-- Contrast overlay -->
-    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-slate-900/30 to-slate-900/10" aria-hidden="true" />
   </div>
 
   <!-- Copy + CTAs -->
-  <div class="pointer-events-none absolute inset-0 flex items-center">
+  <div class="pointer-events-none absolute inset-0 flex items-start pt-24">
     <div class="pointer-events-auto mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
-      <div class="max-w-3xl text-white">
-        <h1 class="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">{title}</h1>
-        {sub && <p class="mt-4 max-w-2xl text-base/7 text-slate-100/90 sm:text-lg/8">{sub}</p>}
-
-        <div class="mt-6 flex flex-wrap gap-3">
+      <div class="max-w-4xl text-white m-auto text-center">
+        <h1 class="text-3xl font-heading tracking-tight sm:text-4xl lg:text-5xl drop-shadow-[0_1px_1px_rgba(0,0,0,.1)] md:drop-shadow-[0_2px_4px_rgba(0,0,0,.1)]">{title}</h1>
+        {sub && <p class="mt-4 max-w-2xl m-auto text-base/7 text-slate-100/90 sm:text-lg/8 drop-shadow-[0_1px_1px_rgba(0,0,0,.6)] md:drop-shadow-[0_2px_4px_rgba(0,0,0,.5)]">{sub}</p>}
+        <div class="mt-6 flex flex-wrap gap-3 justify-center">
           {primary && (
             <a
               href={primary.href ?? "#"}
