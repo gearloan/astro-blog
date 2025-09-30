@@ -1,0 +1,57 @@
+---
+/**
+ * JoinCtaBand.astro
+ * Teal band with big stacked headline on left, short copy + two CTAs centered/right.
+ *
+ * Props:
+ *  - title: string | string[]  // pass lines or a single string
+ *  - copy: string
+ *  - primary: { label: string; href?: string }
+ *  - secondary?: { label: string; href?: string }
+ *  - toneClass?: string // override brand color if desired
+ */
+const {
+  title = ["READY TO", "JOIN THE", "FLIGHT?"],
+  copy = "Every pilot needs AOPA. Every voice matters. Together, we’re stronger.",
+  primary = { label: "VIEW MEMBERSHIP PLANS", href: "#" },
+  secondary = { label: "VIEW MEMBERSHIP PLANS", href: "#" },
+  toneClass = "bg-[#0e4b5f] text-white", // swap to your token: bg-aopa-dkblue
+} = Astro.props as any;
+
+const lines = Array.isArray(title) ? title : [title];
+---
+
+<section class={`${toneClass}`}>
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+    <div class="grid items-center gap-8 md:grid-cols-3">
+      <!-- Big stacked heading -->
+      <div class="md:col-span-1">
+        <h2 class="font-heading text-5xl leading-[0.95] font-extrabold tracking-tight sm:text-6xl">
+          {lines.map((l) => (<span class="block">{l}</span>))}
+        </h2>
+      </div>
+
+      <!-- Copy + buttons -->
+      <div class="md:col-span-2">
+        <p class="text-center md:text-left text-slate-100/90">{copy}</p>
+
+        <div class="mt-6 flex flex-wrap justify-center md:justify-start gap-4">
+          <a
+            href={primary.href ?? "#"}
+            class="inline-flex items-center justify-center rounded-md px-5 py-3 text-sm font-semibold bg-slate-200/90 text-slate-900 hover:bg-white ring-1 ring-white/10 shadow-sm"
+          >
+            {primary.label}
+          </a>
+          {secondary && (
+            <a
+              href={secondary.href ?? "#"}
+              class="inline-flex items-center justify-center rounded-md px-5 py-3 text-sm font-semibold bg-slate-200/90 text-slate-900 hover:bg-white ring-1 ring-white/10 shadow-sm"
+            >
+              {secondary.label}
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

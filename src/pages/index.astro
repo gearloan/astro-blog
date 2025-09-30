@@ -1,6 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import HomeHero from "../components/homepage/HomeHero.astro";
+import WhyChoose from "../components/homepage/WhyChoose.astro";
+import JoinCtaBand from "../components/homepage/JoinCtaBand.astro";
 
 const stats = [
   { kpi: "85+", label: "Years of advocacy" },
@@ -27,7 +29,6 @@ const stats = [
     secondary={{ label: "Member Login" }}
   />
 
-  <!-- Metrics strip stays on the page (optional to componentize later) -->
   <section class="bg-white">
     <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
       <div class="relative -mt-10 grid grid-cols-2 gap-3 rounded-2xl bg-slate-50 p-4 shadow-sm ring-1 ring-slate-200/70 sm:-mt-12 md:grid-cols-4 md:gap-6 md:p-6">
@@ -42,4 +43,25 @@ const stats = [
       </div>
     </div>
   </section>
+
+
+  <WhyChoose
+    heading="WHY 300,000+ PILOTS CHOOSE AOPA"
+    blurb="From student pilots to airline captains, AOPA members get the protection, advocacy, and support they need to fly with confidence."
+    items={[
+      { title: "Advocacy", copy: "Protecting your freedom to fly.", img: "/images/benefits/advocacy.jpg" },
+      { title: "Training & Safety", copy: "Air Safety Institute resources.", img: "/images/benefits/safety.jpg" },
+      { title: "Member Benefits", copy: "Insurance, products, discounts.", img: "/images/benefits/benefits.jpg" },
+      { title: "Community", copy: "Events and pilot network.", img: "/images/benefits/community.jpg" },
+    ]}
+  />
+
+  <JoinCtaBand
+    title={["READY TO", "JOIN THE", "FLIGHT?"]}
+    copy="Every pilot needs AOPA. Every voice matters. Together, we’re stronger."
+    primary={{ label: "VIEW MEMBERSHIP PLANS" }}
+    secondary={{ label: "VIEW MEMBERSHIP PLANS" }}
+    toneClass="bg-[#0e4b5f] text-white"  
+  />
+
 </Layout>
