@@ -1,0 +1,41 @@
+---
+/**
+ * StatsStrip.astro
+ *
+ * Props:
+ *  - items: Array<{ kpi: string; label: string }>
+ *  - overlap?: boolean      // applies the negative top margin to tuck under hero
+ *  - maxWidthClass?: string // container cap (default max-w-6xl)
+ */
+type Item = { kpi: string; label: string };
+const {
+  items = [],
+  overlap = true,
+  maxWidthClass = "max-w-6xl",
+} = Astro.props as { items: Item[]; overlap?: boolean; maxWidthClass?: string };
+
+const cols =
+  items.length >= 5 ? "md:grid-cols-5" :
+  items.length === 4 ? "md:grid-cols-4" :
+  items.length === 3 ? "md:grid-cols-3" :
+  "md:grid-cols-2";
+---
+
+<section class="bg-white">
+  <div class={`mx-auto ${maxWidthClass} px-4 sm:px-6 lg:px-8`}>
+    <div
+      class={`relative ${overlap ? "-mt-10 sm:-mt-12" : "mt-6"} grid grid-cols-2 ${cols} gap-3 rounded-2xl bg-slate-50 p-4 shadow-sm ring-1 ring-slate-200/70 md:gap-6 md:p-6`}
+      role="list"
+      aria-label="AOPA key metrics"
+    >
+      {items.map((s) => (
+        <div class="flex items-center justify-center text-center gap-3 rounded-xl bg-white px-4 py-4 ring-1 ring-slate-200" role="listitem">
+          <div>
+            <div class="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">{s.kpi}</div>
+            <div class="text-xs font-medium uppercase tracking-wide text-slate-600">{s.label}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
