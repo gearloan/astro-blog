@@ -23,8 +23,8 @@ export default {
         uiLabel: ['var(--font-ui-label, "Gotham-Book")', 'sans-serif'],
       },
       colors: {
-        'aopa-ltblue': '#00a3e0',
-        'aopa-dkblue': '#163372',
+        'aopa-ltblue': 'rgb(13, 138, 187)',
+        'aopa-dkblue': 'oklch(39.1% 0.09 240.876)',
         'aopa-grey': '#5e5e5e',
         'aopa-dkgrey': '#333333',
         gray: { 350: '#c4c9d1' },
