@@ -56,7 +56,7 @@ const {
         )}
         <div class="mt-6 flex flex-wrap gap-3 justify-center">
           {primary && (
-            <a href={primary.href ?? "#"} class="inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-semibold text-white bg-sky-700 hover:bg-sky-600">
+            <a href={primary.href ?? "#"} class="inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-semibold text-white bg-aopa-dkblue hover:bg-sky-600">
               {primary.label}
             </a>
           )}
@@ -89,7 +89,7 @@ const {
         scrollTrigger: {
           trigger: container,
           start: 'top top',
-          end: 'bottom top',
+          end: 'bottom+=200px top',
           scrub: true,
           pin: false,
           markers: false,
