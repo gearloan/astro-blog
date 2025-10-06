@@ -4,15 +4,13 @@
  *
  * Props:
  *  - items: Array<{ kpi: string; label: string }>
- *  - overlap?: boolean      // applies the negative top margin to tuck under hero
  *  - maxWidthClass?: string // container cap (default max-w-6xl)
  */
 type Item = { kpi: string; label: string };
 const {
   items = [],
-  overlap = true,
   maxWidthClass = "max-w-6xl",
-} = Astro.props as { items: Item[]; overlap?: boolean; maxWidthClass?: string };
+} = Astro.props as { items: Item[]; maxWidthClass?: string };
 
 const cols =
   items.length >= 5 ? "md:grid-cols-5" :
@@ -21,10 +19,10 @@ const cols =
   "md:grid-cols-2";
 ---
 
-<section class="bg-white">
+<section class="full-bleed bg-cyan-500 mt-8">
   <div class={`mx-auto ${maxWidthClass} px-4 sm:px-6 lg:px-8`}>
     <div
-      class={`relative ${overlap ? "-mt-10 sm:-mt-12" : "mt-6"} grid grid-cols-2 ${cols} gap-3 rounded-2xl bg-slate-50 p-4 shadow-sm ring-1 ring-slate-200/70 md:gap-6 md:p-6`}
+      class={`relative grid grid-cols-2 ${cols} gap-3 rounded-2xl bg-slate-50 p-4 shadow-sm ring-1 ring-slate-200/70 md:gap-6 md:p-6`}
       role="list"
       aria-label="AOPA key metrics"
     >
