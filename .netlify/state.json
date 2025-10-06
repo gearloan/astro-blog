@@ -1,20 +1,20 @@
 {
 	"geolocation": {
 		"data": {
-			"city": "Washington",
+			"city": "Bowie",
 			"country": {
 				"code": "US",
 				"name": "United States"
 			},
 			"subdivision": {
-				"code": "DC",
-				"name": "District of Columbia"
+				"code": "MD",
+				"name": "Maryland"
 			},
 			"timezone": "America/New_York",
-			"latitude": 38.9091,
-			"longitude": -77.0203,
-			"postalCode": "20001"
+			"latitude": 38.9898,
+			"longitude": -76.7904,
+			"postalCode": "20720"
 		},
-		"timestamp": 1758648244013
+		"timestamp": 1759758308149
 	}
 }
