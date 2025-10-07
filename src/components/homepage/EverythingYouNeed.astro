@@ -17,7 +17,7 @@ const {
   bg = {
     alt: "Mountain range with clouds",
     mobile: { jpg: "/images/need-mobile.jpg" },
-    desktop: { jpg: "/images/need-desktop.jpg" },
+    desktop: { jpg: "/images/home/patagonia.jpg" },
   },
   items = [
     { title: "Flight Training Resources", copy: "Comprehensive guides, training materials, and scholarship opportunities for aspiring pilots." },
@@ -30,7 +30,7 @@ const {
 
 <section class="relative isolate">
   <!-- BG image -->
-  <div class="relative w-full overflow-hidden rounded-xl">
+  <div class="relative w-full overflow-hidden rounded-xl my-8">
     <picture>
       {bg.desktop.avif && <source srcset={bg.desktop.avif} type="image/avif" media="(min-width:1024px)" />}
       {bg.desktop.webp && <source srcset={bg.desktop.webp} type="image/webp" media="(min-width:1024px)" />}
@@ -38,9 +38,10 @@ const {
       {bg.mobile.avif && <source srcset={bg.mobile.avif} type="image/avif" media="(max-width:1023px)" />}
       {bg.mobile.webp && <source srcset={bg.mobile.webp} type="image/webp" media="(max-width:1023px)" />}
       <img
+        id="everything-bg-img"
         src={bg.mobile.jpg}
         alt={bg.alt}
-        class="block h-full w-full object-cover"
+        class="block h-full w-full object-cover will-change-transform"
         loading="lazy"
       />
     </picture>
@@ -52,7 +53,7 @@ const {
     <div class="absolute inset-0">
       <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <!-- Title -->
-        <h2 class="pt-10 text-center font-heading text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl drop-shadow">
+        <h2 class="pt-10 text-center font-heading text-4xl font-extrabold tracking-tight text-sky-900 mb-8 sm:text-5xl lg:text-6xl drop-shadow">
           {title}
         </h2>
 
@@ -60,7 +61,7 @@ const {
         <div class="mt-4 flex items-center">
           <span class="h-8 w-8 -ml-2 rounded-full border-2 border-sky-900/60 bg-white/40 backdrop-blur-sm"></span>
           <div class="mx-3 flex-1 border-t-2 border-sky-900/60 relative">
-            <div class="absolute inset-0 flex items-center justify-between px-2 text-[11px] font-semibold uppercase tracking-wide text-slate-800/90">
+            <div class="absolute inset-0 flex items-center justify-between px-2 text-[11px] font-semibold uppercase tracking-wide text-slate-800/90 -mt-8">
               {strapline.slice(0,3).map((s, i) => (
                 <span class="bg-white/50 px-2 py-0.5 rounded">{s}</span>
               ))}
@@ -70,11 +71,11 @@ const {
         </div>
 
         <!-- Frosted panel with items -->
-        <div class="mt-8 rounded-2xl bg-white/65 p-6 shadow-lg ring-1 ring-slate-200/70 backdrop-blur-md sm:p-8">
-          <div class="grid gap-x-10 gap-y-8 md:grid-cols-2">
+        <div class="mt-24 rounded-2xl bg-white/65 p-6  shadow-lg ring-1 ring-slate-200/70 backdrop-blur-md sm:p-8 py-[4rem]">
+          <div class="grid gap-x-10 gap-y-8 md:grid-cols-2 p-8">
             {items.slice(0,4).map((it) => (
               <div>
-                <h3 class="font-heading text-2xl font-extrabold tracking-tight text-slate-900">
+                <h3 class="font-bold text-4xl uppercase tracking-wide font-blockquote text-sky-900">
                   {it.title}
                 </h3>
                 <p class="mt-2 text-slate-700">
@@ -90,3 +91,36 @@ const {
     </div>
   </div>
 </section>
+
+<script>
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+  
+  const image = document.getElementById('everything-bg-img') as HTMLImageElement | null;
+  const container = image?.closest('section') as HTMLElement | null;
+  
+  if (image && container) {
+    gsap.fromTo(
+      image,
+      { scale: 1 }, // start slightly zoomed in
+      {
+        scale: 1.2, // scale up to 1.2x
+        ease: 'none',
+        scrollTrigger: {
+          trigger: container,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1, // smooth scrubbing
+          pin: false,
+          markers: false,
+        },
+      }
+    );
+    
+    // Refresh on image load
+    if (image.complete) ScrollTrigger.refresh();
+    else image.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
+  }
+</script>
