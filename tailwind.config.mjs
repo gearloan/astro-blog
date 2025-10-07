@@ -14,6 +14,7 @@ export default {
         heading:    ['var(--font-heading, "Knockout-94")', 'sans-serif'],
         subheading: ['var(--font-subheading, "Knockout-28")', 'sans-serif'],
         headline: ['var(--font-headline, "Knockout-28")', 'sans-serif'],
+        blockquote: ['var(--font-blockquote, "Knockout-47")', 'sans-serif'],
 
         serif:       ['var(--font-serif, "Mercury-Roman")', 'serif'],
         serifBold:   ['var(--font-serif-bold, "Mercury-Bold")', 'serif'],
