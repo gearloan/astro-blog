@@ -15,14 +15,14 @@
 const {
   title = "AOPA PUBLICATIONS",
   items = [
-    { name: "PILOT MAGAZINE",         color: "text-sky-400",    img: "/images/covers/pilot.jpg" },
+    { name: "PILOT MAGAZINE",         color: "text-sky-400",    img: "/images/covers/pilot-2025-07.jpg" },
     { name: "PILOT TURBINE MAGAZINE", color: "text-yellow-200", img: "/images/covers/turbine.jpg" },
     { name: "FLIGHT TRAINING MAGAZINE", color: "text-fuchsia-300", img: "/images/covers/flight-training.jpg" },
   ],
 } = Astro.props;
 ---
 
-<section class="bg-[#2d2d2d] text-white full-bleed">
+<section class="bg-slate-900 text-white full-bleed">
   <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
     <h2 class="text-center font-heading text-3xl sm:text-4xl font-extrabold tracking-wide">
       {title}
@@ -30,12 +30,12 @@ const {
 
     <div class="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
       {items.slice(0,3).map((m) => (
-        <article class="group">
-          <h3 class={`mb-4 text-center font-heading text-2xl font-extrabold tracking-wide uppercase ${m.color ?? "text-sky-300"}`}>
+        <article class="group flex flex-col">
+          <h3 class={`mb-4 text-center font-ui text-xl font-extrabold tracking-wide uppercase min-h-[4rem] flex items-center justify-center ${m.color ?? "text-sky-300"}`}>
             {m.name}
           </h3>
 
-          <a href={m.href ?? "#"} class="block overflow-hidden rounded-md ring-1 ring-white/10 transition-shadow duration-200 hover:ring-white/25">
+          <a href={m.href ?? "#"} class="block overflow-hidden rounded-md ring-1 ring-white/10 transition-shadow duration-200 hover:ring-white/25 flex-1">
             <div class="aspect-[3/4] w-full bg-black">
               <img
                 src={m.img}
