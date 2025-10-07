@@ -15,5 +15,12 @@ export default defineConfig({
         '@': new URL('./src', import.meta.url).pathname
       }
     }
-  }
+  },
+  markdown: {
+    shikiConfig: {
+      // keep your existing langs if present, but be sure 'astro' is included
+      langs: ['astro'],
+    },
+  },
 });
+

@@ -14,6 +14,7 @@ export default {
         heading:    ['var(--font-heading, "Knockout-94")', 'sans-serif'],
         subheading: ['var(--font-subheading, "Knockout-28")', 'sans-serif'],
         headline: ['var(--font-headline, "Knockout-28")', 'sans-serif'],
+        blockquote: ['var(--font-blockquote, "Knockout-47")', 'sans-serif'],
 
         serif:       ['var(--font-serif, "Mercury-Roman")', 'serif'],
         serifBold:   ['var(--font-serif-bold, "Mercury-Bold")', 'serif'],
@@ -23,8 +24,8 @@ export default {
         uiLabel: ['var(--font-ui-label, "Gotham-Book")', 'sans-serif'],
       },
       colors: {
-        'aopa-ltblue': '#00a3e0',
-        'aopa-dkblue': '#163372',
+        'aopa-ltblue': 'rgb(13, 138, 187)',
+        'aopa-dkblue': 'oklch(39.1% 0.09 240.876)',
         'aopa-grey': '#5e5e5e',
         'aopa-dkgrey': '#333333',
         gray: { 350: '#c4c9d1' },
@@ -210,5 +211,17 @@ export default {
 
   plugins: [
     typography,
+    function ({ addUtilities }) {
+      addUtilities({
+        '.full-bleed': {
+          width: '100vw',
+          position: 'relative',
+          left: '50%',
+          right: '50%',
+          'margin-left': '-50vw',
+          'margin-right': '-50vw',
+        },
+      })
+    }
   ],
 };

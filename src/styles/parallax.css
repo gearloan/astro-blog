@@ -1,0 +1,31 @@
+/* src/styles/parallax.css */
+@layer utilities {
+  /* View-based timeline on the element itself */
+  .tl-view {
+    view-timeline-name: --view;
+    view-timeline-axis: block;
+  }
+
+  /* Generic parallax animation; distance comes from --p */
+  @media (prefers-reduced-motion: no-preference) {
+    .animate-parallax {
+      animation: parallax linear both;
+      /* Map the animation to the element's view timeline */
+      animation-timeline: --view;
+      /* When element starts entering → fully covered */
+      animation-range: entry 0% cover 100%;
+      will-change: transform;
+    }
+  }
+
+  @keyframes parallax {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(0, var(--p, -30%), 0); } /* default = -30% */
+  }
+
+  /* Pin helper (optional) */
+  .pin {
+    position: sticky;
+    top: 0;
+  }
+}

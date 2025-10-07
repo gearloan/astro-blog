@@ -1,0 +1,107 @@
+---
+interface ImgSet { jpg: string; avif?: string; webp?: string; }
+interface Props {
+  title: string; sub?: string;
+  image: { alt: string; mobile: ImgSet; desktop: ImgSet };
+  heightClass?: string;
+  primary?: { label: string; href?: string };
+  secondary?: { label: string; href?: string };
+}
+const {
+  title,
+  sub = "",
+  image,
+  heightClass = "h-[84vh] min-h-[420px] sm:h-[60vh] lg:h-[76vh]", // ← keep it
+  primary,
+  secondary,
+} = Astro.props as Props;
+---
+
+<section class="relative isolate mt-4">
+  <!-- Media -->
+  <div id="hero-pin" class={`rounded-lg relative w-full overflow-hidden ${heightClass}`}>
+    <picture>
+      {image.desktop.avif && (
+        <source srcset={image.desktop.avif} type="image/avif" media="(min-width: 1024px)" />
+      )}
+      {image.desktop.webp && (
+        <source srcset={image.desktop.webp} type="image/webp" media="(min-width: 1024px)" />
+      )}
+      <source srcset={image.desktop.jpg} media="(min-width: 1024px)" />
+
+      {image.mobile.avif && (
+        <source srcset={image.mobile.avif} type="image/avif" media="(max-width: 1023px)" />
+      )}
+      {image.mobile.webp && (
+        <source srcset={image.mobile.webp} type="image/webp" media="(max-width: 1023px)" />
+      )}
+      <img
+        id="hero-img"
+        src={image.mobile.jpg}
+        alt={image.alt}
+        loading="eager"
+        sizes="(min-width: 1280px) 1280px, 100vw"
+        class="absolute inset-0 w-full h-[140%] object-cover will-change-transform"
+      />
+    </picture>
+  </div>
+
+  <!-- Copy + CTAs (unchanged) -->
+  <div class="pointer-events-none absolute inset-0 flex items-start ">
+    <div class="pointer-events-auto mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+      <div class="max-w-4xl text-white m-auto text-center pt-12">
+        <h1 class="text-5xl font-heading sm:text-4xl lg:text-5xl">{title}</h1>
+        {sub && (
+          <p class="mt-4 max-w-2xl m-auto text-base/7 text-slate-100/90 sm:text-lg/8">{sub}</p>
+        )}
+        <div class="mt-6 flex flex-wrap gap-3 justify-center">
+          {primary && (
+            <a href={primary.href ?? "#"} class="inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-semibold text-white bg-aopa-dkblue hover:bg-sky-600">
+              {primary.label}
+            </a>
+          )}
+          {secondary && (
+            <a href={secondary.href ?? "#"} class="inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-semibold text-slate-900 bg-white/95 hover:bg-white">
+              {secondary.label}
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+  import gsap from 'gsap';
+  import ScrollTrigger from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+  const container = document.getElementById('hero-pin');
+  const image = document.getElementById('hero-img') as HTMLImageElement | null;
+  const speedFactor = 1.25; // >1 moves faster than scroll; <1 slower
+  const startOffsetPx = 125; // start this many px higher (increase to start higher)
+  if (!container || !image) { console.warn('missing hero-pin/img'); }
+  else {
+    gsap.fromTo(
+      image,
+      { y: -startOffsetPx }, // start higher within the frame
+      {
+        y: () => -(image.offsetHeight - container.offsetHeight) * speedFactor,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: container,
+          start: 'top-=70px top',
+          end: 'bottom+=200px top',
+          scrub: true,
+          pin: false,
+          markers: false,
+          invalidateOnRefresh: true,
+        },
+      }
+    );
+    if (image.complete) ScrollTrigger.refresh();
+    else image.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
+  }
+</script>
+
+
+
+</section>

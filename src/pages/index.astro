@@ -1,56 +1,125 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import SitemapGrid from '../components/SitemapGrid.astro';
+import HomeHero from "../components/homepage/HomeHero.astro";
+import WhyChoose from "../components/homepage/WhyChoose.astro";
+import JoinCtaBand from "../components/homepage/JoinCtaBand.astro";
+import EverythingYouNeed from "../components/homepage/EverythingYouNeed.astro";
+import NewsSection from "../components/homepage/NewsSection.astro";
+import PublicationsGrid from "../components/homepage/PublicationsGrid.astro";
+import StatsStrip from "../components/homepage/StatsStrip.astro";
+
+
+
+const stats = [
+  { kpi: "85+", label: "Years of advocacy" },
+  { kpi: "300K+", label: "Active members" },
+  { kpi: "90%", label: "Accident reduction" },
+  { kpi: "24/7", label: "Member support" },
+];
 ---
 
-<Layout>
-  <div class="mt-12 w-3/4 m-auto">
-    <p> This is an exercise in content design and in Astro's front end capabilities. </p>
-    <p>We have tons of exceptional and unique digital content, that is for the most part neglected.</p>
-    <p>I'm using typography, color, and layout to show how unique content types can live harmoniously under the same umbrella.</p>
-    <br>
-    <p>In addition to design exploration this was originally built to feel out the proposed tech stack and it feels good. It makes me want to build.</p>
-  </div>
+<Layout section="home">
+  <HomeHero
+    title="Freedom to Fly"
+    sub="Join 300,000+ pilots who trust AOPA to protect general aviation, provide world‑class support, and fight for your freedom to fly."
+    image={{
+      alt: "High‑wing trainer flying over countryside at golden hour",
+      mobile: {
+        jpg:  "/images/home/hero-cessna-mobile.jpg"
+      },
+      desktop: {
+        jpg:  "/images/home/hero-cessna-desktop.jpg"
+      }
+    }}
+    primary={{ label: "Become a Member" }}
+    secondary={{ label: "Member Login" }}
+  />
+  
 
-  <section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-32 py-12">
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+  <StatsStrip items={stats} overlap={false} />
 
-      <!-- Editorial / News -->
-      <a
-        href="/news/home"
-        class="block rounded-2xl overflow-hidden shadow-md focus:outline-none focus:ring-2 focus:ring-sky-500 transition transform hover:scale-[1.01]"
-      >
-        <img
-          src="/images/home/news.png"
-          alt="Editorial / News"
-          class="w-full h-auto object-cover"
-        />
-      </a>
+  <WhyChoose
+    heading="WHY 300,000+ PILOTS CHOOSE AOPA"
+    blurb="From student pilots to airline captains, AOPA members get the protection, advocacy, and support they need to fly with confidence."
+    items={[
+      { title: "Advocacy", copy: "Protecting your freedom to fly.", img: "/images/benefits/advocacy.jpg" },
+      { title: "Training & Safety", copy: "Air Safety Institute resources.", img: "/images/benefits/safety.jpg" },
+      { title: "Member Benefits", copy: "Insurance, products, discounts.", img: "/images/benefits/benefits.jpg" },
+      { title: "Community", copy: "Events and pilot network.", img: "/images/benefits/community.jpg" },
+    ]}
+  />
 
-      <!-- Magazine -->
-      <a
-        href="/magazine/home"
-        class="block rounded-2xl overflow-hidden shadow-md focus:outline-none focus:ring-2 focus:ring-sky-500 transition transform hover:scale-[1.01]"
-      >
-        <img
-          src="/images/home/magazine.png"
-          alt="Magazine"
-          class="w-full h-auto object-cover"
-        />
-      </a>
+  <JoinCtaBand
+    title={["READY TO", "JOIN THE", "FLIGHT?"]}
+    copy="Every pilot needs AOPA. Every voice matters. Together, we’re stronger."
+    primary={{ label: "VIEW MEMBERSHIP PLANS" }}
+    secondary={{ label: "VIEW MEMBERSHIP PLANS" }}
+    toneClass="bg-[#0e4b5f] text-white"  
+  />
 
-      <!-- Instructional -->
-      <a
-        href="/instruction/home"
-        class="block rounded-2xl overflow-hidden shadow-md focus:outline-none focus:ring-2 focus:ring-sky-500 transition transform hover:scale-[1.01]"
-      >
-        <img
-          src="/images/home/instructional.png"
-          alt="Instructional"
-          class="w-full h-auto object-cover"
-        />
-      </a>
+  <EverythingYouNeed
+    title="Everything You Need to Fly"
+    strapline={[
+      "From your first lesson",
+      "To your last landing,",
+      "AOPA is with you every step of the way."
+    ]}
+    bg={{
+      alt: "Snow‑capped mountains",
+      mobile:  { jpg: "/images/bg/mountains-mobile.jpg" },
+      desktop: { jpg: "/images/home/patagonia.jpg" }
+    }}
+    items={[
+      { title: "Flight Training Resources", copy: "Comprehensive guides, training materials, and scholarship opportunities for aspiring pilots." },
+      { title: "Safety & Education", copy: "World‑class safety programs, weather resources, and continuing education for all pilots." },
+      { title: "Pilot Protection Services", copy: "Legal support, medical certification help, and advocacy when you need it most." },
+      { title: "Government Advocacy", copy: "Fighting for your rights in Congress, with federal agencies, and at the state level." },
+    ]}
+  />
 
-    </div>
-  </section>
+  <NewsSection
+    title="AVIATION NEWS"
+    lead={{
+      img: "/images/news/lead-ga-safety.jpg",
+      alt: "Pilot at preflight",
+      headline: "GA Safety Trends: 2022–2025",
+      href: "#"
+    }}
+    side={[
+      { img: "/images/news/solo-checklist.jpg", alt: "Ramp scene", headline: "Solo Flight Checklist Revisited", href: "#" },
+      { img: "/images/news/storms.jpg", alt: "Towering cumulus", headline: "Lessons from Near‑Miss Incidents", href: "#" }
+    ]}
+    category={{
+      label: "FEATURED WRITERS",
+      items: [
+        { headline: "Lessons from Near‑Miss Incidents", href: "#" },
+        { headline: "Lessons from Near‑Miss Incidents", href: "#" },
+        { headline: "Lessons from Near‑Miss Incidents", href: "#" },
+        { headline: "Lessons from Near‑Miss Incidents", href: "#" }
+      ]
+    }}
+  />
+  <PublicationsGrid
+    title="AOPA PUBLICATIONS"
+    items={[
+      {
+        name: "PILOT MAGAZINE",
+        color: "text-sky-400",
+        img: "/images/covers/pilot-2025-07.jpg",
+        href: "/pilot"
+      },
+      {
+        name: "PILOT TURBINE MAGAZINE",
+        color: "text-yellow-200",
+        img: "/images/proxy/turbine-mag.jpg",
+        href: "/turbine"
+      },
+      {
+        name: "FLIGHT TRAINING MAGAZINE",
+        color: "text-yellow-300",
+        img: "/images/proxy/flight-training-mag.jpg",
+        href: "/flight-training"
+      },
+    ]}
+  />
 </Layout>

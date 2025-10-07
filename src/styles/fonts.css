@@ -31,6 +31,7 @@ html[data-editorial="noe"] {
 html[data-mag="Knockout-94"] {
   --font-heading: "Knockout-94";
   --font-subheading: "Knockout-28";
+  --font-blockquote: "Knockout-47";
   --fs-heading: clamp(4.5rem, 4vw, 3.25rem);
 
   /* if you want decks/pullquotes in Söhne too: */
