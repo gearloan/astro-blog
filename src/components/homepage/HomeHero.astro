@@ -11,7 +11,7 @@ const {
   title,
   sub = "",
   image,
-  heightClass = "h-[84vh] min-h-[420px] sm:h-[60vh] lg:h-[82vh]", // ← keep it
+  heightClass = "h-[84vh] min-h-[420px] sm:h-[60vh] lg:h-[76vh]", // ← keep it
   primary,
   secondary,
 } = Astro.props as Props;
@@ -19,7 +19,7 @@ const {
 
 <section class="relative isolate mt-4">
   <!-- Media -->
-  <div id="hero-pin" class={`relative w-full overflow-hidden ${heightClass}`}>
+  <div id="hero-pin" class={`rounded-lg relative w-full overflow-hidden ${heightClass}`}>
     <picture>
       {image.desktop.avif && (
         <source srcset={image.desktop.avif} type="image/avif" media="(min-width: 1024px)" />
@@ -76,7 +76,7 @@ const {
   gsap.registerPlugin(ScrollTrigger);
   const container = document.getElementById('hero-pin');
   const image = document.getElementById('hero-img') as HTMLImageElement | null;
-  const speedFactor = .7; // >1 moves faster than scroll; <1 slower
+  const speedFactor = 1.25; // >1 moves faster than scroll; <1 slower
   const startOffsetPx = 125; // start this many px higher (increase to start higher)
   if (!container || !image) { console.warn('missing hero-pin/img'); }
   else {
@@ -88,7 +88,7 @@ const {
         ease: 'none',
         scrollTrigger: {
           trigger: container,
-          start: 'top top',
+          start: 'top-=70px top',
           end: 'bottom+=200px top',
           scrub: true,
           pin: false,
