@@ -1,0 +1,132 @@
+---
+// PilotGear component
+---
+
+ <section class="flex flex-col md:flex-row md:h-[80vh] mb-0">
+  <!-- Mobile: Top Section - Text Content -->
+  <div class="md:hidden w-full bg-transparent flex items-center justify-center py-8">
+    <div class="max-w-md px-8 text-center">
+      <h2 class="text-4xl font-bold text-gray-800 mb-4 border-b-4 border-blue-400 pb-2 inline-block animate-fade-slide">AOPA GEAR</h2>
+      <div class="mb-6"></div>
+      <p class="text-gray-700 text-lg leading-relaxed animate-fade-slide-delay">
+        Whether you're in the cockpit or on the ground, you'll find quality and style, designed with aviators in mind.
+      </p>
+    </div>
+  </div>
+
+  <!-- Mobile: Bottom Section - Square Image -->
+  <div class="md:hidden w-full flex justify-center pb-0 mb-0">
+    <div class="w-96 h-96 relative">
+      <img
+        src="/images/home/index-a/pilot-gear.jpg"
+        alt="AOPA Gear - Pilots with aircraft"
+        class="w-full h-full object-cover"
+      />
+      
+      <!-- Text Overlay -->
+      <div class="absolute bottom-4 left-4 text-white">
+        <div class="flex items-center gap-2 text-sm bg-black/50 px-3 py-1 rounded-full">
+          <span>Fueled by</span>
+          <span class="font-semibold">Flight Outfitters</span>
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Desktop: Left Column - Image -->
+  <div class="hidden md:block w-1/2 relative h-full">
+    <img
+      src="/images/home/index-a/pilot-gear.jpg"
+      alt="AOPA Gear - Pilots with aircraft"
+      class="w-full h-full object-cover"
+    />
+    
+    <!-- Text Overlay -->
+    <div class="absolute bottom-8 left-8 text-white">
+      <div class="flex items-center gap-2 text-sm">
+        <span>Fueled by</span>
+        <span class="font-semibold">Flight Outfitters</span>
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Desktop: Right Column - Text Content -->
+  <div class="hidden md:flex w-1/2 h-full items-center justify-center">
+    <div class="max-w-md px-8">
+      <h2 class="text-4xl font-bold text-gray-800 mb-4 border-b-4 border-blue-400 pb-2 inline-block animate-fade-slide">AOPA GEAR</h2>
+      <div class="mb-6"></div>
+      <p class="text-gray-700 text-lg leading-relaxed animate-fade-slide-delay">
+        Whether you're in the cockpit or on the ground, you'll find quality and style, designed with aviators in mind.
+      </p>
+      <button
+      class="animate-fade-slide-delay-long mt-6 bg-aopa-dkblue backdrop-blur-sm text-white px-8 py-3 rounded-lg font-ui text-lg hover:bg-aopa-dkblue transition-all duration-200"
+    >
+      Shop Now
+    </button>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Animation classes */
+  .animate-fade-slide {
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  }
+
+  .animate-fade-slide-delay {
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: opacity 0.8s ease-out 0.2s, transform 0.8s ease-out 0.2s;
+  }
+
+  .animate-fade-slide-delay-long {
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: opacity 0.8s ease-out 0.5s, transform 0.8s ease-out 0.5s;
+  }
+
+  .animate-fade-slide.animate-in {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .animate-fade-slide-delay.animate-in {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .animate-fade-slide-delay-long.animate-in {
+    opacity: 1;
+    transform: translateX(0);
+  }
+</style>
+
+<script>
+  // Scroll-triggered animation
+  document.addEventListener('DOMContentLoaded', function() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-in');
+        }
+      });
+    }, {
+      threshold: 0.3, // Trigger when 30% of the element is visible
+      rootMargin: '0px 0px -50px 0px' // Start animation slightly before element is fully in view
+    });
+
+    // Observe the animated elements
+    const animatedElements = document.querySelectorAll('.animate-fade-slide, .animate-fade-slide-delay, .animate-fade-slide-delay-long');
+    animatedElements.forEach(el => {
+      observer.observe(el);
+    });
+  });
+</script>

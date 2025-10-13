@@ -108,9 +108,9 @@ export default function Nav({ section, magazineTitle }: Props) {
   </nav>
 
   {/* DROPDOWN */}
-  <div class="nav-drawer hidden md:block leading-none absolute top-full left-0 w-screen bg-aopa-dkblue text-white shadow-md transform -translate-y-full transition-transform duration-300 ease-out z-40">
+  <div class="nav-drawer hidden md:block leading-none absolute top-full left-0 w-full bg-aopa-dkblue text-white shadow-md transform -translate-y-full transition-transform duration-300 ease-out z-40 overflow-x-hidden">
 
-        <div class="mx-auto md:p-6 grid grid-cols-6 gap-8">
+        <div class="mx-auto max-w-7xl px-4 md:p-6 grid grid-cols-6 gap-4 md:gap-8">
           <div class="border-r-2 border-gray-400">                    
             <img src="/images/ui/logo-small-white.svg" alt="Logo" class="px-10 block dark:hidden mb-4" />
             <ul class="space-y-3 text-center">

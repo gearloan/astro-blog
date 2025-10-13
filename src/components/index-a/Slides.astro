@@ -1,0 +1,332 @@
+---
+// Slides component with advocacy section and slideshow functionality
+---
+
+<!-- Advocacy Section -->
+<section class="relative min-h-[70vh] md:min-h-[80vh]">
+  <!-- Background Image - Full Width/Height -->
+  <div class="absolute inset-0 w-full h-full md:left-1/2 md:w-1/2">
+    <div class="relative w-full h-full">
+      <!-- Slide 1: Advocacy -->
+      <div
+        id="content-0"
+        class="absolute inset-0 transition-opacity ease-in-out opacity-100"
+        style="transition-duration: 3000ms;"
+      >
+        <img
+          src="/images/home/index-a/advocacy.jpg"
+          alt="Advocacy - Pilots with aircraft"
+          class="w-full h-full object-cover"
+        />
+        <!-- Gradient overlay for text visibility -->
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+      </div>
+
+      <!-- Slide 2: Education -->
+      <div
+        id="content-1"
+        class="absolute inset-0 transition-opacity ease-in-out opacity-0"
+        style="transition-duration: 3000ms;"
+      >
+        <img
+          src="/images/home/index-a/education.jpg"
+          alt="Education - Flight training"
+          class="w-full h-full object-cover"
+        />
+        <!-- Gradient overlay for text visibility -->
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+      </div>
+
+      <!-- Slide 3: Training -->
+      <div
+        id="content-2"
+        class="absolute inset-0 transition-opacity ease-in-out opacity-0"
+        style="transition-duration: 3000ms;"
+      >
+        <img
+          src="/images/home/index-a/training.jpg"
+          alt="Training - Professional pilot training"
+          class="w-full h-full object-cover"
+        />
+        <!-- Gradient overlay for text visibility -->
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+      </div>
+
+      <!-- Slide 4: Safety -->
+      <div
+        id="content-3"
+        class="absolute inset-0 transition-opacity ease-in-out opacity-0"
+        style="transition-duration: 3000ms;"
+      >
+        <img
+          src="/images/home/index-a/safety.jpg"
+          alt="Safety - Aviation safety programs"
+          class="w-full h-full object-cover"
+        />
+        <!-- Gradient overlay for text visibility -->
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+      </div>
+
+      <!-- Slide 5: Community -->
+      <div
+        id="content-4"
+        class="absolute inset-0 transition-opacity ease-in-out opacity-0"
+        style="transition-duration: 3000ms;"
+      >
+        <img
+          src="/images/home/index-a/community.jpg"
+          alt="Community - Pilot community events"
+          class="w-full h-full object-cover"
+        />
+        <!-- Gradient overlay for text visibility -->
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile: Left Column - Overlay Content -->
+  <div class="md:hidden absolute inset-0 z-20 w-full h-full flex items-center justify-center">
+    <div class="w-full max-w-sm bg-[#0A4863]/90 m-4 py-8 relative overflow-hidden flex flex-col justify-center">
+      <!-- Shield Logo -->
+      <div class="absolute top-0 left-0 z-10">
+        <img src="/images/aopa-bg.png" alt="AOPA">
+      </div>
+
+      <!-- Content -->
+      <div class="relative z-10 flex flex-col justify-center h-full px-8">
+        <div class="text-left mx-auto">
+          <p class="font-ui text-white text-sm uppercase tracking-wider mb-8">
+            CREATING CHANGE THROUGH:
+          </p>
+
+          <div class="space-y-4">
+            <h2
+              id="slide-mobile-0"
+              class="font-blockquote text-4xl font-bold uppercase transition-all duration-500 text-cyan-300 pb-2 relative"
+              style="transition: color 500ms ease-in-out; --border-width: 100%;"
+            >
+              ADVOCACY
+            </h2>
+            <h2
+              id="slide-mobile-1"
+              class="font-blockquote text-4xl font-bold uppercase transition-all duration-500 text-white pb-2 relative"
+              style="transition: color 500ms ease-in-out; --border-width: 0%;"
+            >
+              EDUCATION
+            </h2>
+            <h2
+              id="slide-mobile-2"
+              class="font-blockquote text-4xl font-bold uppercase transition-all duration-500 text-white pb-2 relative"
+              style="transition: color 500ms ease-in-out; --border-width: 0%;"
+            >
+              TRAINING
+            </h2>
+            <h2
+              id="slide-mobile-3"
+              class="font-blockquote text-4xl font-bold uppercase transition-all duration-500 text-white pb-2 relative"
+              style="transition: color 500ms ease-in-out; --border-width: 0%;"
+            >
+              SAFETY
+            </h2>
+            <h2
+              id="slide-mobile-4"
+              class="font-blockquote text-4xl font-bold uppercase transition-all duration-500 text-white pb-2 relative"
+              style="transition: color 500ms ease-in-out; --border-width: 0%;"
+            >
+              COMMUNITY
+            </h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Desktop: Left Column - Overlay Content -->
+  <div class="hidden md:block absolute inset-y-0 left-0 w-1/2 z-20">
+    <div class="w-full h-full bg-[#0A4863] py-12 relative overflow-hidden flex flex-col justify-center">
+      <!-- Shield Logo -->
+      <div class="absolute top-0 left-0 z-10">
+        <img src="/images/aopa-bg.png" alt="AOPA">
+      </div>
+
+      <!-- Content -->
+      <div class="relative z-10 flex flex-col justify-center h-full px-8">
+        <div class="text-left mx-auto">
+          <p class="font-ui text-white text-sm uppercase tracking-wider mb-8">
+            CREATING CHANGE THROUGH:
+          </p>
+
+          <div class="space-y-4">
+            <h2
+              id="slide-0"
+              class="font-blockquote text-6xl font-bold uppercase transition-all duration-500 text-cyan-300 pb-2 relative"
+              style="transition: color 500ms ease-in-out; --border-width: 100%;"
+            >
+              ADVOCACY
+            </h2>
+            <h2
+              id="slide-1"
+              class="font-blockquote text-6xl font-bold uppercase transition-all duration-500 text-white pb-2 relative"
+              style="transition: color 500ms ease-in-out; --border-width: 0%;"
+            >
+              EDUCATION
+            </h2>
+            <h2
+              id="slide-2"
+              class="font-blockquote text-6xl font-bold uppercase transition-all duration-500 text-white pb-2 relative"
+              style="transition: color 500ms ease-in-out; --border-width: 0%;"
+            >
+              TRAINING
+            </h2>
+            <h2
+              id="slide-3"
+              class="font-blockquote text-6xl font-bold uppercase transition-all duration-500 text-white pb-2 relative"
+              style="transition: color 500ms ease-in-out; --border-width: 0%;"
+            >
+              SAFETY
+            </h2>
+            <h2
+              id="slide-4"
+              class="font-blockquote text-6xl font-bold uppercase transition-all duration-500 text-white pb-2 relative"
+              style="transition: color 500ms ease-in-out; --border-width: 0%;"
+            >
+              COMMUNITY
+            </h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Side Text Overlay (Desktop Only) -->
+  <div class="hidden md:block absolute bottom-8 left-1/2 right-8 z-30 text-white pl-8">
+    <div id="text-content-0" class="space-y-2">
+      <p class="text-2xl md:text-3xl font-ui">Protecting your freedom</p>
+      <p class="text-2xl md:text-3xl font-ui">to fly through</p>
+      <p class="text-2xl md:text-3xl font-ui">government advocacy</p>
+      <p class="text-2xl md:text-3xl font-ui">and policy reform</p>
+    </div>
+    <div id="text-content-1" class="space-y-2 opacity-0 absolute inset-0">
+      <p class="text-2xl md:text-3xl font-ui">Comprehensive flight</p>
+      <p class="text-2xl md:text-3xl font-ui">training resources</p>
+      <p class="text-2xl md:text-3xl font-ui">and educational</p>
+      <p class="text-2xl md:text-3xl font-ui">materials for pilots</p>
+    </div>
+    <div id="text-content-2" class="space-y-2 opacity-0 absolute inset-0">
+      <p class="text-2xl md:text-3xl font-ui">Professional pilot</p>
+      <p class="text-2xl md:text-3xl font-ui">certification programs</p>
+      <p class="text-2xl md:text-3xl font-ui">and advanced</p>
+      <p class="text-2xl md:text-3xl font-ui">training courses</p>
+    </div>
+    <div id="text-content-3" class="space-y-2 opacity-0 absolute inset-0">
+      <p class="text-2xl md:text-3xl font-ui">Aviation safety</p>
+      <p class="text-2xl md:text-3xl font-ui">programs and</p>
+      <p class="text-2xl md:text-3xl font-ui">incident prevention</p>
+      <p class="text-2xl md:text-3xl font-ui">initiatives</p>
+    </div>
+    <div id="text-content-4" class="space-y-2 opacity-0 absolute inset-0">
+      <p class="text-2xl md:text-3xl font-ui">Building a strong</p>
+      <p class="text-2xl md:text-3xl font-ui">pilot community</p>
+      <p class="text-2xl md:text-3xl font-ui">through events</p>
+      <p class="text-2xl md:text-3xl font-ui">and networking</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  let activeSlide = 0;
+  const totalSlides = 5;
+
+  function updateSlide() {
+    // Update left side text highlighting (both mobile and desktop)
+    for (let i = 0; i < totalSlides; i++) {
+      // Update mobile elements
+      const mobileElement = document.getElementById(`slide-mobile-${i}`);
+      if (mobileElement) {
+        if (i === activeSlide) {
+          mobileElement.className =
+            "font-blockquote text-4xl font-bold uppercase transition-all duration-500 text-cyan-300 pb-2 relative";
+          mobileElement.style.transition = "color 500ms ease-in-out";
+          mobileElement.style.setProperty('--border-width', '100%');
+        } else {
+          mobileElement.className =
+            "font-blockquote text-4xl font-bold uppercase transition-all duration-500 text-white pb-2 relative";
+          mobileElement.style.transition = "color 500ms ease-in-out";
+          mobileElement.style.setProperty('--border-width', '0%');
+        }
+      }
+      
+      // Update desktop elements
+      const desktopElement = document.getElementById(`slide-${i}`);
+      if (desktopElement) {
+        if (i === activeSlide) {
+          desktopElement.className =
+            "font-blockquote text-6xl font-bold uppercase transition-all duration-500 text-cyan-300 pb-2 relative";
+          desktopElement.style.transition = "color 500ms ease-in-out";
+          desktopElement.style.setProperty('--border-width', '100%');
+        } else {
+          desktopElement.className =
+            "font-blockquote text-6xl font-bold uppercase transition-all duration-500 text-white pb-2 relative";
+          desktopElement.style.transition = "color 500ms ease-in-out";
+          desktopElement.style.setProperty('--border-width', '0%');
+        }
+      }
+    }
+
+    // Update background images with smoother crossfade
+    for (let i = 0; i < totalSlides; i++) {
+      const contentElement = document.getElementById(`content-${i}`);
+      if (contentElement) {
+        if (i === activeSlide) {
+          // Fade in the active slide
+          contentElement.className =
+            "absolute inset-0 transition-opacity ease-in-out opacity-100";
+          contentElement.style.transitionDuration = '3000ms';
+        } else {
+          // Fade out inactive slides
+          contentElement.className =
+            "absolute inset-0 transition-opacity ease-in-out opacity-0";
+          contentElement.style.transitionDuration = '3000ms';
+        }
+      }
+    }
+
+    // Update right side text overlays (desktop only)
+    for (let i = 0; i < totalSlides; i++) {
+      const textElement = document.getElementById(`text-content-${i}`);
+      if (textElement) {
+        if (i === activeSlide) {
+          textElement.className = "space-y-2 opacity-100 absolute bottom-0 left-0 transition-opacity duration-300 pl-8 pb-8";
+        } else {
+          textElement.className = "space-y-2 opacity-0 absolute bottom-0 left-0 transition-opacity duration-300 pl-8 pb-8";
+        }
+      }
+    }
+  }
+
+  function nextSlide() {
+    activeSlide = (activeSlide + 1) % totalSlides;
+    updateSlide();
+  }
+
+  // Initialize the slideshow
+  document.addEventListener("DOMContentLoaded", function () {
+    updateSlide();
+    // Auto-advance slides every 5 seconds
+    setInterval(nextSlide, 5000);
+  });
+</script>
+
+<style>
+  /* Sliding border effect */
+  h2[id^="slide-"]::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    background-color: #22d3ee; /* cyan-300 */
+    width: var(--border-width, 0%);
+    transition: width 650ms ease-in-out;
+  }
+</style>

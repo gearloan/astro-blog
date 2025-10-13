@@ -1,0 +1,116 @@
+---
+import "../styles/global.css";
+import MainNav from '../components/utility/MainNav.tsx';
+import Tuner from '../components/utility/Tuner.astro';
+
+const { proseStyle = 'prose-none' } = Astro.props;
+const isEditorial = proseStyle === 'prose-editorial';
+
+const { section, wrapperClass, magazineTitle = "", fullWidth = false } = Astro.props;
+const { isDark } = Astro.props;
+// e.g., '/editorial/article-slug' → 'editorial'
+---
+<!doctype html>
+<html lang="en" class={isDark ? 'dark' : ''}>
+	<head>
+
+<script is:inline>
+(() => {
+  const root = document.documentElement;
+
+  // 1) classList.add/remove
+  const add = DOMTokenList.prototype.add;
+  DOMTokenList.prototype.add = function(...args) {
+    if (this === root.classList) console.log('[theme]', 'classList.add', args, new Error().stack);
+    return add.apply(this, args);
+  };
+  const remove = DOMTokenList.prototype.remove;
+  DOMTokenList.prototype.remove = function(...args) {
+    if (this === root.classList) console.warn('[theme]', 'classList.remove', args, new Error().stack);
+    return remove.apply(this, args);
+  };
+
+  // 2) setAttribute/removeAttribute on <html>
+  const setAttr = Element.prototype.setAttribute;
+  Element.prototype.setAttribute = function(name, value) {
+    if (this === root && name === 'class' && !String(value).includes('dark')) {
+      console.warn('[theme]', 'setAttribute("class", …) removed dark ->', value, new Error().stack);
+    }
+    return setAttr.call(this, name, value);
+  };
+  const remAttr = Element.prototype.removeAttribute;
+  Element.prototype.removeAttribute = function(name) {
+    if (this === root && name === 'class') {
+      console.warn('[theme]', 'removeAttribute("class") on <html>', new Error().stack);
+    }
+    return remAttr.call(this, name);
+  };
+
+  // 3) className property on <html>
+  const desc = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'className');
+  if (desc && desc.set) {
+    Object.defineProperty(HTMLElement.prototype, 'className', {
+      ...desc,
+      set(v) {
+        if (this === root && !String(v).includes('dark')) {
+          console.warn('[theme]', 'className= removed dark ->', v, new Error().stack);
+        }
+        return desc.set.call(this, v);
+      }
+    });
+  }
+})();
+</script>
+
+
+		<!--START preload fonts to prevent FOUT -->
+		<link rel="preload" href="/fonts/gotham/gothambold-webfont.woff" as="font" type="font/woff2" crossorigin="anonymous">
+		<link rel="preload" href="/fonts/gotham/gothambolditalic-webfont.woff" as="font" type="font/woff2" crossorigin="anonymous">
+		<link rel="preload" href="/fonts/gotham/gothambook-webfont.woff" as="font" type="font/woff2" crossorigin="anonymous">
+		<link rel="preload" href="/fonts/gotham/gothambookitalic-webfont.woff" as="font" type="font/woff2" crossorigin="anonymous">
+		<link rel="preload" href="/fonts/knockout/Knockout-HTF28-JuniorFeatherwt.otf" as="font" type="otf" crossorigin="anonymous">
+		<link rel="preload" href="/fonts/knockout/Knockout-HTF47-Bantamweight.otf" as="font" type="otf" crossorigin="anonymous">
+		<link rel="preload" href="/fonts/knockout/Knockout-HTF94-UltmtSumo.otf" as="font" type="otf" crossorigin="anonymous">
+		<link rel="preload" href="/fonts/mercury/Mercury Display Bold.otf" as="font" type="otf" crossorigin="anonymous">
+		<link rel="preload" href="/fonts/mercury/Mercury-TextG1Roman.otf" as="font" type="otf" crossorigin="anonymous">
+		<link rel="preload" href="/fonts/mercury/Mercury-TextG1Italic.otf" as="font" type="otf" crossorigin="anonymous">
+		<link rel="preload" href="/fonts/sohne/TestSohne-Extrafett.otf" as="font" type="otf" crossorigin="anonymous">
+		<!--END preload fonts to prevent FOUT -->
+
+    {import.meta.env.DEV && (
+      <style is:inline>
+        astro-dev-toolbar,[data-astro-dev-toolbar]{display:none!important}
+      </style>
+    )}
+
+        
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>AOPA - astro test</title>
+	</head>
+  <body class={`font-body flex flex-col dark:bg-gray-900 min-h-screen text-black dark:text-white mw-[1376px] ${wrapperClass}`}>
+    <div class="grow flex flex-col">
+      <div class="sticky top-0 z-50">
+        <MainNav section={section} magazineTitle={magazineTitle} client:load />
+      </div>
+    <main class={fullWidth ? "w-full" : "mx-auto w-full max-w-[1440px] px-4 md:px-6 lg:px-8"}>
+			<slot />
+		</main>
+    <Tuner proseStyle={proseStyle} />
+    </div>
+	</body>
+</html>
+
+<style>
+	html,
+	body {
+		margin: 0;
+		width: 100%;
+		height: 100%;
+		display: flex;
+  		flex-direction: column;
+	}
+</style>
