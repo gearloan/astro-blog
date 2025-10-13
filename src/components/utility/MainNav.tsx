@@ -20,7 +20,7 @@ export default function Nav({ section, magazineTitle }: Props) {
       if (
         drawerRef.current &&
         !drawerRef.current.contains(event.target as Node) &&
-        !(event.target as HTMLElement).closest('#hamburger')
+        !(event.target as HTMLElement).closest('[aria-label="Toggle user menu"]')
       ) {
         setIsOpen(false);
       }
@@ -43,9 +43,24 @@ export default function Nav({ section, magazineTitle }: Props) {
   <nav class="relative z-50 h-[75px] bg-aopa-dkblue shadow-md flex justify-between items-stretch">
     {/* LEFT SIDE — the ONLY hover trigger */}
     <div class="flex text-white h-full">
+      {/* Hamburger moved to left of AOPA - part of hover trigger */}
+      <div
+        id="hamburger"
+        data-section={section ?? 'default'}
+        class="
+          relative w-[75px] h-[75px] bg-aopa-ltblue flex flex-col justify-center items-center z-60 nav-trigger
+
+          data-[section=instruction]:bg-[#16d3c4] data-[section=instruction]:text-[#163372]
+        "
+      >
+        <span class="bar transition-transform duration-300 absolute w-8 h-1 rounded-lg bg-white top-[28px]"></span>
+        <span class="bar transition-opacity duration-300 absolute w-8 h-1 rounded-lg bg-white top-[36px]"></span>
+        <span class="bar transition-transform duration-300 absolute w-8 h-1 rounded-lg bg-white top-[44px]"></span>
+      </div>
+      
       <ul class="flex h-full font-heading nav-trigger">
         <li   class="
-          relative px-3 md:px-6 pr-6 md:pr-[2.5rem] h-full clip-angle
+          relative px-0 md:px-0 pr-6 md:pr-[2.5rem] h-full clip-angle
           flex items-center text-2xl tracking-wide
 
           /* default */
@@ -89,20 +104,15 @@ export default function Nav({ section, magazineTitle }: Props) {
 
     <div class="flex">
       <button
-        aria-label="Toggle menu"
+        aria-label="Toggle user menu"
         onClick={toggleMenu}
-        id="hamburger"
-        data-section={section ?? 'default'}
-        class={`
-          ml-6 relative w-[75px] h-[75px] bg-aopa-ltblue flex flex-col justify-center items-center z-60 
-
-          data-[section=instruction]:bg-[#16d3c4] data-[section=instruction]:text-[#163372]
-
-          ${isOpen ? 'open' : ''}`}
+        class="ml-6 relative w-[75px] h-[75px] bg-aopa-ltblue flex justify-center items-center hover:bg-opacity-80 transition-colors"
       >
-        <span class="bar transition-transform duration-300 absolute w-8 h-1 rounded-lg bg-white top-[28px]"></span>
-        <span class="bar transition-opacity duration-300 absolute w-8 h-1 rounded-lg bg-white top-[36px]"></span>
-        <span class="bar transition-transform duration-300 absolute w-8 h-1 rounded-lg bg-white top-[44px]"></span>
+        <img 
+          src="/images/home/index-a/avatar.svg" 
+          alt="User Avatar" 
+          class="w-8 h-8"
+        />
       </button>
     </div>
   </nav>
