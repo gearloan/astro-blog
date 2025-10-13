@@ -1,0 +1,293 @@
+---
+// Video slider component
+---
+
+<section class="py-16 bg-white" style="background: linear-gradient(rgb(242, 242, 242) 0%, rgb(139, 168, 189) 100%);">
+  <div class="max-w-6xl mx-auto px-4 md:px-8">
+    
+    <!-- Header -->
+    <div class="text-center mb-2">
+      <h2 class="text-3xl md:text-4xl font-heading text-gray-900 mb-8">Aviation Videos</h2>
+      <p class="text-lg text-gray-700 uppercase tracking-wide">Featured Playlists</p>
+    </div>
+
+    <!-- Playlist Tabs -->
+    <div class="flex justify-center mb-12">
+      <div class="flex bg-gray-100 rounded-full p-2">
+        <button 
+          class="px-6 py-4 rounded-full text-sm font-ui transition-all duration-200 playlist-tab border-0 outline-none" 
+          data-playlist="pilot-turbine"
+        >
+          AirVenture 2025
+        </button>
+        <button 
+          class="px-6 py-4 rounded-full text-sm font-ui bg-aopa-dkblue text-white transition-all duration-200 playlist-tab active border-0 outline-none" 
+          data-playlist="pilot-magazine"
+        >
+          Aopa Sweepstakes
+        </button>
+        <button 
+          class="px-6 py-4 rounded-full text-sm font-ui transition-all duration-200 playlist-tab border-0 outline-none" 
+          data-playlist="flight-training"
+        >
+          AOPA Presents
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full Width Video Slider Container -->
+  <div class="relative overflow-hidden w-full">
+    <div class="video-slider flex transition-transform duration-500 ease-out" id="videoSlider">
+      
+      <!-- Pilot Turbine Video -->
+      <div class="flex-shrink-0 px-2" style="width: 75vw;" data-video="pilot-turbine">
+        <div class="relative bg-aopa-dkblue rounded-3xl aspect-video flex items-center justify-center cursor-pointer hover:bg-opacity-90 transition-all duration-200" onclick="event.stopPropagation();">
+          <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center">
+            <svg class="w-8 h-8 text-aopa-dkblue ml-1" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pilot Magazine Video (Center) -->
+      <div class="flex-shrink-0 px-2" style="width: 75vw;" data-video="pilot-magazine">
+        <div class="relative bg-aopa-dkblue rounded-3xl aspect-video flex items-center justify-center cursor-pointer hover:bg-opacity-90 transition-all duration-200" onclick="event.stopPropagation();">
+          <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center">
+            <svg class="w-8 h-8 text-aopa-dkblue ml-1" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flight Training Video -->
+      <div class="flex-shrink-0 px-2" style="width: 75vw;" data-video="flight-training">
+        <div class="relative bg-aopa-dkblue rounded-3xl aspect-video flex items-center justify-center cursor-pointer hover:bg-opacity-90 transition-all duration-200" onclick="event.stopPropagation();">
+          <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center">
+            <svg class="w-8 h-8 text-aopa-dkblue ml-1" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Navigation Dots -->
+  <div class="max-w-6xl mx-auto px-4 md:px-8">
+    <div class="flex justify-center mt-8 space-x-2">
+      <button class="w-2 h-2 rounded-full bg-gray-300 transition-all duration-200 nav-dot" data-slide="0"></button>
+      <button class="w-2 h-2 rounded-full bg-aopa-dkblue transition-all duration-200 nav-dot active" data-slide="1"></button>
+      <button class="w-2 h-2 rounded-full bg-gray-300 transition-all duration-200 nav-dot" data-slide="2"></button>
+    </div>
+  </div>
+</section>
+
+<script>
+  class VideoSlider {
+    constructor() {
+      this.slider = document.getElementById('videoSlider');
+      this.currentSlide = 1; // Start at center slide
+      this.currentPlaylist = 'pilot-magazine'; // Start with Pilot Magazine
+      this.isDragging = false;
+      this.startX = 0;
+      this.currentX = 0;
+      this.initialTransform = 0;
+      
+      this.init();
+    }
+
+    init() {
+      // Set up the slider dimensions
+      this.setupSlider();
+      
+      // Set initial position to center slide (Pilot Magazine video)
+      this.currentSlide = 1; // Center slide
+      this.centerSlider();
+      
+      // Add event listeners
+      this.addEventListeners();
+    }
+
+    centerSlider() {
+      const containerWidth = this.slider.parentElement.offsetWidth;
+      const slideWidth = containerWidth * 0.75; // Each slide is 75% of container width
+      const centerOffset = (containerWidth - slideWidth) / 2; // Center the slide
+      const translateX = -this.currentSlide * slideWidth + centerOffset;
+      this.slider.style.transform = `translateX(${translateX}px)`;
+    }
+
+    setupSlider() {
+      // Set the slider to 300% width to accommodate 3 videos (75vw each)
+      this.slider.style.width = '300%';
+    }
+
+    addEventListeners() {
+      // Mouse events - only on slider container, not on videos
+      this.slider.addEventListener('mousedown', this.startDrag.bind(this));
+      document.addEventListener('mousemove', this.drag.bind(this));
+      document.addEventListener('mouseup', this.endDrag.bind(this));
+
+      // Touch events - only on slider container, not on videos
+      this.slider.addEventListener('touchstart', this.startDrag.bind(this));
+      document.addEventListener('touchmove', this.drag.bind(this));
+      document.addEventListener('touchend', this.endDrag.bind(this));
+
+      // Navigation dots
+      document.querySelectorAll('.nav-dot').forEach((dot, index) => {
+        dot.addEventListener('click', () => this.goToSlide(index));
+      });
+
+      // Playlist tabs
+      const tabs = document.querySelectorAll('.playlist-tab');
+      console.log('Found tabs:', tabs.length);
+      tabs.forEach(tab => {
+        tab.addEventListener('click', (e) => {
+          e.preventDefault();
+          console.log('Tab clicked:', e.target.dataset.playlist);
+          this.switchPlaylist(e.target);
+        });
+      });
+    }
+
+    startDrag(e) {
+      this.isDragging = true;
+      this.startX = e.type === 'mousedown' ? e.clientX : e.touches[0].clientX;
+      this.initialTransform = this.getCurrentTransform();
+      this.slider.style.cursor = 'grabbing';
+      e.preventDefault();
+    }
+
+    drag(e) {
+      if (!this.isDragging) return;
+      
+      this.currentX = e.type === 'mousemove' ? e.clientX : e.touches[0].clientX;
+      const diffX = this.currentX - this.startX;
+      const newTransform = this.initialTransform + diffX;
+      
+      this.slider.style.transform = `translateX(${newTransform}px)`;
+    }
+
+    endDrag(e) {
+      if (!this.isDragging) return;
+      
+      this.isDragging = false;
+      this.slider.style.cursor = 'grab';
+      
+      const diffX = this.currentX - this.startX;
+      const threshold = 100; // Minimum drag distance to change slide
+      
+      if (Math.abs(diffX) > threshold) {
+        if (diffX > 0 && this.currentSlide > 0) {
+          this.goToSlide(this.currentSlide - 1);
+        } else if (diffX < 0 && this.currentSlide < 2) {
+          this.goToSlide(this.currentSlide + 1);
+        } else {
+          this.updateSliderPosition();
+        }
+      } else {
+        this.updateSliderPosition();
+      }
+    }
+
+    goToSlide(slideIndex) {
+      this.currentSlide = slideIndex;
+      this.updateSliderPosition();
+      this.updateNavigationDots();
+    }
+
+    updateSliderPosition() {
+      const containerWidth = this.slider.parentElement.offsetWidth;
+      const slideWidth = containerWidth * 0.75; // Each slide is 75% of container width
+      const centerOffset = (containerWidth - slideWidth) / 2; // Center the slide
+      const translateX = -this.currentSlide * slideWidth + centerOffset;
+      this.slider.style.transform = `translateX(${translateX}px)`;
+    }
+
+
+    updateNavigationDots() {
+      document.querySelectorAll('.nav-dot').forEach((dot, index) => {
+        dot.classList.toggle('active', index === this.currentSlide);
+        dot.classList.toggle('bg-aopa-dkblue', index === this.currentSlide);
+        dot.classList.toggle('bg-gray-300', index !== this.currentSlide);
+      });
+    }
+
+    switchPlaylist(activeTab) {
+      console.log('Switching to video:', activeTab.dataset.playlist);
+      
+      // Update tab states
+      document.querySelectorAll('.playlist-tab').forEach(tab => {
+        tab.classList.remove('active', 'bg-aopa-dkblue', 'text-white');
+        tab.classList.add('text-gray-700');
+      });
+      
+      activeTab.classList.add('active', 'bg-aopa-dkblue', 'text-white');
+      activeTab.classList.remove('text-gray-700');
+      
+      // Find which video corresponds to this tab and slide to it
+      const videos = this.slider.querySelectorAll('[data-video]');
+      let targetSlide = 1; // Default to center
+      
+      videos.forEach((video, index) => {
+        if (video.dataset.video === activeTab.dataset.playlist) {
+          targetSlide = index;
+        }
+      });
+      
+      console.log('Sliding to video at index:', targetSlide);
+      this.goToSlide(targetSlide);
+    }
+
+    getCurrentTransform() {
+      const transform = this.slider.style.transform;
+      const match = transform.match(/translateX\(([^)]+)px\)/);
+      return match ? parseFloat(match[1]) : 0;
+    }
+  }
+
+  // Initialize slider when DOM is loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    new VideoSlider();
+  });
+</script>
+
+<style>
+  .video-slider {
+    cursor: grab;
+  }
+  
+  .video-slider:active {
+    cursor: grabbing;
+  }
+  
+  .playlist-tab.active {
+    background-color: #0a2d3a;
+    color: white;
+  }
+  
+  .nav-dot.active {
+    background-color: #0a2d3a;
+  }
+  
+  .playlist-tab {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  
+  .playlist-tab:focus {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  
+  .playlist-tab:active {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+</style>
