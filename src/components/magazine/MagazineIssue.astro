@@ -11,26 +11,26 @@ const bgColor = props.bgColor;
 // Now it's safe to reference `posts`
 const heroStory = posts.find(
   post =>
-    Array.isArray(post.magazinePresentationOptions?.presentationslots) &&
-    post.magazinePresentationOptions.presentationslots.includes('hero')
+    Array.isArray(post.presentationSettings?.presentationSlots) &&
+    post.presentationSettings.presentationSlots.includes('hero')
 );
 
 const featuredStories = posts
   .filter(
     post =>
-      Array.isArray(post.magazinePresentationOptions?.presentationslots) &&
-      post.magazinePresentationOptions.presentationslots.includes('featured')
+      Array.isArray(post.presentationSettings?.presentationSlots) &&
+      post.presentationSettings.presentationSlots.includes('featured')
   )
   .reverse();
 
 const teaserStories = posts.filter(
   post =>
-    Array.isArray(post.magazinePresentationOptions?.presentationslots) &&
-    post.magazinePresentationOptions.presentationslots.includes('teaser')
+    Array.isArray(post.presentationSettings?.presentationSlots) &&
+    post.presentationSettings.presentationSlots.includes('teaser')
 );
 
-const line1 = heroStory?.magazinePresentationOptions?.heroTitleLine1 ?? heroStory?.title ?? '';
-const line2 = heroStory?.magazinePresentationOptions?.heroTitleLine2 ?? '';
+const line1 = heroStory?.presentationSettings?.heroTitleLine1 ?? heroStory?.title ?? '';
+const line2 = heroStory?.presentationSettings?.heroTitleLine2 ?? '';
 console.log('✅ MagazineIssue component initialized');
 ---
 
@@ -80,7 +80,7 @@ console.log('✅ MagazineIssue component initialized');
           <ul class="tracking-wide">
             {teaserStories.map(story => (
               <li class="font-subheading text-3xl uppercase mb-3 hover:opacity-75">
-                <a href={`/magazine-post/${story.slug}`}>{story.title}</a>
+                <a href={`/magazine-post/${story.slug}`}>{story?.title ?? 'No Title'}</a>
               </li>
             ))}
           </ul>
@@ -100,10 +100,10 @@ console.log('✅ MagazineIssue component initialized');
           return (
             <article>
               <a href={`/magazine-post/${story.slug}`}>
-                <img class="w-full" src={thumb} alt={story.title} />
+                <img class="w-full" src={thumb} alt={story?.title ?? 'Story image'} />
               </a>
               <a href={`/magazine-post/${story.slug}`}>
-                <h3 class="mb-2 mt-4 font-subheading text-3xl uppercase">{story.title}</h3>
+                <h3 class="mb-2 mt-4 font-subheading text-3xl uppercase">{story?.title ?? 'No Title'}</h3>
               </a>
               <p class="mb-2">
                 {story.excerpt.replace(/<[^>]*>/g, '').split(' ').slice(0, 30).join(' ') + '...'}

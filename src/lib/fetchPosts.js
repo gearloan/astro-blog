@@ -23,7 +23,7 @@ export async function fetchPosts(opts = {}) {
         nodes {
           id
           slug
-          title
+          title(format: RENDERED)
           excerpt
           date
           author { node { name } }
@@ -33,7 +33,7 @@ export async function fetchPosts(opts = {}) {
               mediaDetails { sizes { name sourceUrl } }
             }
           }
-          magazinePresentationOptions {
+          presentationSettings {
             presentationSlots
             teaserLine1
             teaserLine2
@@ -76,8 +76,8 @@ export async function fetchPosts(opts = {}) {
   if (!tag) {
     const editorial = allPosts.filter(
       (p) =>
-        !Array.isArray(p?.magazinePresentationOptions?.presentationSlots) ||
-        p.magazinePresentationOptions.presentationSlots.length === 0
+        !Array.isArray(p?.presentationSettings?.presentationSlots) ||
+        p.presentationSettings.presentationSlots.length === 0
     );
     return editorial.slice(0, limit);
   }

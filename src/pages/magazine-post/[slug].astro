@@ -34,7 +34,7 @@ const { slug } = Astro.params;
 const { postBy: post } = await getPost(slug);
 if (!post) throw new Error(`Post not found: ${slug}`);
 
-const slots = post?.magazinePresentationOptions?.presentationSlots ?? [];
+const slots = post?.presentationSettings?.presentationSlots ?? [];
 const isFeatured = Array.isArray(slots) && slots.some(s => String(s).toLowerCase() === 'featured');
 
 const Media = pickMediaComponent(post.formatSlug ?? 'longform');

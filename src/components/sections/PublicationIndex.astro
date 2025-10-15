@@ -20,7 +20,7 @@ if (!posts?.length) throw new Error(`No posts returned for tag "${pub}"`);
 
 // helpers
 const slots = (p: any) =>
-  (p?.magazinePresentationOptions?.presentationSlots ?? [])
+  (p?.presentationSettings?.presentationSlots ?? [])
     .map((s: any) => String(s).toLowerCase().trim());
 const hasSlot = (p: any, name: string) => slots(p).includes(name);
 
@@ -49,11 +49,17 @@ if (forcedIssueKey && issuePosts.length === 0) {
   throw new Error(`No posts found for issue ${forcedIssueKey} (${pub})`);
 }
 
+// If no posts found for this issue, show a fallback message
+if (issuePosts.length === 0) {
+  throw new Error(`No posts found for ${pub} magazine`);
+}
+
 // ---- Hero + lists (scoped to the issue) ----
 const heroStory =
   issuePosts.find((p: any) => hasSlot(p, 'hero')) ??
   issuePosts.find((p: any) => hasSlot(p, 'featured')) ??
-  issuePosts[0];
+  issuePosts[0] ??
+  null;
 
 const used = new Set([heroStory?.slug].filter(Boolean));
 
@@ -63,14 +69,14 @@ const issueLabel = labelFromIssueKey(issueKey);         // uses Date.UTC interna
 const issueLink = issueKey ? `/${pub}/${issueKey}` : `/${pub}`;
 
 const featuredStories = issuePosts.filter((p: any) => {
-  if (!p?.slug || used.has(p.slug)) return false;
+  if (!p?.slug || !p?.title || used.has(p.slug)) return false;
   const ok = hasSlot(p, 'featured');
   if (ok) used.add(p.slug);
   return ok;
 });
 
 let teaserStories = issuePosts.filter((p: any) => {
-  if (!p?.slug || used.has(p.slug)) return false;
+  if (!p?.slug || !p?.title || used.has(p.slug)) return false;
   const ok = hasSlot(p, 'teaser');
   if (ok) used.add(p.slug);
   return ok;
@@ -79,7 +85,7 @@ let teaserStories = issuePosts.filter((p: any) => {
 // fallback if no teasers: take next 3 unused within the issue
 if (teaserStories.length === 0) {
   for (const p of issuePosts as any[]) {
-    if (!p?.slug || used.has(p.slug)) continue;
+    if (!p?.slug || !p?.title || used.has(p.slug)) continue;
     teaserStories.push(p);
     used.add(p.slug);
     if (teaserStories.length >= 3) break;
@@ -87,8 +93,9 @@ if (teaserStories.length === 0) {
 }
 
 // hero title lines with sane defaults
-const line1 = heroStory?.magazinePresentationOptions?.heroTitleLine1 ?? heroStory?.title ?? '';
-const line2 = heroStory?.magazinePresentationOptions?.heroTitleLine2 ?? '';
+const line1 = heroStory?.presentationSettings?.heroTitleLine1 ?? heroStory?.title ?? 'No Title Available';
+const line2 = heroStory?.presentationSettings?.heroTitleLine2 ?? '';
+
 
 // pub-specific sidebar meta (with fallback)
 const publicationMeta = {
@@ -186,7 +193,7 @@ const heroStyle = [
             <ul class="tracking-wide">
               {teaserStories.map((story: any) => (
                 <li class="text-3xl uppercase mb-3 hover:opacity-75">
-                  <h4><a href={`/magazine-post/${story.slug}`}>{story.title}</a></h4>
+                  <h4><a href={`/magazine-post/${story.slug}`}>{story?.title ?? 'No Title'}</a></h4>
                 </li>
               ))}
             </ul>
@@ -216,7 +223,7 @@ const heroStyle = [
                   <div class="relative aspect-video overflow-hidden rounded bg-black">
                     <img
                       src={thumb}
-                      alt={story.title}
+                      alt={story?.title ?? 'Story image'}
                       class="absolute inset-0 block h-full w-full object-cover object-center transform-gpu will-change-transform scale-[1.01]"
                       loading="lazy"
                       decoding="async"
@@ -228,7 +235,7 @@ const heroStyle = [
                 </a>
 
                 <a href={`/magazine-post/${story.slug}`}>
-                  <h3 class="mb-2 mt-4 text-3xl uppercase">{story.title}</h3>
+                  <h3 class="mb-2 mt-4 text-3xl uppercase">{story?.title ?? 'No Title'}</h3>
                 </a>
 
                 <p class="mb-2">

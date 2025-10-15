@@ -109,7 +109,7 @@ export default function Nav({ section, magazineTitle }: Props) {
         class="ml-6 relative w-[75px] h-[75px] bg-aopa-ltblue flex justify-center items-center hover:bg-opacity-80 transition-colors"
       >
         <img 
-          src="/images/home/index-a/avatar.svg" 
+          src="/images/home/avatar.svg" 
           alt="User Avatar" 
           class="w-8 h-8"
         />

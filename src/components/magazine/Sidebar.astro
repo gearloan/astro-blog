@@ -227,7 +227,7 @@ const width = `${pct}%`;
               >
                 <span class="inline-flex items-center gap-2">
                   <span class="read-dot inline-block h-2 w-2 rounded-full bg-white/30" aria-hidden="true"></span>
-                  <span class="line-clamp-2 text-left">{p.title}</span>
+                  <span class="line-clamp-2 text-left">{p?.title ?? 'No Title'}</span>
                 </span>
               </a>
             </li>

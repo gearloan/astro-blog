@@ -5,7 +5,7 @@ export const POST_BY_SLUG = gql`
   query PostBySlug($slug: String!) {
     postBy(slug: $slug) {
       id
-      title
+      title(format: RENDERED)
       date
       content(format: RENDERED)
       formatSlug
@@ -17,17 +17,15 @@ export const POST_BY_SLUG = gql`
           mediaDetails { sizes { name sourceUrl } }
         }
       }
-      magazinePresentationOptions {
+      presentationSettings {
         presentationSlots        # => e.g. ["hero","featured","teaser"]
+        proseStyle
       }
       author { node { name } }
       tags { nodes { slug name } }
 
       # Fallback for prose style resolution
       categories { nodes { slug name } }
-
-      # Keep this if it exists in your schema; remove if it errors
-      presentationSettings { proseStyle }
     }
   }
 `;

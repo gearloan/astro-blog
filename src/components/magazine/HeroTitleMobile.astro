@@ -3,21 +3,21 @@ import { fetchPosts } from '../../lib/fetchPosts.js';
 const posts = await fetchPosts({ tag: 'pilot' });
 
 const heroStory = posts.find(
-  post => post.magazinePresentationOptions?.presentationSlots?.includes('hero')
+  post => post.presentationSettings?.presentationSlots?.includes('hero')
 );
 
 console.log({
-  title: heroStory.title,
-  line1: heroStory.heroTitleLine1,
-  line2: heroStory.heroTitleLine2
+  title: heroStory?.title,
+  line1: heroStory?.heroTitleLine1,
+  line2: heroStory?.heroTitleLine2
 });
 
 const teaserStories = posts.filter(
-  post => post.magazinePresentationOptions?.presentationSlots?.includes('teaser')
+  post => post.presentationSettings?.presentationSlots?.includes('teaser')
 );
 
-const line1 = heroStory.magazinePresentationOptions?.heroTitleLine1 ?? heroStory.title;
-const line2 = heroStory.magazinePresentationOptions?.heroTitleLine2 ?? '';
+const line1 = heroStory?.presentationSettings?.heroTitleLine1 ?? heroStory?.title ?? 'No Title Available';
+const line2 = heroStory?.presentationSettings?.heroTitleLine2 ?? '';
 
 const date = new Date(heroStory?.date ?? '');
 const badgeMonth = date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase(); // → "OCT"
@@ -56,7 +56,7 @@ const badgeYear = date.getUTCFullYear(); // → 2025
   <ul class="mt-4 space-y-2 ">
     {teaserStories.map(story => (
       <li class="font-subheading text-2xl uppercase hover:opacity-75">
-        <a href={`/magazine-post/${story.slug}`}>{story.title}</a>
+        <a href={`/magazine-post/${story.slug}`}>{story?.title ?? 'No Title'}</a>
       </li>
     ))}
   </ul>
