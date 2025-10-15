@@ -158,6 +158,11 @@
           this.switchPlaylist(e.target);
         });
       });
+
+      // Resize event listener to fix tab pill positioning
+      window.addEventListener('resize', () => {
+        this.handleResize();
+      });
     }
 
 
@@ -224,16 +229,29 @@
     moveTabPill(activeTab) {
       const pill = document.getElementById('tabPill');
       const tabContainer = activeTab.parentElement;
-      const tabRect = activeTab.getBoundingClientRect();
-      const containerRect = tabContainer.getBoundingClientRect();
       
-      // Calculate the position relative to the container
-      const left = tabRect.left - containerRect.left;
-      const width = tabRect.width;
+      // Use offsetLeft and offsetWidth for more reliable positioning
+      const left = activeTab.offsetLeft;
+      const width = activeTab.offsetWidth;
       
       // Move the pill to the active tab position
       pill.style.left = `${left}px`;
       pill.style.width = `${width}px`;
+    }
+
+    handleResize() {
+      // Debounce resize events to avoid excessive calculations
+      clearTimeout(this.resizeTimeout);
+      this.resizeTimeout = setTimeout(() => {
+        // Update slider position
+        this.updateSliderPosition();
+        
+        // Recalculate tab pill position for the active tab
+        const activeTab = document.querySelector('.playlist-tab.active');
+        if (activeTab) {
+          this.moveTabPill(activeTab);
+        }
+      }, 100);
     }
 
   }
