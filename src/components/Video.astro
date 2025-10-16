@@ -44,7 +44,7 @@
     <div class="video-slider flex transition-transform duration-500 ease-out" id="videoSlider">
       
       <!-- AirVenture 2025 Video -->
-      <div class="flex-shrink-0 px-2" style="width: 75vw;" data-video="pilot-turbine">
+      <div class="flex-shrink-0 px-2" style="width: 45vw;" data-video="pilot-turbine">
         <div class="relative rounded-3xl aspect-video overflow-hidden">
           <iframe 
             width="100%" 
@@ -60,7 +60,7 @@
       </div>
 
       <!-- AOPA Sweepstakes Video (Center) -->
-      <div class="flex-shrink-0 px-2" style="width: 75vw;" data-video="pilot-magazine">
+      <div class="flex-shrink-0 px-2" style="width: 45vw;" data-video="pilot-magazine">
         <div class="relative rounded-3xl aspect-video overflow-hidden">
           <iframe 
             width="100%" 
@@ -76,7 +76,7 @@
       </div>
 
       <!-- AOPA Presents Video -->
-      <div class="flex-shrink-0 px-2" style="width: 75vw;" data-video="flight-training">
+      <div class="flex-shrink-0 px-2" style="width: 45vw;" data-video="flight-training">
         <div class="relative rounded-3xl aspect-video overflow-hidden">
           <iframe 
             width="100%" 
@@ -131,14 +131,14 @@
 
     centerSlider() {
       const containerWidth = this.slider.parentElement.offsetWidth;
-      const slideWidth = containerWidth * 0.75; // Each slide is 75% of container width
+      const slideWidth = containerWidth * 0.45; // Each slide is 45% of container width
       const centerOffset = (containerWidth - slideWidth) / 2; // Center the slide
       const translateX = -this.currentSlide * slideWidth + centerOffset;
       this.slider.style.transform = `translateX(${translateX}px)`;
     }
 
     setupSlider() {
-      // Set the slider to 300% width to accommodate 3 videos (75vw each)
+      // Set the slider to 300% width to accommodate 3 videos (45vw each)
       this.slider.style.width = '300%';
     }
 
@@ -174,7 +174,7 @@
 
     updateSliderPosition() {
       const containerWidth = this.slider.parentElement.offsetWidth;
-      const slideWidth = containerWidth * 0.75; // Each slide is 75% of container width
+      const slideWidth = containerWidth * 0.45; // Each slide is 45% of container width
       const centerOffset = (containerWidth - slideWidth) / 2; // Center the slide
       const translateX = -this.currentSlide * slideWidth + centerOffset;
       this.slider.style.transform = `translateX(${translateX}px)`;
