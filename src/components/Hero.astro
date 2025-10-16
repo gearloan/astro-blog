@@ -4,14 +4,43 @@
 
 <!-- Hero Section with Weather Widget -->
 <section class="relative w-full md:h-[87vh] h-[75vh] overflow-hidden">
-  <!-- Background Image -->
+  <!-- Background Video -->
   <div class="absolute inset-0">
+    <!-- Desktop Video -->
+    <video
+      class="hidden md:block w-full h-full object-cover object-bottom"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="metadata"
+    >
+      <source src="/video/hero-video-desktop.mp4" type="video/mp4">
+      <!-- Fallback image for browsers that don't support video -->
       <img
         src="/images/home/hero-cessna-desktop.jpg"
         alt="Piper M600 flying over water at sunset"
         class="w-full h-full object-cover object-bottom"
-        loading="eager"
       />
+    </video>
+    
+    <!-- Mobile Video -->
+    <video
+      class="block md:hidden w-full h-full object-cover object-bottom"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="metadata"
+    >
+      <source src="/video/hero-video-mobile.mp4" type="video/mp4">
+      <!-- Fallback image for browsers that don't support video -->
+      <img
+        src="/images/home/hero-cessna-desktop.jpg"
+        alt="Piper M600 flying over water at sunset"
+        class="w-full h-full object-cover object-bottom"
+      />
+    </video>
   </div>
 
   <!-- Main Content Overlay -->
