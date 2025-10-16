@@ -2,60 +2,166 @@
 // Sponsors component
 ---
 
-<section class="py-12 bg-gray-50">
-  <div class="max-w-6xl mx-auto px-4 md:px-8">
+<section class="relative py-12 overflow-hidden">
+  <!-- Background Image -->
+  <div class="absolute inset-0">
+    <img
+      src="/images/home/hero-cessna-desktop.jpg"
+      alt="Piper M600 flying over water at sunset"
+      class="w-full h-full object-cover object-center"
+    />
+    <!-- Dark overlay for better text readability -->
+    <div class="absolute inset-0 bg-black/40"></div>
+  </div>
+  
+  <!-- Content -->
+  <div class="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
     
     <!-- Header -->
-    <div class="text-center mb-8">
-      <h2 class="text-2xl md:text-3xl font-heading text-gray-900 uppercase mb-2">Our Partners</h2>
-      <div class="w-24 h-px bg-aopa-ltblue mx-auto"></div>
+    <div class="text-center mb-12">
+      <h2 class="text-2xl md:text-3xl font-heading text-white uppercase mb-2">Our Partners</h2>
+      <div class="w-24 h-px bg-white mx-auto"></div>
     </div>
 
-    <!-- Sponsors Grid -->
-    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 items-center">
-      
-      <!-- Sponsor 1 -->
-      <div class="flex items-center justify-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
-        <div class="w-24 h-16 bg-gray-200 flex items-center justify-center">
-          <span class="text-xs text-gray-500">Logo 1</span>
+    <!-- Strategic Partners -->
+    <div class="mb-12">
+      <h3 class="text-lg md:text-xl font-heading text-white uppercase text-center mb-6">Strategic Partners</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-center">
+        
+        <!-- AOPA Partners Aerospace -->
+        <div class="flex items-center justify-center p-1 bg-white/70 hover:bg-white/90 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 h-24 group">
+          <img
+            src="/images/sponsors/strategic/AOPA-partners-aerospace.png"
+            alt="AOPA Partners Aerospace"
+            class="w-60 h-30 object-contain grayscale group-hover:grayscale-0 transition-all duration-300"
+          />
         </div>
-      </div>
 
-      <!-- Sponsor 2 -->
-      <div class="flex items-center justify-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
-        <div class="w-24 h-16 bg-gray-200 flex items-center justify-center">
-          <span class="text-xs text-gray-500">Logo 2</span>
+        <!-- AOPA Partners Aircraft Spruce -->
+        <div class="flex items-center justify-center p-1 bg-white/70 hover:bg-white/90 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 h-24 group">
+          <img
+            src="/images/sponsors/strategic/AOPA-partners-aircraft-spruce.png"
+            alt="AOPA Partners Aircraft Spruce"
+            class="w-60 h-30 object-contain grayscale group-hover:grayscale-0 transition-all duration-300"
+          />
         </div>
-      </div>
 
-      <!-- Sponsor 3 -->
-      <div class="flex items-center justify-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
-        <div class="w-24 h-16 bg-gray-200 flex items-center justify-center">
-          <span class="text-xs text-gray-500">Logo 3</span>
+        <!-- AOPA Partners Mastercard -->
+        <div class="flex items-center justify-center p-1 bg-white/70 hover:bg-white/90 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 h-24 group">
+          <img
+            src="/images/sponsors/strategic/AOPA-partners-mastercard.png"
+            alt="AOPA Partners Mastercard"
+            class="w-60 h-30 object-contain grayscale group-hover:grayscale-0 transition-all duration-300"
+          />
         </div>
-      </div>
 
-      <!-- Sponsor 4 -->
-      <div class="flex items-center justify-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
-        <div class="w-24 h-16 bg-gray-200 flex items-center justify-center">
-          <span class="text-xs text-gray-500">Logo 4</span>
+        <!-- AP Stacked Insurance -->
+        <div class="flex items-center justify-center p-1 bg-white/70 hover:bg-white/90 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 h-24 group">
+          <img
+            src="/images/sponsors/strategic/ap_stackedinsurance_color_rgb_01.png"
+            alt="AP Stacked Insurance"
+            class="w-60 h-30 object-contain grayscale group-hover:grayscale-0 transition-all duration-300"
+          />
         </div>
-      </div>
 
-      <!-- Sponsor 5 -->
-      <div class="flex items-center justify-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
-        <div class="w-24 h-16 bg-gray-200 flex items-center justify-center">
-          <span class="text-xs text-gray-500">Logo 5</span>
+        <!-- FF Boeing -->
+        <div class="flex items-center justify-center p-1 bg-white/70 hover:bg-white/90 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 h-24 group">
+          <img
+            src="/images/sponsors/strategic/FF-boeing_black.png"
+            alt="FF Boeing"
+            class="w-60 h-30 object-contain grayscale group-hover:grayscale-0 transition-all duration-300"
+          />
         </div>
-      </div>
 
-      <!-- Sponsor 6 -->
-      <div class="flex items-center justify-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
-        <div class="w-24 h-16 bg-gray-200 flex items-center justify-center">
-          <span class="text-xs text-gray-500">Logo 6</span>
+        <!-- SiriusXM Media Aviation -->
+        <div class="flex items-center justify-center p-1 bg-white/70 hover:bg-white/90 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 h-24 group">
+          <img
+            src="/images/sponsors/strategic/SiriusXM MEDIA AVIATION BLUE LANDSCAPE RGB.png"
+            alt="SiriusXM Media Aviation"
+            class="w-60 h-30 object-contain grayscale group-hover:grayscale-0 transition-all duration-300"
+          />
         </div>
-      </div>
 
+      </div>
+    </div>
+
+    <!-- Premier Partners -->
+    <div class="mb-12">
+      <h3 class="text-lg md:text-xl font-heading text-white uppercase text-center mb-6">Premier Partners</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center justify-center max-w-2xl mx-auto">
+        
+        <!-- Breitling -->
+        <div class="flex items-center justify-center p-1 bg-white/80 hover:bg-white/90 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 h-20 group">
+          <img
+            src="/images/sponsors/premier/Breitling-Logo215x60white.png "
+            alt="Breitling"
+            class="w-48 h-24 object-contain grayscale group-hover:grayscale-0 transition-all duration-300"
+          />
+        </div>
+
+        <!-- Sporty's -->
+        <div class="flex items-center justify-center p-1 bg-white/80 hover:bg-white/90 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 h-20 group">
+          <img
+            src="/images/sponsors/premier/Sportys_logo_w_prop_blue-withPadding.png"
+            alt="Sporty's"
+            class="w-48 h-24 object-contain grayscale group-hover:grayscale-0 transition-all duration-300"
+          />
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Supporting Sponsors -->
+    <div class="mb-8">
+      <h3 class="text-lg md:text-xl font-heading text-white uppercase text-center mb-6">Supporting Sponsors</h3>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 items-center">
+        
+        <!-- AOPA Partners Avis -->
+        <div class="flex items-center justify-center p-1 bg-white/50 hover:bg-white/90 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 h-16 group">
+          <img
+            src="/images/sponsors/supporting/AOPA-partners-avis-slickSliderCrop.png"
+            alt="AOPA Partners Avis"
+            class="w-36 h-18 object-contain grayscale group-hover:grayscale-0 transition-all duration-300"
+          />
+        </div>
+
+        <!-- AOPA Partners CAU -->
+        <div class="flex items-center justify-center p-1 bg-white/50 hover:bg-white/90 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 h-16 group">
+          <img
+            src="/images/sponsors/supporting/AOPA-partners-CAU.png"
+            alt="AOPA Partners CAU"
+            class="w-36 h-18 object-contain grayscale group-hover:grayscale-0 transition-all duration-300"
+          />
+        </div>
+
+        <!-- AOPA Partners Enterprise -->
+        <div class="flex items-center justify-center p-1 bg-white/50 hover:bg-white/90 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 h-16 group">
+          <img
+            src="/images/sponsors/supporting/AOPA-partners-enterprise.png"
+            alt="AOPA Partners Enterprise"
+            class="w-36 h-18 object-contain grayscale group-hover:grayscale-0 transition-all duration-300"
+          />
+        </div>
+
+        <!-- AOPA Partners Hertz -->
+        <div class="flex items-center justify-center p-1 bg-white/50 hover:bg-white/90 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 h-16 group">
+          <img
+            src="/images/sponsors/supporting/AOPA-partners-Hertz.png"
+            alt="AOPA Partners Hertz"
+            class="w-36 h-18 object-contain grayscale group-hover:grayscale-0 transition-all duration-300"
+          />
+        </div>
+
+        <!-- AOPA Partners JSFirm -->
+        <div class="flex items-center justify-center p-1 bg-white/50 hover:bg-white/90 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 h-16 group">
+          <img
+            src="/images/sponsors/supporting/AOPA-partners-jsfirm.png"
+            alt="AOPA Partners JSFirm"
+            class="w-36 h-18 object-contain grayscale group-hover:grayscale-0 transition-all duration-300"
+          />
+        </div>
+
+      </div>
     </div>
 
   </div>
