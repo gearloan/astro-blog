@@ -134,7 +134,10 @@
       const slideWidth = containerWidth * 0.45; // Each slide is 45% of container width
       const centerOffset = (containerWidth - slideWidth) / 2; // Center the slide
       const translateX = -this.currentSlide * slideWidth + centerOffset;
-      this.slider.style.transform = `translateX(${translateX}px)`;
+      
+      // Add a small adjustment to ensure perfect centering
+      const adjustment = Math.round(translateX);
+      this.slider.style.transform = `translateX(${adjustment}px)`;
     }
 
     setupSlider() {
@@ -177,7 +180,10 @@
       const slideWidth = containerWidth * 0.45; // Each slide is 45% of container width
       const centerOffset = (containerWidth - slideWidth) / 2; // Center the slide
       const translateX = -this.currentSlide * slideWidth + centerOffset;
-      this.slider.style.transform = `translateX(${translateX}px)`;
+      
+      // Add a small adjustment to ensure perfect centering
+      const adjustment = Math.round(translateX);
+      this.slider.style.transform = `translateX(${adjustment}px)`;
     }
 
 
