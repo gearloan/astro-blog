@@ -123,10 +123,10 @@
             <!-- Weather Header -->
             <div class="flex items-center gap-3 mb-4 mr-4 md:mr-10">
               <div
-                class="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center aspect-square"
+                class="w-12 h-12 bg-green-400 rounded-full flex items-center justify-center aspect-square weather-sun-container"
               >
                 <svg
-                  class="w-8 h-8 text-yellow-600"
+                  class="w-8 h-8 text-green-600 weather-sun-icon"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -138,10 +138,10 @@
               </div>
               <div class="flex-1">
                 <h3 class="font-ui text-slate-600 text-base whitespace-nowrap">Aviation Weather</h3>
-                <p class="text-sm text-slate-600">
+                <p class="text-sm text-slate-600 weather-timestamp">
                   Frederick Municipal Airport | 8am Friday
                 </p>
-                <p class="text-slate-600 text-xs md:text-base font-medium">
+                <p class="text-slate-600 text-xs md:text-base font-medium weather-conditions">
                   CLEAR SKIES, CALM WINDS
                 </p>
               </div>
@@ -153,7 +153,7 @@
             >
               <!-- Temperature -->
               <div class="text-center">
-                <div class="font-blockquote text-5xl md:text-7xl font-bold text-slate-600">
+                <div class="font-blockquote text-5xl md:text-7xl font-bold text-slate-600 weather-temp">
                   58°
                 </div>
                 <div class="text-xs text-slate-600">TEMP</div>
@@ -162,7 +162,7 @@
               <!-- Wind -->
               <div class="text-center">
                 <div
-                  class="font-blockquote text-5xl md:text-7xl font-bold text-slate-600 flex items-center justify-center gap-1"
+                  class="font-blockquote text-5xl md:text-7xl font-bold text-slate-600 flex items-center justify-center gap-1 weather-wind"
                 >
                   3
                   <svg
@@ -181,7 +181,7 @@
 
               <!-- Visibility -->
               <div class="text-center hidden md:block">
-                <div class="font-blockquote text-4xl md:text-7xl font-bold text-slate-600">
+                <div class="font-blockquote text-4xl md:text-7xl font-bold text-slate-600 weather-visibility">
                   10
                 </div>
                 <div class="text-xs text-slate-600">MILES</div>
@@ -191,7 +191,7 @@
               <!-- Pressure -->
               <div class="text-center">
                 <div
-                  class="font-blockquote text-5xl md:text-7xl font-bold text-slate-600 flex items-center justify-center gap-1"
+                  class="font-blockquote text-5xl md:text-7xl font-bold text-slate-600 flex items-center justify-center gap-1 weather-pressure"
                 >
                   30.51
                   <svg
@@ -312,4 +312,8 @@
       });
     });
   });
+</script>
+
+<script>
+  import weatherWidget from '../scripts/weather-widget.ts';
 </script>
