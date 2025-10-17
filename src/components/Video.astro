@@ -44,7 +44,7 @@
     <div class="video-slider flex transition-transform duration-500 ease-out" id="videoSlider">
       
       <!-- AirVenture 2025 Video -->
-      <div class="flex-shrink-0 px-4" style="width: 45vw;" data-video="pilot-turbine">
+      <div class="flex-shrink-0 px-4 w-[80vw] md:w-[45vw]" data-video="pilot-turbine">
         <div class="relative rounded-3xl aspect-video overflow-hidden">
           <iframe 
             width="100%" 
@@ -60,7 +60,7 @@
       </div>
 
       <!-- AOPA Sweepstakes Video (Center) -->
-      <div class="flex-shrink-0 px-4" style="width: 45vw;" data-video="pilot-magazine">
+      <div class="flex-shrink-0 px-4 w-[80vw] md:w-[45vw]" data-video="pilot-magazine">
         <div class="relative rounded-3xl aspect-video overflow-hidden">
           <iframe 
             width="100%" 
@@ -76,7 +76,7 @@
       </div>
 
       <!-- AOPA Presents Video -->
-      <div class="flex-shrink-0 px-4" style="width: 45vw;" data-video="flight-training">
+      <div class="flex-shrink-0 px-4 w-[80vw] md:w-[45vw]" data-video="flight-training">
         <div class="relative rounded-3xl aspect-video overflow-hidden">
           <iframe 
             width="100%" 
@@ -131,7 +131,8 @@
 
     centerSlider() {
       const containerWidth = this.slider.parentElement.offsetWidth;
-      const slideWidth = containerWidth * 0.45; // Each slide is 45% of container width
+      // Use responsive slide width: 80% on mobile, 45% on desktop
+      const slideWidth = window.innerWidth < 768 ? containerWidth * 0.80 : containerWidth * 0.45;
       const centerOffset = (containerWidth - slideWidth) / 2; // Center the slide
       const translateX = -this.currentSlide * slideWidth + centerOffset;
       
@@ -177,7 +178,8 @@
 
     updateSliderPosition() {
       const containerWidth = this.slider.parentElement.offsetWidth;
-      const slideWidth = containerWidth * 0.45; // Each slide is 45% of container width
+      // Use responsive slide width: 80% on mobile, 45% on desktop
+      const slideWidth = window.innerWidth < 768 ? containerWidth * 0.80 : containerWidth * 0.45;
       const centerOffset = (containerWidth - slideWidth) / 2; // Center the slide
       const translateX = -this.currentSlide * slideWidth + centerOffset;
       
