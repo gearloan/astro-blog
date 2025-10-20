@@ -125,7 +125,20 @@
       </div>
 
       <!-- Tab Content -->
-      <div class="px-4 py-4 md:p-6">
+      <div class="px-4 py-4 md:p-6 relative">
+        <!-- Info Icon -->
+        <div class="absolute top-2 right-2 z-10">
+            <button 
+              id="weather-info-btn"
+              class="w-6 h-6 bg-gray-200/60 hover:bg-gray-300/80 rounded-full flex items-center justify-center transition-colors"
+              title="Trend Arrow Info"
+            >
+            <svg class="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+            </svg>
+          </button>
+        </div>
+        
         <!-- Weather Tab -->
         <div id="weather-content" class="tab-content h-40 md:h-24">
           <div class="flex flex-wrap lg:flex-nowrap h-full">
@@ -163,7 +176,7 @@
               <!-- Temperature -->
               <div class="text-center">
                 <div class="font-blockquote text-5xl md:text-7xl font-bold text-slate-600 weather-temp">
-                  58°
+                  
                 </div>
                 <div class="text-xs text-slate-600">TEMP</div>
               </div>
@@ -173,7 +186,7 @@
                 <div
                   class="font-blockquote text-5xl md:text-7xl font-bold text-slate-600 flex items-center justify-center gap-1 weather-wind"
                 >
-                  3
+                  
                   <svg
                     class="w-4 h-4 md:w-5 md:h-5 text-red-600"
                     fill="currentColor"
@@ -191,7 +204,7 @@
               <!-- Visibility -->
               <div class="text-center hidden md:block">
                 <div class="font-blockquote text-4xl md:text-7xl font-bold text-slate-600 weather-visibility">
-                  10
+                  
                 </div>
                 <div class="text-xs text-slate-600">MILES</div>
                 <div class="text-xs text-slate-600">VISIBILITY</div>
@@ -202,7 +215,7 @@
                 <div
                   class="font-blockquote text-5xl md:text-7xl font-bold text-slate-600 flex items-center justify-center gap-1 weather-pressure"
                 >
-                  30.51
+                  
                   <svg
                     class="w-4 h-4 md:w-5 md:h-5 text-green-600"
                     fill="currentColor"
@@ -325,4 +338,9 @@
 
 <script>
   import weatherWidget from '../scripts/weather-widget.ts';
+  
+  // Initialize the weather widget when the page loads
+  document.addEventListener('DOMContentLoaded', () => {
+    new weatherWidget();
+  });
 </script>

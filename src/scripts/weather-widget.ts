@@ -6,11 +6,13 @@ class WeatherWidget {
     windSpeed: number | null
     visibility: number | null
     pressure: number | null
+    timestamp: string | null
   } = {
     temperature: null,
     windSpeed: null,
     visibility: null,
-    pressure: null
+    pressure: null,
+    timestamp: null
   };
   private updateInterval: number | null = null;
 
@@ -28,13 +30,17 @@ class WeatherWidget {
   }
 
   private setupWidget() {
-    console.log('Setting up weather widget...');
     this.weatherContainer = document.getElementById('weather-content');
     if (!this.weatherContainer) {
       console.warn('Weather widget container not found');
       return;
     }
-    console.log('Weather container found:', this.weatherContainer);
+
+    // Load previous weather data from localStorage
+    this.loadWeatherHistory();
+
+    // Setup info button
+    this.setupInfoButton();
 
     // Initial load
     this.updateWeather();
@@ -48,6 +54,118 @@ class WeatherWidget {
     this.updateInterval = window.setInterval(() => {
       this.updateWeather();
     }, 30 * 1000);
+  }
+
+  private loadWeatherHistory() {
+    try {
+      const stored = localStorage.getItem('weather-history');
+      if (stored) {
+        const history = JSON.parse(stored);
+        // Check if data is not too old (within 1 hour)
+        const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+        const storedTime = new Date(history.timestamp);
+        
+        if (storedTime > oneHourAgo) {
+          this.weatherHistory = history;
+          console.log('Loaded weather history from localStorage:', this.weatherHistory);
+        } else {
+          console.log('Stored weather data is too old, starting fresh');
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to load weather history from localStorage:', error);
+    }
+  }
+
+  private saveWeatherHistory() {
+    try {
+      localStorage.setItem('weather-history', JSON.stringify(this.weatherHistory));
+      console.log('Saved weather history to localStorage');
+    } catch (error) {
+      console.warn('Failed to save weather history to localStorage:', error);
+    }
+  }
+
+  private setupInfoButton() {
+    const infoBtn = document.getElementById('weather-info-btn');
+    if (!infoBtn) return;
+
+    infoBtn.addEventListener('click', () => {
+      this.showInfoModal();
+    });
+  }
+
+  private showInfoModal() {
+    // Create modal overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+    overlay.id = 'weather-info-overlay';
+
+    // Create modal content
+    const modal = document.createElement('div');
+    modal.className = 'bg-white rounded-lg p-6 max-w-md mx-4 shadow-xl';
+    modal.innerHTML = `
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold text-gray-800">Weather Trend Arrows</h3>
+        <button id="close-info-modal" class="text-gray-500 hover:text-gray-700">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="space-y-3 text-sm text-gray-600">
+        <div class="flex items-center gap-2">
+          <span class="text-blue-600">↑</span>
+          <span><strong>Temperature:</strong> Blue arrows show temperature trends</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-red-600">↑</span>
+          <span><strong>Wind:</strong> Red arrows show wind speed changes</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-green-600">↑</span>
+          <span><strong>Pressure:</strong> Green arrows show pressure trends</span>
+        </div>
+        
+        <div class="mt-4 pt-3 border-t border-gray-200">
+          <p class="font-medium text-gray-800 mb-2">Arrow Count:</p>
+          <ul class="space-y-1 text-xs">
+            <li>• <strong>1 Arrow:</strong> Small change (0-1.9 units)</li>
+            <li>• <strong>2 Arrows:</strong> Medium change (2-4.9 units)</li>
+            <li>• <strong>3 Arrows:</strong> Large change (5+ units)</li>
+            <li>• <strong>— Line:</strong> No change from previous reading</li>
+          </ul>
+        </div>
+        
+        <div class="mt-4 pt-3 border-t border-gray-200 text-xs text-gray-500">
+          <p>Data updates every 30 seconds. Trends compare current values to the previous reading.</p>
+        </div>
+      </div>
+    `;
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    // Close modal handlers
+    const closeBtn = modal.querySelector('#close-info-modal');
+    const closeModal = () => {
+      document.body.removeChild(overlay);
+    };
+
+    closeBtn?.addEventListener('click', closeModal);
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeModal();
+    });
+
+    // Close on Escape key
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        closeModal();
+        document.removeEventListener('keydown', handleEscape);
+      }
+    };
+    document.addEventListener('keydown', handleEscape);
   }
 
   private async updateWeather() {
@@ -123,10 +241,10 @@ class WeatherWidget {
     // Update temperature
     const tempElement = this.weatherContainer.querySelector('.weather-temp');
     if (tempElement) {
-      tempElement.textContent = `${data.temperature}°`;
-      console.log('Updated temperature to:', data.temperature);
-    } else {
-      console.log('Temperature element not found');
+      const tempTrend = this.getTrendDirection(data.temperature, this.weatherHistory.temperature);
+      const tempMagnitude = this.getTrendMagnitude(data.temperature, this.weatherHistory.temperature);
+      const tempArrow = this.getTrendArrow(tempTrend, tempMagnitude, 'text-blue-600');
+      tempElement.innerHTML = `${data.temperature}°<span class="inline-flex items-baseline ml-1">${tempArrow}</span>`;
     }
 
     // Update wind
@@ -135,10 +253,7 @@ class WeatherWidget {
       const windTrend = this.getTrendDirection(data.windSpeed, this.weatherHistory.windSpeed);
       const windMagnitude = this.getTrendMagnitude(data.windSpeed, this.weatherHistory.windSpeed);
       const windArrow = this.getTrendArrow(windTrend, windMagnitude, 'text-red-600');
-      console.log('Updating wind to:', data.windSpeed, 'trend:', windTrend, 'magnitude:', windMagnitude);
-      windElement.innerHTML = `${data.windSpeed} ${windArrow}`;
-    } else {
-      console.log('Wind element not found');
+      windElement.innerHTML = `${data.windSpeed}<span class="inline-flex items-baseline ml-1">${windArrow}</span>`;
     }
 
     // Update visibility
@@ -156,10 +271,7 @@ class WeatherWidget {
       const pressureTrend = this.getTrendDirection(parseFloat(data.pressure), this.weatherHistory.pressure);
       const pressureMagnitude = this.getTrendMagnitude(parseFloat(data.pressure), this.weatherHistory.pressure);
       const pressureArrow = this.getTrendArrow(pressureTrend, pressureMagnitude, 'text-green-600');
-      console.log('Updated pressure to:', data.pressure, 'trend:', pressureTrend, 'magnitude:', pressureMagnitude);
-      pressureElement.innerHTML = `${data.pressure} ${pressureArrow}`;
-    } else {
-      console.log('Pressure element not found');
+      pressureElement.innerHTML = `${data.pressure}<span class="inline-flex items-baseline ml-1">${pressureArrow}</span>`;
     }
 
     // Update conditions text
@@ -194,8 +306,12 @@ class WeatherWidget {
       temperature: data.temperature,
       windSpeed: data.windSpeed,
       visibility: data.visibility,
-      pressure: parseFloat(data.pressure)
+      pressure: parseFloat(data.pressure),
+      timestamp: data.timestamp
     };
+
+    // Save to localStorage for persistence
+    this.saveWeatherHistory();
   }
 
   private updateSunIcon(flightRules: string) {
