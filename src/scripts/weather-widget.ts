@@ -17,14 +17,21 @@ class WeatherWidget {
   }
 
   private setupWidget() {
+    console.log('Setting up weather widget...');
     this.weatherContainer = document.getElementById('weather-content');
     if (!this.weatherContainer) {
       console.warn('Weather widget container not found');
       return;
     }
+    console.log('Weather container found:', this.weatherContainer);
 
     // Initial load
     this.updateWeather();
+
+    // Force an immediate update after 2 seconds to clear any cached data
+    setTimeout(() => {
+      this.updateWeather();
+    }, 2000);
 
     // Update every 5 minutes
     this.updateInterval = window.setInterval(() => {
@@ -34,12 +41,14 @@ class WeatherWidget {
 
   private async updateWeather() {
     try {
-      const response = await fetch('/api/weather?airport=KFDK');
+      console.log('Fetching weather data...');
+      const response = await fetch(`/api/weather?airport=KFDK&t=${Date.now()}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
       const weatherData = await response.json();
+      console.log('Weather data received:', weatherData);
       this.updateWeatherDisplay(weatherData);
       
     } catch (error) {
@@ -49,29 +58,43 @@ class WeatherWidget {
   }
 
   private updateWeatherDisplay(data: any) {
-    if (!this.weatherContainer) return;
+    if (!this.weatherContainer) {
+      console.log('Weather container not found');
+      return;
+    }
+
+    console.log('Updating weather display with data:', data);
 
     // Update temperature
     const tempElement = this.weatherContainer.querySelector('.weather-temp');
     if (tempElement) {
       tempElement.textContent = `${data.temperature}°`;
+      console.log('Updated temperature to:', data.temperature);
+    } else {
+      console.log('Temperature element not found');
     }
 
     // Update wind
     const windElement = this.weatherContainer.querySelector('.weather-wind');
     if (windElement) {
+      console.log('Updating wind to:', data.windSpeed);
       windElement.innerHTML = `
         ${data.windSpeed}
         <svg class="w-4 h-4 md:w-5 md:h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path>
         </svg>
       `;
+    } else {
+      console.log('Wind element not found');
     }
 
     // Update visibility
     const visibilityElement = this.weatherContainer.querySelector('.weather-visibility');
     if (visibilityElement) {
       visibilityElement.textContent = data.visibility.toString();
+      console.log('Updated visibility to:', data.visibility);
+    } else {
+      console.log('Visibility element not found');
     }
 
     // Update pressure
@@ -83,12 +106,18 @@ class WeatherWidget {
           <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
         </svg>
       `;
+      console.log('Updated pressure to:', data.pressure);
+    } else {
+      console.log('Pressure element not found');
     }
 
     // Update conditions text
     const conditionsElement = this.weatherContainer.querySelector('.weather-conditions');
     if (conditionsElement) {
       conditionsElement.textContent = data.conditions;
+      console.log('Updated conditions to:', data.conditions);
+    } else {
+      console.log('Conditions element not found');
     }
 
     // Update sun icon color based on flight rules
@@ -104,6 +133,9 @@ class WeatherWidget {
         hour12: true 
       });
       timestampElement.textContent = `Frederick Municipal Airport | ${timeString}`;
+      console.log('Updated timestamp to:', timeString);
+    } else {
+      console.log('Timestamp element not found');
     }
   }
 

@@ -70,10 +70,11 @@ function parseMetar(metar: any) {
   const dewpoint = metar.dewp || 0;
   const windSpeed = metar.wspd || 0;
   const windDir = metar.wdir || 0;
-  const visibility = metar.visib || 0;
+  const visibility = parseFloat(metar.visib) || 0;
   const altimeter = metar.altim || 0;
   const skyCover = metar.skyc || [];
   const skyHeight = metar.skyh || [];
+  
   
   // Determine flight rules based on visibility and ceiling
   let flightRules = 'VFR';
@@ -102,8 +103,9 @@ function parseMetar(metar: any) {
   // Convert temperature from Celsius to Fahrenheit
   const tempF = Math.round((temp * 9/5) + 32);
   
-  // Convert pressure from inches to display format
-  const pressureInches = (altimeter / 100).toFixed(2);
+  // Convert pressure from hPa to inches of mercury (aviation format)
+  // Standard conversion: 1 hPa = 0.02953 inches of mercury
+  const pressureInches = (altimeter * 0.02953).toFixed(2);
   
   // Convert wind direction to cardinal direction
   const windDirection = getWindDirection(windDir);
