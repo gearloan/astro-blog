@@ -1,6 +1,17 @@
 // Weather Widget - Fetches real aviation weather data
 class WeatherWidget {
-  private weatherContainer: HTMLElement | null = null;
+  private weatherContainer: HTMLElement | null = null
+  private weatherHistory: {
+    temperature: number | null
+    windSpeed: number | null
+    visibility: number | null
+    pressure: number | null
+  } = {
+    temperature: null,
+    windSpeed: null,
+    visibility: null,
+    pressure: null
+  };
   private updateInterval: number | null = null;
 
   constructor() {
@@ -33,10 +44,10 @@ class WeatherWidget {
       this.updateWeather();
     }, 2000);
 
-    // Update every 5 minutes
+    // Update every 30 seconds for testing (change back to 5 minutes for production)
     this.updateInterval = window.setInterval(() => {
       this.updateWeather();
-    }, 5 * 60 * 1000);
+    }, 30 * 1000);
   }
 
   private async updateWeather() {
@@ -54,6 +65,50 @@ class WeatherWidget {
     } catch (error) {
       console.error('Failed to fetch weather data:', error);
       // Keep existing display on error
+    }
+  }
+
+  private getTrendDirection(current: number, previous: number | null): 'up' | 'down' | 'same' {
+    if (previous === null) return 'same';
+    if (current > previous) return 'up';
+    if (current < previous) return 'down';
+    return 'same';
+  }
+
+  private getTrendMagnitude(current: number, previous: number | null): 1 | 2 | 3 {
+    if (previous === null) return 1;
+    const change = Math.abs(current - previous);
+    
+    // Define thresholds for different magnitudes
+    // These can be adjusted based on typical weather variations
+    if (change >= 5) return 3;      // Large change (3 arrows)
+    if (change >= 2) return 2;      // Medium change (2 arrows)
+    return 1;                       // Small change (1 arrow)
+  }
+
+  private getTrendArrow(direction: 'up' | 'down' | 'same', magnitude: 1 | 2 | 3 = 1, color: string = 'text-red-600'): string {
+    const arrowSvg = (dir: 'up' | 'down') => {
+      if (dir === 'up') {
+        return `<svg class="w-3 h-3 md:w-4 md:h-4 ${color}" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+        </svg>`;
+      } else {
+        return `<svg class="w-3 h-3 md:w-4 md:h-4 ${color}" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>`;
+      }
+    };
+
+    switch (direction) {
+      case 'up':
+        return Array(magnitude).fill(0).map(() => arrowSvg('up')).join('');
+      case 'down':
+        return Array(magnitude).fill(0).map(() => arrowSvg('down')).join('');
+      case 'same':
+      default:
+        return `<svg class="w-4 h-4 md:w-5 md:h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+        </svg>`;
     }
   }
 
@@ -77,13 +132,11 @@ class WeatherWidget {
     // Update wind
     const windElement = this.weatherContainer.querySelector('.weather-wind');
     if (windElement) {
-      console.log('Updating wind to:', data.windSpeed);
-      windElement.innerHTML = `
-        ${data.windSpeed}
-        <svg class="w-4 h-4 md:w-5 md:h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path>
-        </svg>
-      `;
+      const windTrend = this.getTrendDirection(data.windSpeed, this.weatherHistory.windSpeed);
+      const windMagnitude = this.getTrendMagnitude(data.windSpeed, this.weatherHistory.windSpeed);
+      const windArrow = this.getTrendArrow(windTrend, windMagnitude, 'text-red-600');
+      console.log('Updating wind to:', data.windSpeed, 'trend:', windTrend, 'magnitude:', windMagnitude);
+      windElement.innerHTML = `${data.windSpeed} ${windArrow}`;
     } else {
       console.log('Wind element not found');
     }
@@ -100,13 +153,11 @@ class WeatherWidget {
     // Update pressure
     const pressureElement = this.weatherContainer.querySelector('.weather-pressure');
     if (pressureElement) {
-      pressureElement.innerHTML = `
-        ${data.pressure}
-        <svg class="w-4 h-4 md:w-5 md:h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-        </svg>
-      `;
-      console.log('Updated pressure to:', data.pressure);
+      const pressureTrend = this.getTrendDirection(parseFloat(data.pressure), this.weatherHistory.pressure);
+      const pressureMagnitude = this.getTrendMagnitude(parseFloat(data.pressure), this.weatherHistory.pressure);
+      const pressureArrow = this.getTrendArrow(pressureTrend, pressureMagnitude, 'text-green-600');
+      console.log('Updated pressure to:', data.pressure, 'trend:', pressureTrend, 'magnitude:', pressureMagnitude);
+      pressureElement.innerHTML = `${data.pressure} ${pressureArrow}`;
     } else {
       console.log('Pressure element not found');
     }
@@ -137,6 +188,14 @@ class WeatherWidget {
     } else {
       console.log('Timestamp element not found');
     }
+
+    // Update weather history for next comparison
+    this.weatherHistory = {
+      temperature: data.temperature,
+      windSpeed: data.windSpeed,
+      visibility: data.visibility,
+      pressure: parseFloat(data.pressure)
+    };
   }
 
   private updateSunIcon(flightRules: string) {
