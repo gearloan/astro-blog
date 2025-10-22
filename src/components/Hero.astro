@@ -216,14 +216,11 @@
         </div>
 
         <!-- TAF Tab -->
-        <div id="taf-content" class="tab-content hidden h-40 md:h-24">
+        <div id="taf-content" class="tab-content hidden min-h-96 overflow-y-auto">
           <div class="flex items-center justify-center h-full">
             <div class="text-center">
-              <h3 class="text-xl font-bold text-slate-600 mb-4">TAF - Terminal Aerodrome Forecast</h3>
-              <p class="text-slate-600">24-hour weather forecast for Frederick Municipal Airport</p>
-              <div class="mt-4 p-4 bg-slate-100 rounded-lg">
-                <p class="text-sm text-slate-700 font-mono">TAF data will be displayed here</p>
-              </div>
+              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+              <p class="text-slate-600">Loading TAF data...</p>
             </div>
           </div>
         </div>
@@ -312,6 +309,12 @@
           // Dispatch a custom event to trigger winds aloft update
           window.dispatchEvent(new CustomEvent('winds-aloft-tab-selected'));
         }
+
+        // Trigger TAF widget update when that tab is selected
+        if (targetTab === 'taf') {
+          // Dispatch a custom event to trigger TAF update
+          window.dispatchEvent(new CustomEvent('taf-tab-selected'));
+        }
       });
     });
   });
@@ -320,10 +323,12 @@
 <script>
   import weatherWidget from '../scripts/weather-widget.ts';
   import windsAloftWidget from '../scripts/winds-aloft-widget.ts';
+  import tafWidget from '../scripts/taf-widget.ts';
   
   // Initialize the weather widgets when the page loads
   document.addEventListener('DOMContentLoaded', () => {
     new weatherWidget();
     new windsAloftWidget();
+    new tafWidget();
   });
 </script>

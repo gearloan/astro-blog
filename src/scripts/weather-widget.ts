@@ -39,8 +39,6 @@ class WeatherWidget {
     // Load previous weather data from localStorage
     this.loadWeatherHistory();
 
-    // Setup info button
-    this.setupInfoButton();
 
     // Initial load
     this.updateWeather();
@@ -82,87 +80,6 @@ class WeatherWidget {
     }
   }
 
-  private setupInfoButton() {
-    const infoBtn = document.getElementById('weather-info-btn');
-    if (!infoBtn) return;
-
-    infoBtn.addEventListener('click', () => {
-      this.showInfoModal();
-    });
-  }
-
-  private showInfoModal() {
-    // Create modal overlay
-    const overlay = document.createElement('div');
-    overlay.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-    overlay.id = 'weather-info-overlay';
-
-    // Create modal content
-    const modal = document.createElement('div');
-    modal.className = 'bg-white rounded-lg p-6 max-w-md mx-4 shadow-xl';
-    modal.innerHTML = `
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-semibold text-gray-800">Weather Trend Arrows</h3>
-        <button id="close-info-modal" class="text-gray-500 hover:text-gray-700">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-      
-      <div class="space-y-3 text-sm text-gray-600">
-        <div class="flex items-center gap-2">
-          <span class="text-blue-600">↑</span>
-          <span><strong>Temperature:</strong> Blue arrows show temperature trends</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="text-red-600">↑</span>
-          <span><strong>Wind:</strong> Red arrows show wind speed changes</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="text-green-600">↑</span>
-          <span><strong>Pressure:</strong> Green arrows show pressure trends</span>
-        </div>
-        
-        <div class="mt-4 pt-3 border-t border-gray-200">
-          <p class="font-medium text-gray-800 mb-2">Arrow Count:</p>
-          <ul class="space-y-1 text-xs">
-            <li>• <strong>1 Arrow:</strong> Small change (0-1.9 units)</li>
-            <li>• <strong>2 Arrows:</strong> Medium change (2-4.9 units)</li>
-            <li>• <strong>3 Arrows:</strong> Large change (5+ units)</li>
-            <li>• <strong>— Line:</strong> No change from previous reading</li>
-          </ul>
-        </div>
-        
-        <div class="mt-4 pt-3 border-t border-gray-200 text-xs text-gray-500">
-          <p>Data updates every 30 seconds. Trends compare current values to the previous reading.</p>
-        </div>
-      </div>
-    `;
-
-    overlay.appendChild(modal);
-    document.body.appendChild(overlay);
-
-    // Close modal handlers
-    const closeBtn = modal.querySelector('#close-info-modal');
-    const closeModal = () => {
-      document.body.removeChild(overlay);
-    };
-
-    closeBtn?.addEventListener('click', closeModal);
-    overlay.addEventListener('click', (e) => {
-      if (e.target === overlay) closeModal();
-    });
-
-    // Close on Escape key
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        closeModal();
-        document.removeEventListener('keydown', handleEscape);
-      }
-    };
-    document.addEventListener('keydown', handleEscape);
-  }
 
   private async updateWeather() {
     try {
