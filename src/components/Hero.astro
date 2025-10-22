@@ -100,27 +100,21 @@
       <div class="flex border-b border-white/20 overflow-x-auto scrollbar-hide">
         <button
           class="tab-button active px-4 py-3 text-sm font-ui font-medium text-slate-600 border-b-2 border-blue-500 bg-white/20"
-          data-tab="weather"
+          data-tab="metar"
         >
-          Aviation Weather
+          METAR
         </button>
         <button
           class="tab-button px-4 py-3 text-sm font-ui font-medium text-slate-600 border-b-2 border-transparent hover:bg-white/10"
-          data-tab="airport"
+          data-tab="taf"
         >
-          Airport Finder
+          TAF
         </button>
         <button
           class="tab-button px-4 py-3 text-sm font-ui font-medium text-slate-600 border-b-2 border-transparent hover:bg-white/10"
-          data-tab="destinations"
+          data-tab="winds-aloft"
         >
-          <span class="md:hidden">Desti-nations</span><span class="hidden md:inline">Destinations</span>
-        </button>
-        <button
-          class="tab-button px-4 py-3 text-sm font-ui font-medium text-slate-600 border-b-2 border-transparent hover:bg-white/10"
-          data-tab="flightplanner"
-        >
-          iFlightPlanner
+          Winds Aloft
         </button>
       </div>
 
@@ -139,8 +133,8 @@
           </button>
         </div>
         
-        <!-- Weather Tab -->
-        <div id="weather-content" class="tab-content h-40 md:h-24">
+        <!-- METAR Tab -->
+        <div id="metar-content" class="tab-content h-40 md:h-24">
           <div class="flex flex-wrap lg:flex-nowrap h-full">
             <!-- Weather Header -->
             <div class="flex items-center gap-3 mb-4 mr-4 md:mr-10">
@@ -175,7 +169,7 @@
             >
               <!-- Temperature -->
               <div class="text-center">
-                <div class="font-blockquote text-5xl md:text-7xl font-bold text-slate-600 weather-temp">
+                <div class="font-blockquote text-6xl md:text-7xl font-bold text-slate-600 weather-temp">
                   
                 </div>
                 <div class="text-xs text-slate-600">TEMP</div>
@@ -184,7 +178,7 @@
               <!-- Wind -->
               <div class="text-center">
                 <div
-                  class="font-blockquote text-5xl md:text-7xl font-bold text-slate-600 flex items-center justify-center gap-1 weather-wind"
+                  class="font-blockquote text-6xl md:text-7xl font-bold text-slate-600 flex items-center justify-center gap-1 weather-wind"
                 >
                   
                   <svg
@@ -203,7 +197,7 @@
 
               <!-- Visibility -->
               <div class="text-center hidden md:block">
-                <div class="font-blockquote text-4xl md:text-7xl font-bold text-slate-600 weather-visibility">
+                <div class="font-blockquote text-6xl md:text-7xl font-bold text-slate-600 weather-visibility">
                   
                 </div>
                 <div class="text-xs text-slate-600">MILES</div>
@@ -233,32 +227,28 @@
           </div>
         </div>
 
-        <!-- Airport Finder Tab -->
-        <div id="airport-content" class="tab-content hidden h-24">
+        <!-- TAF Tab -->
+        <div id="taf-content" class="tab-content hidden h-40 md:h-24">
           <div class="flex items-center justify-center h-full">
             <div class="text-center">
-              <h3 class="text-xl font-bold text-slate-600 mb-4">Airport Finder</h3>
-              <p class="text-slate-600">Search for airports by location, code, or name</p>
+              <h3 class="text-xl font-bold text-slate-600 mb-4">TAF - Terminal Aerodrome Forecast</h3>
+              <p class="text-slate-600">24-hour weather forecast for Frederick Municipal Airport</p>
+              <div class="mt-4 p-4 bg-slate-100 rounded-lg">
+                <p class="text-sm text-slate-700 font-mono">TAF data will be displayed here</p>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Destinations Tab -->
-        <div id="destinations-content" class="tab-content hidden h-24">
+        <!-- Winds Aloft Tab -->
+        <div id="winds-aloft-content" class="tab-content hidden h-40 md:h-24">
           <div class="flex items-center justify-center h-full">
             <div class="text-center">
-              <h3 class="text-xl font-bold text-slate-600 mb-4">Destinations</h3>
-              <p class="text-slate-600">Discover popular flying destinations and routes</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- iFlightPlanner Tab -->
-        <div id="flightplanner-content" class="tab-content hidden h-24">
-          <div class="flex items-center justify-center h-full">
-            <div class="text-center">
-              <h3 class="text-xl font-bold text-slate-600 mb-4">iFlightPlanner</h3>
-              <p class="text-slate-600">Plan your flight with weather, fuel, and route planning</p>
+              <h3 class="text-xl font-bold text-slate-600 mb-4">Winds Aloft</h3>
+              <p class="text-slate-600">Upper level wind data for flight planning</p>
+              <div class="mt-4 p-4 bg-slate-100 rounded-lg">
+                <p class="text-sm text-slate-700 font-mono">Winds aloft data will be displayed here</p>
+              </div>
             </div>
           </div>
         </div>

@@ -30,7 +30,7 @@ class WeatherWidget {
   }
 
   private setupWidget() {
-    this.weatherContainer = document.getElementById('weather-content');
+    this.weatherContainer = document.getElementById('metar-content');
     if (!this.weatherContainer) {
       console.warn('Weather widget container not found');
       return;
@@ -50,10 +50,10 @@ class WeatherWidget {
       this.updateWeather();
     }, 2000);
 
-    // Update every 30 seconds for testing (change back to 5 minutes for production)
+    // Update every 5 minutes
     this.updateInterval = window.setInterval(() => {
       this.updateWeather();
-    }, 30 * 1000);
+    }, 5 * 60 * 1000);
   }
 
   private loadWeatherHistory() {
@@ -67,9 +67,6 @@ class WeatherWidget {
         
         if (storedTime > oneHourAgo) {
           this.weatherHistory = history;
-          console.log('Loaded weather history from localStorage:', this.weatherHistory);
-        } else {
-          console.log('Stored weather data is too old, starting fresh');
         }
       }
     } catch (error) {
@@ -80,7 +77,6 @@ class WeatherWidget {
   private saveWeatherHistory() {
     try {
       localStorage.setItem('weather-history', JSON.stringify(this.weatherHistory));
-      console.log('Saved weather history to localStorage');
     } catch (error) {
       console.warn('Failed to save weather history to localStorage:', error);
     }
@@ -170,14 +166,12 @@ class WeatherWidget {
 
   private async updateWeather() {
     try {
-      console.log('Fetching weather data...');
       const response = await fetch(`/api/weather?airport=KFDK&t=${Date.now()}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
       const weatherData = await response.json();
-      console.log('Weather data received:', weatherData);
       this.updateWeatherDisplay(weatherData);
       
     } catch (error) {
@@ -232,11 +226,8 @@ class WeatherWidget {
 
   private updateWeatherDisplay(data: any) {
     if (!this.weatherContainer) {
-      console.log('Weather container not found');
       return;
     }
-
-    console.log('Updating weather display with data:', data);
 
     // Update temperature
     const tempElement = this.weatherContainer.querySelector('.weather-temp');
@@ -260,9 +251,6 @@ class WeatherWidget {
     const visibilityElement = this.weatherContainer.querySelector('.weather-visibility');
     if (visibilityElement) {
       visibilityElement.textContent = data.visibility.toString();
-      console.log('Updated visibility to:', data.visibility);
-    } else {
-      console.log('Visibility element not found');
     }
 
     // Update pressure
@@ -278,9 +266,6 @@ class WeatherWidget {
     const conditionsElement = this.weatherContainer.querySelector('.weather-conditions');
     if (conditionsElement) {
       conditionsElement.textContent = data.conditions;
-      console.log('Updated conditions to:', data.conditions);
-    } else {
-      console.log('Conditions element not found');
     }
 
     // Update sun icon color based on flight rules
@@ -296,9 +281,6 @@ class WeatherWidget {
         hour12: true 
       });
       timestampElement.textContent = `Frederick Municipal Airport | ${timeString}`;
-      console.log('Updated timestamp to:', timeString);
-    } else {
-      console.log('Timestamp element not found');
     }
 
     // Update weather history for next comparison
@@ -320,9 +302,9 @@ class WeatherWidget {
     
     if (!sunContainer || !sunIcon) return;
 
-    // Remove existing color classes
-    sunContainer.className = sunContainer.className.replace(/bg-(green|yellow|red)-400/g, '');
-    sunIcon.className = sunIcon.className.replace(/text-(green|yellow|red)-600/g, '');
+    // Remove existing color classes using classList
+    sunContainer.classList.remove('bg-green-400', 'bg-yellow-400', 'bg-red-400');
+    sunIcon.classList.remove('text-green-600', 'text-yellow-600', 'text-red-600');
 
     // Add new color classes based on flight rules
     switch (flightRules) {

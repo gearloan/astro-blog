@@ -20,7 +20,6 @@ export const GET: APIRoute = async ({ request }) => {
     }
     
     const responseText = await response.text();
-    console.log('Raw API response:', responseText);
     
     if (!responseText || responseText.trim() === '') {
       throw new Error('Empty response from weather API');
@@ -30,8 +29,6 @@ export const GET: APIRoute = async ({ request }) => {
     try {
       data = JSON.parse(responseText);
     } catch (parseError) {
-      console.error('JSON parse error:', parseError);
-      console.error('Response text:', responseText);
       throw new Error('Invalid JSON response from weather API');
     }
     
