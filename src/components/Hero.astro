@@ -241,14 +241,11 @@
         </div>
 
         <!-- Winds Aloft Tab -->
-        <div id="winds-aloft-content" class="tab-content hidden h-40 md:h-24">
+        <div id="winds-aloft-content" class="tab-content hidden min-h-96">
           <div class="flex items-center justify-center h-full">
             <div class="text-center">
-              <h3 class="text-xl font-bold text-slate-600 mb-4">Winds Aloft</h3>
-              <p class="text-slate-600">Upper level wind data for flight planning</p>
-              <div class="mt-4 p-4 bg-slate-100 rounded-lg">
-                <p class="text-sm text-slate-700 font-mono">Winds aloft data will be displayed here</p>
-              </div>
+              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+              <p class="text-slate-600">Loading winds aloft data...</p>
             </div>
           </div>
         </div>
@@ -321,6 +318,12 @@
         if (targetContent) {
           targetContent.classList.remove('hidden');
         }
+
+        // Trigger winds aloft widget update when that tab is selected
+        if (targetTab === 'winds-aloft') {
+          // Dispatch a custom event to trigger winds aloft update
+          window.dispatchEvent(new CustomEvent('winds-aloft-tab-selected'));
+        }
       });
     });
   });
@@ -328,9 +331,11 @@
 
 <script>
   import weatherWidget from '../scripts/weather-widget.ts';
+  import windsAloftWidget from '../scripts/winds-aloft-widget.ts';
   
-  // Initialize the weather widget when the page loads
+  // Initialize the weather widgets when the page loads
   document.addEventListener('DOMContentLoaded', () => {
     new weatherWidget();
+    new windsAloftWidget();
   });
 </script>

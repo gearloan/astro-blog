@@ -337,9 +337,4 @@ class WeatherWidget {
 // Initialize weather widget
 const weatherWidget = new WeatherWidget();
 
-// Clean up on page unload
-window.addEventListener('beforeunload', () => {
-  weatherWidget.destroy();
-});
-
-export default weatherWidget;
+export default WeatherWidget;
