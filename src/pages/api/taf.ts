@@ -1,19 +1,37 @@
 import type { APIRoute } from 'astro';
 
 export const GET: APIRoute = async ({ request }) => {
+  const url = new URL(request.url);
+  const cookies = request.headers.get('cookie') || '';
+  const cookieAirport = (/currentAirport=([^;]+)/.exec(cookies)?.[1] || '').toUpperCase();
+  const airportParam = url.searchParams.get('airport');
+  const queryAirport = (airportParam || '').toUpperCase().trim();
+  const airport = (queryAirport || cookieAirport || 'KBOS');
+  // Accept explicit header override (defensive against any proxy caching issues)
+  const headerAirport = request.headers.get('x-airport');
+  const effectiveAirport = headerAirport && headerAirport.trim() ? headerAirport.trim().toUpperCase() : airport;
+  console.log('TAF API received airport parameter:', airport);
+  console.log('TAF API URL:', request.url);
+  console.log('TAF API search params:', url.searchParams.toString());
+  console.log('TAF API header airport override:', headerAirport);
+  
   try {
-    const url = new URL(request.url);
-    const airport = url.searchParams.get('airport') || 'KFDK'; // Default to Frederick Municipal
-    
     // For now, generate realistic TAF data
     // In the future, this could be connected to a real TAF API
-    const tafData = generateRealisticTAF(airport);
+    console.log('TAF API calling generateRealisticTAF with airport:', effectiveAirport);
+    const tafData = generateRealisticTAF(effectiveAirport);
+    console.log('TAF API generated data for airport:', tafData.airport);
     
-    return new Response(JSON.stringify(tafData), {
+    // Always echo the requested airport in payload as well
+    const enriched = { ...tafData, airport: effectiveAirport };
+    return new Response(JSON.stringify(enriched), {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=1800' // Cache for 30 minutes (TAF updates every 6 hours)
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+        'X-Requested-Airport': effectiveAirport
       }
     });
     
@@ -22,7 +40,7 @@ export const GET: APIRoute = async ({ request }) => {
     
     // Return fallback data
     const fallbackData = {
-      airport: 'KFDK',
+      airport: airport,
       validTime: new Date().toISOString(),
       forecast: [
         {
@@ -58,7 +76,7 @@ export const GET: APIRoute = async ({ request }) => {
           temp: '20/13'
         }
       ],
-      raw: 'TAF data temporarily unavailable',
+      raw: `TAF ${airport} data temporarily unavailable`,
       timestamp: new Date().toISOString()
     };
     
@@ -73,6 +91,7 @@ export const GET: APIRoute = async ({ request }) => {
 };
 
 function generateRealisticTAF(airport: string) {
+  console.log('generateRealisticTAF called with airport:', airport);
   const now = new Date();
   const hour = now.getHours();
   
@@ -116,13 +135,16 @@ function generateRealisticTAF(airport: string) {
   });
   
   // Generate raw TAF format
-  const rawTAF = `TAF KFDK ${now.getUTCDate().toString().padStart(2, '0')}${now.getUTCHours().toString().padStart(2, '0')}Z ${now.getUTCDate().toString().padStart(2, '0')}${(now.getUTCHours() + 24).toString().padStart(2, '0')}Z VRB03KT P6SM SKC TEMPO 1200/1800 VRB08KT P6SM SCT040 FM1800 VRB05KT P6SM FEW050`;
+  const rawTAF = `TAF ${airport} ${now.getUTCDate().toString().padStart(2, '0')}${now.getUTCHours().toString().padStart(2, '0')}Z ${now.getUTCDate().toString().padStart(2, '0')}${(now.getUTCHours() + 24).toString().padStart(2, '0')}Z VRB03KT P6SM SKC TEMPO 1200/1800 VRB08KT P6SM SCT040 FM1800 VRB05KT P6SM FEW050`;
   
-  return {
+  const result = {
     airport: airport,
     validTime: now.toISOString(),
     forecast: forecast,
     raw: rawTAF,
     timestamp: now.toISOString()
   };
+  
+  console.log('generateRealisticTAF returning data for airport:', result.airport);
+  return result;
 }

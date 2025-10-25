@@ -3,7 +3,7 @@ import type { APIRoute } from 'astro';
 export const GET: APIRoute = async ({ request }) => {
   try {
     const url = new URL(request.url);
-    const airport = url.searchParams.get('airport') || 'KFDK'; // Default to Frederick Municipal
+    const airport = url.searchParams.get('airport') || 'KBOS';
     
     // For now, generate realistic winds aloft data
     // In the future, this could be connected to a real winds aloft API
@@ -22,7 +22,7 @@ export const GET: APIRoute = async ({ request }) => {
     
     // Return fallback data
     const fallbackData = {
-      airport: 'KFDK',
+      airport: airport,
       validTime: new Date().toISOString(),
       levels: [
         { altitude: '3000', windDirection: 290, windSpeed: 15, temperature: 5 },
@@ -80,7 +80,7 @@ function generateRealisticWindsAloft(airport: string) {
     airport: airport,
     validTime: now.toISOString(),
     levels: levels,
-    raw: `FDK ${now.getUTCHours().toString().padStart(2, '0')}${now.getUTCMinutes().toString().padStart(2, '0')}Z WINDS ALOFT`,
+    raw: `${airport.replace(/^K/, '')} ${now.getUTCHours().toString().padStart(2, '0')}${now.getUTCMinutes().toString().padStart(2, '0')}Z WINDS ALOFT`,
     timestamp: now.toISOString()
   };
 }

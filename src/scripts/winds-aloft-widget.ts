@@ -31,11 +31,19 @@ class WindsAloftWidget {
     window.addEventListener('winds-aloft-tab-selected', () => {
       this.updateWindsAloft();
     });
+
+    // Listen for airport changes
+    window.addEventListener('airport-changed', (event: any) => {
+      this.updateWindsAloft();
+    });
   }
 
   private async updateWindsAloft() {
     try {
-      const response = await fetch(`/api/winds-aloft?airport=KFDK&t=${Date.now()}`);
+      const airport = this.getCurrentAirport();
+      const response = await fetch(`/api/winds-aloft/${airport}?t=${Date.now()}&cache=${Math.random()}`, {
+        cache: 'no-store'
+      });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -49,17 +57,24 @@ class WindsAloftWidget {
     }
   }
 
+  private getCurrentAirport(): string {
+    // Get current airport from airport search widget or default to KBOS
+    const airportSearch = (window as any).airportSearch;
+    return airportSearch?.getCurrentAirport() || 'KBOS';
+  }
+
   private updateWindsAloftDisplay(data: any) {
     if (!this.container) {
       return;
     }
 
     // Create the winds aloft display
+    const airportLabel = data.airport || this.getCurrentAirport();
     const windsAloftHTML = `
       <div class="winds-aloft-container">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <h3 class="text-lg font-bold text-slate-600">Winds Aloft - ${data.airport}</h3>
+            <h3 class="text-lg font-bold text-slate-600">Winds Aloft - ${airportLabel}</h3>
             <p class="text-sm text-slate-500">Valid: ${new Date(data.validTime).toLocaleString()}</p>
           </div>
           <div class="text-xs text-slate-500">
