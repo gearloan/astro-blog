@@ -8,7 +8,6 @@ export const POST_BY_SLUG = gql`
       title(format: RENDERED)
       date
       content(format: RENDERED)
-      formatSlug
       videoUrl
       featuredImage {
         node {
@@ -16,10 +15,6 @@ export const POST_BY_SLUG = gql`
           sourceUrl
           mediaDetails { sizes { name sourceUrl } }
         }
-      }
-      presentationSettings {
-        presentationSlots        # => e.g. ["hero","featured","teaser"]
-        proseStyle
       }
       author { node { name } }
       tags { nodes { slug name } }

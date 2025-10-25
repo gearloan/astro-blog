@@ -50,13 +50,11 @@ const proseStyle = resolveProseStyle(post);
 // editorial sidebar content
 const mostRead = await fetchPosts({ tag: 'editorial' }, 5);
 
-// media-only slot (video/image based on formatSlug)
-const Media = pickMediaComponent(post.formatSlug ?? 'longform');
+// media-only slot (video/image) - fallback to image until format is available
+const Media = pickMediaComponent('longform');
 
 // OPTIONAL: ACF featured badge flag (if you decide to show it here later)
-const slots = post?.presentationSettings?.presentationSlots ?? [];
-const isFeatured =
-  Array.isArray(slots) && slots.some((s: any) => String(s).toLowerCase() === 'featured');
+const isFeatured = false;
 ---
 
 <Layout proseStyle={proseStyle} section="editorial">

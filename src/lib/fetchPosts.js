@@ -33,14 +33,7 @@ export async function fetchPosts(opts = {}) {
               mediaDetails { sizes { name sourceUrl } }
             }
           }
-          presentationSettings {
-            presentationSlots
-            teaserLine1
-            teaserLine2
-            teaserLine3
-            heroTitleLine1
-            heroTitleLine2
-          }
+          # contentSettings removed (schema mismatch)
         }
       }
     }
@@ -73,14 +66,8 @@ export async function fetchPosts(opts = {}) {
   const allPosts = json?.data?.posts?.nodes ?? [];
 
   // Editorial bucket = posts without magazine presentation slots
-  if (!tag) {
-    const editorial = allPosts.filter(
-      (p) =>
-        !Array.isArray(p?.presentationSettings?.presentationSlots) ||
-        p.presentationSettings.presentationSlots.length === 0
-    );
-    return editorial.slice(0, limit);
-  }
+  // If no tag, just return most recent
+  if (!tag) return allPosts.slice(0, limit);
 
   // Magazine pages (pilot/turbine): already filtered/limited server-side
   return allPosts;

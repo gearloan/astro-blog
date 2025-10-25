@@ -34,10 +34,10 @@ const { slug } = Astro.params;
 const { postBy: post } = await getPost(slug);
 if (!post) throw new Error(`Post not found: ${slug}`);
 
-const slots = post?.presentationSettings?.presentationSlots ?? [];
+const slots = post?.contentSettings?.presentationSlots ?? [];
 const isFeatured = Array.isArray(slots) && slots.some(s => String(s).toLowerCase() === 'featured');
 
-const Media = pickMediaComponent(post.formatSlug ?? 'longform');
+const Media = pickMediaComponent('longform');
 
 // keep your contentGroups fallback for prose
 const postForStyle = {
